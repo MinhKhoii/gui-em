@@ -5493,9 +5493,15 @@ if (window.TINY_PERF && !window.TINY_PERF.mobile) {
         }
       }
 
-      // Arrow buttons state on mobile
-      if (prevBtn) prevBtn.disabled = (mobilePageIndex === 0);
-      if (nextBtn) nextBtn.disabled = (mobilePageIndex === totalFaces - 1);
+      // Arrow buttons state on mobile: Ẩn hoàn toàn trên điện thoại để giao diện thoáng, không vướng
+      if (prevBtn) {
+        prevBtn.disabled = (mobilePageIndex === 0);
+        prevBtn.style.setProperty('display', 'none', 'important');
+      }
+      if (nextBtn) {
+        nextBtn.disabled = (mobilePageIndex === totalFaces - 1);
+        nextBtn.style.setProperty('display', 'none', 'important');
+      }
 
       if (book3D) book3D.style.transform = 'none';
 
@@ -5521,9 +5527,15 @@ if (window.TINY_PERF && !window.TINY_PERF.mobile) {
         dot.classList.toggle('active', idx === currentSheetIndex);
       });
 
-      // Arrow buttons state on desktop
-      if (prevBtn) prevBtn.disabled = (currentSheetIndex === 0);
-      if (nextBtn) nextBtn.disabled = (currentSheetIndex === totalSheets);
+      // Arrow buttons state on desktop: hiển thị lại bình thường
+      if (prevBtn) {
+        prevBtn.style.removeProperty('display');
+        prevBtn.disabled = (currentSheetIndex === 0);
+      }
+      if (nextBtn) {
+        nextBtn.style.removeProperty('display');
+        nextBtn.disabled = (currentSheetIndex === totalSheets);
+      }
 
       // Centering book perspective on desktop
       if (book3D) {

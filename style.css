@@ -12288,11 +12288,23 @@ body {
     /* Mũi tên điều hướng trên điện thoại: ẩn hoàn toàn để giao diện thoáng, tinh tế, chạm 2 bên hoặc vuốt để lật trang */
     .book-nav-arrow {
       display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
 
     .dog-ear-curl {
       width: 38px !important;
       height: 38px !important;
+    }
+  }
+
+  @media (hover: none) and (pointer: coarse) {
+    .book-nav-arrow {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
     }
   }
 
