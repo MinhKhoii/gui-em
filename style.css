@@ -11157,9 +11157,10 @@ body {
             .cosmic-nebula {
                 position: absolute;
                 border-radius: 50%;
-                filter: blur(80px);
+                filter: blur(24px);
                 pointer-events: none;
                 animation: cosmicNebulaPulse 12s ease-in-out infinite alternate;
+                will-change: transform, opacity;
             }
             .nebula-1 {
                 top: 15%;
@@ -12297,6 +12298,59 @@ body {
       width: 38px !important;
       height: 38px !important;
     }
+
+    /* TỐI ƯU HIỆU NĂNG MƯỢT MÀ 60FPS TRÊN ĐIỆN THOẠI (Mobile Hardware Acceleration) */
+    #memory-gallery-page {
+      backdrop-filter: none !important;
+      -webkit-backdrop-filter: none !important;
+      background: radial-gradient(circle at 50% 25%, #230b30 0%, #0c0414 100%) !important;
+      transform: translateZ(0);
+      will-change: opacity, visibility;
+    }
+
+    .book-topbar {
+      backdrop-filter: blur(6px) !important;
+      -webkit-backdrop-filter: blur(6px) !important;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .sheet-face {
+      will-change: transform, opacity !important;
+      transform: translate3d(0, 0, 0) !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.42) !important;
+      backface-visibility: hidden !important;
+      -webkit-backface-visibility: hidden !important;
+    }
+
+    .book-3d, .book-stage, .page-paper {
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35) !important;
+    }
+
+    .cosmic-nebula {
+      filter: none !important;
+      opacity: 0.6 !important;
+    }
+
+    #stars3 {
+      display: none !important;
+    }
+  }
+
+  /* ẨN VÀ TẠM DỪNG HOÀN TOÀN TẤT CẢ PHẦN TỬ NỀN KHI MỞ SÁCH ĐỂ MÁY KHÔNG BỊ GIẬT LAG */
+  body.book-modal-active #initial-cosmic-bg,
+  body.book-modal-active #wish-backdrop,
+  body.book-modal-active #natureCanvas,
+  body.book-modal-active #laCanvas,
+  body.book-modal-active #co-hoa,
+  body.book-modal-active #woman-scene,
+  body.book-modal-active #tiny-sky,
+  body.book-modal-active #uiverse-starfield,
+  body.book-modal-active #question-stage,
+  body.book-modal-active #smile-stage,
+  body.book-modal-active #beauty-stage {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
   }
 
   @media (hover: none) and (pointer: coarse) {

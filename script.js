@@ -21,10 +21,10 @@
                     lite,
                     mobile,
                     canvasDpr,
-                    ambientFps: mobile ? 60 : lite ? 24 : 60,
-                    roverFps: mobile ? 45 : lite ? 30 : 60,
-                    orbitFps: mobile ? 45 : lite ? 24 : 60,
-                    leafFps: mobile ? 60 : lite ? 24 : 60
+                    ambientFps: mobile ? 30 : lite ? 24 : 60,
+                    roverFps: mobile ? 30 : lite ? 30 : 60,
+                    orbitFps: mobile ? 30 : lite ? 24 : 60,
+                    leafFps: mobile ? 30 : lite ? 24 : 60
                 };
 
             }
@@ -233,25 +233,13 @@ const text1 = document.getElementById('text-1');
             }
 
             function musicFadeAndHold() {
-                if (musicAllowedPastGate || musicGateClosed)
-                    return;
-                const t = tinySoundtrack.currentTime || 0;
-                if (t >= MUSIC_HOLD_TIME - .02) {
-                    musicGateClosed = true;
-                    scheduleIntroNudge(2000);
-                    tinySoundtrack.pause();
-                    try {
-                        tinySoundtrack.currentTime = MUSIC_HOLD_TIME;
-                    } catch (_) {}
-                    tinySoundtrack.volume = 0;
-                    if (musicFadeTimer !== null) {
-                        clearInterval(musicFadeTimer);
-                        musicFadeTimer = null;
-                    }
-                    return;
-                }
-                if (t >= MUSIC_FADE_START) {
-                    tinySoundtrack.volume = MUSIC_VOLUME * Math.max(0, (MUSIC_HOLD_TIME - t) / (MUSIC_HOLD_TIME - MUSIC_FADE_START));
+                // Nhạc nền phát liên tục, mượt mà suốt trải nghiệm, không ngắt quãng
+                musicAllowedPastGate = true;
+                musicGateClosed = false;
+                tinySoundtrack.volume = MUSIC_VOLUME;
+                if (musicFadeTimer !== null) {
+                    clearInterval(musicFadeTimer);
+                    musicFadeTimer = null;
                 }
             }
 
@@ -478,13 +466,10 @@ const text1 = document.getElementById('text-1');
                         return;
                     // Gọi play() ngay trong tương tác để Chrome cho phép âm thanh.
                     startMusicIfAllowed();
-                    // Không được bỏ qua 9,7 giây đầu dù click nhiều lần.
-                    if (clickCount === 2 && (!musicGateClosed || tinySoundtrack.currentTime < MUSIC_HOLD_TIME - .045)) {
-                        showMusicWaitHint();
-                        return;
+                    if (clickCount === 2) {
+                        musicAllowedPastGate = true;
+                        musicGateClosed = false;
                     }
-                    if (clickCount === 2)
-                        resumeMusicAtBeauty();
                     hideIntroNudge();
 
                     if (clickCount === 0) {
@@ -3769,7 +3754,7 @@ const text1 = document.getElementById('text-1');
                         return;
                         // Dừng hẳn animation sau cảnh 20/10.
                     }
-                    if (document.hidden) {
+                    if (document.hidden || document.body.classList.contains('book-modal-active')) {
                         khungTruoc = thoiGian;
                         requestAnimationFrame(vong);
                         return;
@@ -3979,6 +3964,11 @@ const text1 = document.getElementById('text-1');
                 function animationLoop(t) {
                     if (dungVeHoaHong) {
                         ctx.clearRect(0, 0, w, h);
+                        return;
+                    }
+                    if (document.body.classList.contains('book-modal-active')) {
+                        lanTruoc = t;
+                        requestAnimationFrame(animationLoop);
                         return;
                     }
                     if ((!TINY_PERF.mobile && document.documentElement.classList.contains('tiny-scene-transition')) || document.hidden || (lanTruoc && t - lanTruoc < nhipHoa)) {
@@ -5598,6 +5588,7 @@ if (window.TINY_PERF && !window.TINY_PERF.mobile) {
   function openBook() {
     modal.classList.add('is-open');
     modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('book-modal-active');
     document.body.style.overflow = 'hidden';
     updateView(false);
     startAmbientParticles();
@@ -5606,8 +5597,9 @@ if (window.TINY_PERF && !window.TINY_PERF.mobile) {
   function closeBook() {
     modal.classList.remove('is-open');
     modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('book-modal-active');
     document.body.style.overflow = '';
-    }
+  }
 
   // EVENT LISTENERS
   if (closeBtn) closeBtn.addEventListener('click', closeBook);
@@ -5855,16 +5847,17 @@ if (window.TINY_PERF && !window.TINY_PERF.mobile) {
       height = canvas.height = window.innerHeight;
     });
 
+    const mobile = isMobile();
     const particles = [];
-    const numParticles = isMobile() ? 24 : 45;
+    const numParticles = mobile ? 12 : 36;
     for (let i = 0; i < numParticles; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        r: Math.random() * 2.5 + 0.8,
-        speedY: Math.random() * 0.4 + 0.2,
-        speedX: Math.sin(Math.random() * 6) * 0.3,
-        opacity: Math.random() * 0.6 + 0.2,
+        r: Math.random() * 2 + 0.8,
+        speedY: Math.random() * 0.35 + 0.15,
+        speedX: Math.sin(Math.random() * 6) * 0.25,
+        opacity: Math.random() * 0.5 + 0.2,
         hue: Math.random() > 0.4 ? 335 : 45
       });
     }
@@ -5886,8 +5879,10 @@ if (window.TINY_PERF && !window.TINY_PERF.mobile) {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fillStyle = `hsla(${p.hue}, 85%, 75%, ${p.opacity})`;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = `hsla(${p.hue}, 85%, 70%, 0.8)`;
+        if (!mobile) {
+          ctx.shadowBlur = 6;
+          ctx.shadowColor = `hsla(${p.hue}, 85%, 70%, 0.8)`;
+        }
         ctx.fill();
       });
 
