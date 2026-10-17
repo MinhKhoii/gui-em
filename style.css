@@ -12285,14 +12285,10 @@ body {
       font-size: 11.5px !important;
     }
 
-    /* Mũi tên điều hướng trên điện thoại */
+    /* Mũi tên điều hướng trên điện thoại: ẩn hoàn toàn để giao diện thoáng, tinh tế, chạm 2 bên hoặc vuốt để lật trang */
     .book-nav-arrow {
-      width: 38px !important;
-      height: 38px !important;
-      font-size: 15px !important;
+      display: none !important;
     }
-    .book-nav-arrow.prev { left: 4px !important; }
-    .book-nav-arrow.next { right: 4px !important; }
 
     .dog-ear-curl {
       width: 38px !important;
