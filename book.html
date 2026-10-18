@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cuốn Sách Kỷ Niệm ✨ | Món Quà Dành Tặng Em</title>
+    <meta name="description"
+        content="Cuốn sách kỷ niệm lật trang sống động với những khoảnh khắc và lời chúc ngọt ngào nhất.">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS riêng cho Cuốn Sách Kỷ Niệm 3D -->
+    <link rel="stylesheet" href="css/book.css">
+</head>
+
+<body>
+    <!-- Nhạc nền du dương -->
+    <audio id="book-bg-audio" src="audio/soundtrack.mp3" preload="auto" loop></audio>
+
+    <main id="memory-gallery-page" class="is-open" aria-label="Cuốn sách kỷ niệm lật trang 3D">
+        <canvas id="book-ambient-canvas"></canvas>
+        <div id="wish-particles-overlay"></div>
+
+        <!-- TOPBAR ĐIỀU HƯỚNG TINH TẾ -->
+        <header class="book-topbar">
+            <a href="index.html" class="book-nav-back" title="Trở về Trang chính">
+                <span>←</span> Trang chính
+            </a>
+
+            <div class="book-page-indicator">
+                <!-- Dành cho desktop (5 lượt lật) -->
+                <div class="book-page-dots" id="book-page-dots" aria-label="Danh sách trang sách">
+                    <span class="book-page-dot active" data-sheet-index="0" title="Bìa sách & Lời mở đầu"></span>
+                    <span class="book-page-dot" data-sheet-index="1" title="Chương 1 - 2"></span>
+                    <span class="book-page-dot" data-sheet-index="2" title="Chương 3 - 4"></span>
+                    <span class="book-page-dot" data-sheet-index="3" title="Chương 5 - 6"></span>
+                    <span class="book-page-dot" data-sheet-index="4" title="Chương 7 - Bìa sau"></span>
+                </div>
+                <!-- Dành cho điện thoại (Chỉ số trang 1/10) -->
+                <span class="book-mobile-counter" id="book-mobile-counter">Trang 1 / 10</span>
+            </div>
+
+            <div class="book-topbar-right">
+                <a href="preview.html" class="book-nav-station-btn" title="Ghé thăm Trạm Nguyện Ước Ánh Sao">
+                    <span>🌠</span> Trạm Ước
+                </a>
+                <button type="button" class="book-audio-btn" id="book-audio-btn" title="Bật/Tắt nhạc nền"
+                    aria-label="Bật hoặc tắt nhạc nền">
+                    <span>🎵</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 3D BOOK STAGE -->
+        <div class="book-stage" id="book-stage">
+            <!-- Navigation arrows -->
+            <button type="button" class="book-nav-arrow prev" id="book-nav-prev" aria-label="Trang trước"
+                disabled>❮</button>
+            <button type="button" class="book-nav-arrow next" id="book-nav-next" aria-label="Trang tiếp">❯</button>
+
+            <!-- The 3D Book -->
+            <div class="book-3d" id="book-3d" role="region" aria-label="Cuốn sách ảnh lật trang">
+                <div class="book-center-spine" aria-hidden="true"></div>
+                <div class="book-ribbon" aria-hidden="true"></div>
+
+                <!-- ================= SHEET 0 ================= -->
+                <!-- Front: Bìa trước | Back: Lời tựa mặt trong -->
+                <div class="book-sheet" data-sheet="0" style="z-index: 10;">
+                    <div class="sheet-shadow-gradient"></div>
+
+                    <!-- BÌA TRƯỚC (Front Cover) -->
+                    <div class="sheet-face sheet-front cover-hard-front" id="cover-front-face">
+                        <div class="cover-cosmic-stars-bg" aria-hidden="true"></div>
+                        <div class="cover-filigree-frame"></div>
+                        <div>
+                            <p class="cover-kicker">MÓN QUÀ DÀNH RIÊNG CHO EM</p>
+                            <div class="cover-seal-emblem">❦</div>
+                        </div>
+                        <div>
+                            <h1 class="cover-main-title">
+                                KỶ NIỆM<br>ĐONG ĐẦY
+                                <em>Những điều ngọt ngào</em>
+                            </h1>
+                            <div class="cover-date-badge">FOR YOU · SPECIAL</div>
+                        </div>
+                        <div>
+                            <p class="cover-open-prompt">✨ Nhấn góc hoặc mũi tên để mở sách</p>
+                        </div>
+                        <div class="dog-ear-curl" title="Nhấn để lật trang"></div>
+                    </div>
+
+                    <!-- MẶT TRONG BÌA TRƯỚC (Ex Libris: Lời Mở Đầu) -->
+                    <div class="sheet-face sheet-back page-paper">
+                        <div class="page-header">
+                            <span class="page-chapter-kicker">· LỜI MỞ ĐẦU</span>
+                            <span class="page-num-tag">✦</span>
+                        </div>
+                        <div
+                            style="margin: auto 0; text-align: center; padding: 4px 10px 18px; width: 100%; box-sizing: border-box;">
+                            <div style="font-size: 26px; margin-bottom: 4px; color: #b8426c;">💌</div>
+                            <h2 class="page-title" style="margin: 2px 0 8px; font-size: 21px;">Một Chút Dịu Dàng
+                                <em>Đọng Lại</em>
+                            </h2>
+                            <p class="page-body-text"
+                                style="font-size: 13px; line-height: 1.65; text-align: center; margin: 0 auto 6px; max-width: 96%;">
+                                <span class="drop-cap" style="font-size: 34px; line-height: 0.85;">C</span>ó những
+                                khoảnh khắc trôi qua rất khẽ, nhưng khi đọng lại trong tim thì lại hóa thành những ký ức
+                                lấp lánh nhất. Cuốn sách nhỏ này được viết riêng cho em — cô gái luôn làm cho thế giới
+                                xung quanh trở nên ngọt ngào và ấm áp hơn.
+                            </p>
+                            <p class="page-body-text"
+                                style="font-size: 13px; line-height: 1.65; text-align: center; margin: 0 auto 8px; max-width: 96%;">
+                                Hy vọng mỗi khi nhìn lại những trang sách này, em sẽ luôn nhớ rằng em luôn được yêu
+                                thương, trân trọng và xứng đáng với tất cả những điều ngọt ngào nhất.
+                            </p>
+                            <div
+                                style="margin: 8px auto; padding: 7px 12px; background: rgba(235, 180, 205, 0.18); border-left: 3px solid #b8426c; border-radius: 4px; font-style: italic; font-size: 12px; color: #5a3d49; text-align: center; max-width: 92%;">
+                                "Gặp được em là một điều thật may mắn trong cuộc đời này."
+                            </div>
+                            <div
+                                style="margin-top: 10px; font-family: 'Dancing Script', cursive; font-size: 20px; color: #b8426c;">
+                                Gửi em ♡
+                            </div>
+                        </div>
+                        <div class="dog-ear-curl left-curl" title="Quay lại bìa trước"></div>
+                    </div>
+                </div>
+
+                <!-- ================= SHEET 1 ================= -->
+                <!-- Front: Trang 1 (CHƯƠNG I: Ảnh img1) | Back: Trang 2 (CHƯƠNG II: Ảnh img2) -->
+                <div class="book-sheet" data-sheet="1" style="z-index: 9;">
+                    <div class="sheet-shadow-gradient"></div>
+
+                    <!-- TRANG 1: CHƯƠNG I · NỤ CƯỜI (img1.jpg) -->
+                    <div class="sheet-face sheet-front page-paper page-photo-layout">
+                        <div class="page-header">
+                            <span class="page-chapter-kicker">CHƯƠNG I · NỤ CƯỜI</span>
+                            <span class="page-num-tag">Trang 01</span>
+                        </div>
+                        <div class="polaroid-frame">
+                            <div class="polaroid-washi-tape"></div>
+                            <div class="polaroid-img-wrap">
+                                <img id="book-img-slot-1" src="./img/img1.jpg" alt="Khoảnh khắc rạng rỡ của em">
+                            </div>
+                            <p class="polaroid-caption">Ánh mắt và nụ cười rạng rỡ 🌸</p>
+                        </div>
+                        <p class="page-body-text">
+                            Có những nụ cười chỉ cần nhìn thấy thôi cũng đủ làm một ngày u ám bỗng trở nên bừng sáng. Nụ
+                            cười của em là điều ngọt ngào nhất — hãy luôn giữ nét hồn nhiên này trên môi nhé!
+                        </p>
+                        <div class="dog-ear-curl" title="Lật sang trang tiếp"></div>
+                    </div>
+
+                    <!-- TRANG 2: CHƯƠNG II · HƯƠNG SẮC (img2.jpg) -->
+                    <div class="sheet-face sheet-back page-paper page-photo-layout">
+                        <div class="page-header">
+                            <span class="page-chapter-kicker">CHƯƠNG II · HƯƠNG SẮC</span>
+                            <span class="page-num-tag">Trang 02</span>
+                        </div>
+                        <div class="polaroid-frame tilt-right">
+                            <div class="polaroid-washi-tape"></div>
+                            <div class="polaroid-img-wrap">
+                                <img id="book-img-slot-2" src="./img/img2.jpg" alt="Bó hoa tặng em">
+                            </div>
+                            <p class="polaroid-caption">Dành tặng đóa hoa xinh đẹp nhất 💐</p>
+                        </div>
+                        <p class="page-body-text">
+                            Mong em luôn rực rỡ như những đóa hoa mùa thu — dịu dàng mà kiêu hãnh, tự tin khoe sắc theo
+                            cách của riêng mình mà không cần phải so sánh với bất kỳ ai.
+                        </p>
+                        <div class="dog-ear-curl left-curl" title="Lật lại trang trước"></div>
+                    </div>
+                </div>
+
+                <!-- ================= SHEET 2 ================= -->
+                <!-- Front: Trang 3 (CHƯƠNG III: Ảnh img11) | Back: Trang 4 (CHƯƠNG IV: Ảnh img10) -->
+                <div class="book-sheet" data-sheet="2" style="z-index: 8;">
+                    <div class="sheet-shadow-gradient"></div>
+
+                    <!-- TRANG 3: CHƯƠNG III · BÌNH YÊN (img11.jpg - Nắng Mai Dịu Dàng) -->
+                    <div class="sheet-face sheet-front page-paper page-photo-layout">
+                        <div class="page-header">
+                            <span class="page-chapter-kicker">CHƯƠNG III · BÌNH YÊN</span>
+                            <span class="page-num-tag">Trang 03</span>
+                        </div>
+                        <div class="polaroid-frame">
+                            <div class="polaroid-washi-tape"></div>
+                            <div class="polaroid-img-wrap">
+                                <img id="book-img-slot-3" src="./img/img11.jpg"
+                                    alt="Khoảnh khắc bình yên dưới nắng sớm">
+                            </div>
+                            <p class="polaroid-caption">Nắng sớm dịu dàng và nụ cười trong trẻo ☀️</p>
+                        </div>
+                        <p class="page-body-text">
+                            Mong em mỗi sớm mai thức dậy đều thấy lòng an yên, luôn rạng rỡ và ngập tràn năng lượng tích
+                            cực như những tia nắng ấm áp đầu ngày.
+                        </p>
+                        <div class="dog-ear-curl" title="Lật sang trang tiếp"></div>
+                    </div>
+
+                    <!-- TRANG 4: CHƯƠNG IV · THẢNH THƠI (img10.jpg - Góc Cà Phê An Yên) -->
+                    <div class="sheet-face sheet-back page-paper page-photo-layout">
+                        <div class="page-header">
+                            <span class="page-chapter-kicker">CHƯƠNG IV · THẢNH THƠI</span>
+                            <span class="page-num-tag">Trang 04</span>
+                        </div>
+                        <div class="polaroid-frame tilt-right">
+                            <div class="polaroid-washi-tape"></div>
+                            <div class="polaroid-img-wrap">
+                                <img id="book-img-slot-4" src="./img/img10.jpg" alt="Góc cà phê thảnh thơi">
+                            </div>
+                            <p class="polaroid-caption">Một chút bình yên, một chút thảnh thơi ☕</p>
+                        </div>
+                        <p class="page-body-text">
+                            Giữa những ngày bận rộn, mong em luôn dành cho mình những khoảnh khắc thảnh thơi — thưởng
+                            thức món ăn ngon, nghe bản nhạc yêu thích và yêu thương bản thân nhiều hơn.
+                        </p>
+                        <div class="dog-ear-curl left-curl" title="Lật lại trang trước"></div>
+                    </div>
+                </div>
+
+                <!-- ================= SHEET 3 ================= -->
+                <!-- Front: Trang 5 (Cà phê ấm img4) | Back: Trang 6 (4 điều ước) -->
+                <div class="book-sheet" data-sheet="3" style="z-index: 7;">
+                    <div class="sheet-shadow-gradient"></div>
+
+                    <!-- TRANG 5: CHƯƠNG V · RẠNG NGỜI (Chọn 3 kiểu ảnh: Ánh đỏ, Sinh nhật, Tuổi thơ) -->
+                    <div class="sheet-face sheet-front page-paper page-photo-layout">
+                        <div class="page-header">
+                            <span class="page-chapter-kicker">CHƯƠNG V · RẠNG NGỜI</span>
+                            <span class="page-num-tag">Trang 05</span>
+                        </div>
+                        <div class="polaroid-frame tilt-right" id="ch5-polaroid">
+                            <div class="polaroid-washi-tape"></div>
+                            <div class="polaroid-img-wrap">
+                                <img id="book-img-slot-5" src="./img/img8.jpg" alt="Khoảnh khắc rực rỡ tỏa sáng">
+                            </div>
+                            <p class="polaroid-caption" id="ch5-caption">Rực rỡ và tỏa sáng giữa ngàn ánh đỏ ❤️</p>
+                        </div>
+                        <div class="ch5-photo-selector" role="tablist" aria-label="Chọn khoảnh khắc">
+                            <button type="button" class="ch5-thumb active" data-src="./img/img8.jpg"
+                                data-caption="Rực rỡ và tỏa sáng giữa ngàn ánh đỏ ❤️"
+                                data-text="Chúc em luôn tự tin, yêu đời và rạng ngời theo cách riêng của mình. Dù ở bất cứ đâu hay trong bất kỳ khoảnh khắc nào, nụ cười của em luôn là điều ấm áp và đáng yêu nhất!"
+                                title="Bấm để xem ảnh ánh đỏ rực rỡ">
+                                <span class="ch5-thumb-dot dot-red"></span> Rực rỡ
+                            </button>
+                            <button type="button" class="ch5-thumb" data-src="./img/img7.jpg"
+                                data-caption="Sinh nhật ngọt ngào và hạnh phúc 🎂"
+                                data-text="Thêm một tuổi mới thật rực rỡ và hạnh phúc nhé! Mong em luôn được yêu thương, chiều chuộng và cuộc sống luôn ngập tràn những niềm vui ngọt ngào như chiếc bánh sinh nhật."
+                                title="Bấm để xem ảnh sinh nhật">
+                                <span class="ch5-thumb-dot dot-cake"></span> Sinh nhật
+                            </button>
+                            <button type="button" class="ch5-thumb" data-src="./img/img9.jpg"
+                                data-caption="Nụ cười thơ ngây thuở bé 🌸"
+                                data-text="Từ cô bé nhỏ với nụ cười hồn nhiên năm ấy, đến thiếu nữ dịu dàng xinh đẹp hôm nay — em vẫn luôn giữ trọn nét đáng yêu, trong sáng và sự ấm áp trong trái tim mình."
+                                title="Bấm để xem ảnh tuổi thơ">
+                                <span class="ch5-thumb-dot dot-child"></span> Tuổi thơ
+                            </button>
+                        </div>
+                        <p class="page-body-text" id="ch5-body-text">
+                            Chúc em luôn tự tin, yêu đời và rạng ngời theo cách riêng của mình. Dù ở bất cứ đâu hay
+                            trong bất kỳ khoảnh khắc nào, nụ cười của em luôn là điều ấm áp và đáng yêu nhất!
+                        </p>
+                        <div class="dog-ear-curl" title="Lật sang trang tiếp"></div>
+                    </div>
+
+                    <!-- TRANG 6: BỐN ĐIỀU NGUYỆN ƯỚC & LỌ ĐIỀU ƯỚC PHÁT SÁNG -->
+                    <div class="sheet-face sheet-back page-paper page-ch6-layout">
+                        <div class="page-header">
+                            <span class="page-chapter-kicker">CHƯƠNG VI · ƯỚC NGUYỆN</span>
+                            <span class="page-num-tag">Trang 06</span>
+                        </div>
+                        <div class="ch6-content-wrap">
+                            <div class="ch6-header-area">
+                                <h2 class="page-title" style="font-size: 19px; margin-bottom: 2px;">Ngàn Lời Chúc
+                                    <em>Tặng Em</em>
+                                </h2>
+                                <div class="ch6-subtitle-wrap">
+                                    <p class="ch6-subtitle" id="ch6-wish-message">Mỗi ngôi sao lấp lánh gửi gắm một điều
+                                        ước chân thành</p>
+                                </div>
+                            </div>
+
+                            <!-- ANIMATED WISHING JAR / LỌ ĐIỀU ƯỚC PHÁT SÁNG -->
+                            <div class="wishing-jar-stage" id="wishing-jar-interactive"
+                                title="Chạm vào lọ để nhận ngàn lời chúc phúc!">
+                                <div class="wishing-jar-glow"></div>
+                                <svg class="wishing-jar-svg" viewBox="0 0 160 180" aria-hidden="true">
+                                    <defs>
+                                        <linearGradient id="jarGlass" x1="0" y1="0" x2="1" y2="1">
+                                            <stop offset="0%" stop-color="rgba(255, 235, 248, 0.75)" />
+                                            <stop offset="45%" stop-color="rgba(255, 255, 255, 0.28)" />
+                                            <stop offset="100%" stop-color="rgba(235, 195, 225, 0.68)" />
+                                        </linearGradient>
+                                        <linearGradient id="jarCork" x1="0" y1="0" x2="1" y2="0">
+                                            <stop offset="0%" stop-color="#b88358" />
+                                            <stop offset="50%" stop-color="#d9a377" />
+                                            <stop offset="100%" stop-color="#9a653d" />
+                                        </linearGradient>
+                                    </defs>
+                                    <rect x="56" y="10" width="48" height="14" rx="3" fill="url(#jarCork)"
+                                        stroke="#7d4e2b" stroke-width="1.5" />
+                                    <rect x="50" y="24" width="60" height="9" rx="4" fill="url(#jarGlass)"
+                                        stroke="rgba(255,200,225,0.9)" stroke-width="1.5" />
+                                    <path d="M 50 33 Q 80 40 110 33" stroke="#e56d98" stroke-width="2" fill="none" />
+                                    <path d="M 80 37 L 74 52 L 88 52 Z" fill="#ffd1e3" stroke="#c44d79"
+                                        stroke-width="1" />
+                                    <path
+                                        d="M 52 33 C 35 45 24 75 24 115 C 24 155 45 170 80 170 C 115 170 136 155 136 115 C 136 75 125 45 108 33 Z"
+                                        fill="url(#jarGlass)" stroke="rgba(255, 215, 235, 0.85)" stroke-width="2.5" />
+                                    <path d="M 36 65 C 32 85 32 120 38 145" stroke="rgba(255,255,255,0.85)"
+                                        stroke-width="3" stroke-linecap="round" fill="none" />
+                                    <path d="M 44 58 C 42 68 42 80 44 90" stroke="rgba(255,255,255,0.6)"
+                                        stroke-width="2" stroke-linecap="round" fill="none" />
+                                </svg>
+
+                                <!-- Floating animated stars inside jar -->
+                                <div class="jar-stars-container">
+                                    <span class="j-star js-1" title="Bình yên">⭐</span>
+                                    <span class="j-star js-2" title="May mắn">✨</span>
+                                    <span class="j-star js-3" title="Hạnh phúc">💖</span>
+                                    <span class="j-star js-4" title="Rạng ngời">🌸</span>
+                                    <span class="j-star js-5" title="Yêu thương">🌟</span>
+                                </div>
+
+                                <!-- Rising stardust particles -->
+                                <div class="jar-magic-dust">
+                                    <span class="m-dust md-1">✦</span>
+                                    <span class="m-dust md-2">✧</span>
+                                    <span class="m-dust md-3">✦</span>
+                                </div>
+                            </div>
+
+                            <!-- 4 WISH CARDS (INTERACTIVE & ILLUMINATED WITH THEMED BLOSSOMS) -->
+                            <div class="wishes-grid">
+                                <div class="wish-card" data-wish="peace" role="button" tabindex="0"
+                                    title="Chạm để gửi điều ước Bình Yên">
+                                    <span class="wish-card-badge">✨ Đã ước</span>
+                                    <div class="wish-card-icon">🌸</div>
+                                    <div class="wish-card-title">Bình Yên</div>
+                                    <p class="wish-card-desc">Tâm hồn luôn thanh thản, không vướng bận âu lo muộn phiền.
+                                    </p>
+                                </div>
+                                <div class="wish-card" data-wish="radiant" role="button" tabindex="0"
+                                    title="Chạm để gửi điều ước Rạng Rỡ">
+                                    <span class="wish-card-badge">✨ Đã ước</span>
+                                    <div class="wish-card-icon">✨</div>
+                                    <div class="wish-card-title">Rạng Rỡ</div>
+                                    <p class="wish-card-desc">Nụ cười tươi tắn luôn nở trên môi mỗi sớm mai thức dậy.
+                                    </p>
+                                </div>
+                                <div class="wish-card" data-wish="loved" role="button" tabindex="0"
+                                    title="Chạm để gửi điều ước Yêu Chiều">
+                                    <span class="wish-card-badge">✨ Đã ước</span>
+                                    <div class="wish-card-icon">💖</div>
+                                    <div class="wish-card-title">Yêu Chiều</div>
+                                    <p class="wish-card-desc">Luôn được che chở, thấu hiểu và nâng niu như món quà quý.
+                                    </p>
+                                </div>
+                                <div class="wish-card" data-wish="luck" role="button" tabindex="0"
+                                    title="Chạm để gửi điều ước May Mắn">
+                                    <span class="wish-card-badge">✨ Đã ước</span>
+                                    <div class="wish-card-icon">🍀</div>
+                                    <div class="wish-card-title">May Mắn</div>
+                                    <p class="wish-card-desc">Mọi ước muốn trong lòng đều sớm hóa thành hiện thực ngọt
+                                        ngào.</p>
+                                </div>
+                            </div>
+
+                            <div class="ch6-footer-banner">
+                                <span class="ch6-sparkle-left">✦</span>
+                                <p class="ch6-footer-quote">"Mọi điều may mắn và tốt đẹp nhất trần đời đều xin gửi tặng
+                                    em!"</p>
+                                <span class="ch6-sparkle-right">✦</span>
+                            </div>
+                        </div>
+                        <div class="dog-ear-curl left-curl" title="Lật lại trang trước"></div>
+                    </div>
+                </div>
+
+                <!-- ================= SHEET 4 ================= -->
+                <!-- Front: Trang 7 (Bức thư bí mật) | Back: Bìa sau -->
+                <div class="book-sheet" data-sheet="4" style="z-index: 6;">
+                    <div class="sheet-shadow-gradient"></div>
+
+                    <!-- TRANG 7: BỨC THƯ TÂM TÌNH RE-ENGINEERED (FLAWLESS FULL-SHEET READING) -->
+                    <div class="sheet-face sheet-front page-paper page-ch7-layout" id="ch7-sheet-face">
+                        <div class="page-header">
+                            <span class="page-chapter-kicker">CHƯƠNG VII · TÂM TÌNH</span>
+                            <span class="page-num-tag">Trang 07</span>
+                        </div>
+                        <div style="text-align: center; width: 100%;">
+                            <h2 class="page-title" style="font-size: 21px; margin-bottom: 4px;">Bức Thư Nhỏ <em>Gửi
+                                    Em</em></h2>
+                            <p class="page-body-text" style="font-size: 12.5px; margin-bottom: 12px;">
+                                Có một bức thư tay được niêm phong trang trọng gửi đến em:
+                            </p>
+
+                            <!-- VINTAGE LUXURY ENVELOPE -->
+                            <div class="envelope-hub">
+                                <div class="envelope-real-box" id="secret-envelope" title="Chạm vào phong bì để mở thư">
+                                    <div class="envelope-stamp-badge">
+                                        <span>FOR YOU</span>
+                                        🌸
+                                    </div>
+                                    <div class="envelope-recipient-tag">
+                                        <p>Thân gửi: Cô gái nhỏ tuyệt vời 💌</p>
+                                    </div>
+                                    <div class="envelope-wax-button" id="envelope-wax-btn" title="Chạm để mở lá thư">
+                                        💌
+                                    </div>
+                                </div>
+                            </div>
+
+                            <p style="font-size: 11.5px; color: #8c5b6f; margin-top: 10px; font-weight: 500;">
+                                ✨ Chạm vào con dấu sáp 💌 để mở đọc lá thư nhé ✨
+                            </p>
+                        </div>
+
+                        <!-- FULL-SHEET EXPANDED LETTER (COVERS READING AREA COMPLETELY, NO OVERLAPPING) -->
+                        <div class="secret-letter-fullsheet" id="secret-letter-card">
+                            <div class="letter-full-header">
+                                <span class="letter-tag">💌 Bức thư gửi em 💌</span>
+                                <span class="letter-date">Ngày đặc biệt</span>
+                            </div>
+
+                            <div class="letter-full-body">
+                                <h3 class="letter-salutation">Gửi em — cô gái nhỏ tuyệt vời,</h3>
+                                <p class="letter-paragraphs">
+                                    Cảm ơn em vì đã xuất hiện và mang đến nguồn năng lượng thật ấm áp, dịu dàng.<br><br>
+                                    Mong em luôn nhận được thật nhiều hoa tươi, quà đẹp và những lời yêu thương chân
+                                    thành nhất.<br><br>
+                                    Chúc em luôn giữ mãi nụ cười rạng rỡ, bình yên trong tâm hồn và luôn được trân quý,
+                                    yêu chiều mỗi ngày!
+                                </p>
+                                <div class="letter-signature-wrap">
+                                    <p class="letter-sign-calligraphy">Thương mến gửi em ♡</p>
+                                </div>
+                            </div>
+
+                            <button type="button" class="letter-close-btn" id="letter-close-btn">
+                                <span>✉️</span> Gấp thư lại
+                            </button>
+                        </div>
+
+                        <div class="dog-ear-curl" title="Khép sách sang bìa sau"></div>
+                    </div>
+
+                    <!-- BÌA SAU (Back Cover) - PROPERLY CONTAINED -->
+                    <div class="sheet-face sheet-back cover-hard-back">
+                        <div class="cover-filigree-frame"></div>
+                        <div>
+                            <p class="cover-kicker">LỜI KẾT</p>
+                            <div class="cover-seal-emblem">✨</div>
+                        </div>
+                        <div style="margin: 10px 0;">
+                            <h2 class="cover-main-title" style="font-size: 26px; line-height: 1.35;">
+                                "Mỗi trang sách khép lại,<br>
+                                Là mở ra một chương mới<br>rạng rỡ hơn."
+                            </h2>
+                            <p
+                                style="font-family: 'Dancing Script', cursive; font-size: 20px; color: #ffb8d6; margin-top: 8px;">
+                                Luôn mỉm cười và hạnh phúc em nhé!
+                            </p>
+                        </div>
+                        <div class="back-cover-actions">
+                            <button type="button" class="book-action-btn primary" id="btn-read-again">
+                                <span>🔄</span> Lật đọc lại từ đầu
+                            </button>
+                            <button type="button" class="book-action-btn" id="btn-close-back-cover">
+                                <span>✕</span> Khép cuốn sách lại
+                            </button>
+                        </div>
+                        <div class="dog-ear-curl left-curl" title="Mở lại trang trước"></div>
+                    </div>
+                </div>
+
+            </div><!-- End #book-3d -->
+        </div><!-- End .book-stage -->
+
+        <!-- ================= GRAND CLOSING CELEBRATION MODAL ================= -->
+        <div id="closing-grand-celebration" class="closing-celebration-overlay" aria-hidden="true">
+            <canvas id="closing-fireworks-canvas"></canvas>
+            <div class="closing-plaque-container">
+                <div class="closing-plaque-card">
+                    <div class="closing-plaque-crown">👑</div>
+                    <div class="closing-plaque-stars">✨ 💖 ✨</div>
+                    <h2 class="closing-plaque-title">Món Quà Nhỏ · Gửi Trọn Yêu Thương</h2>
+                    <p class="closing-plaque-quote">
+                        "Trang sách có thể khép lại,<br>
+                        nhưng sự chân thành và những lời chúc bình yên nhất<br>
+                        sẽ luôn dõi theo em trên mọi nẻo đường."
+                    </p>
+
+                    <div class="closing-wishes-row">
+                        <div class="c-wish-pill">🌸 Luôn Bình Yên</div>
+                        <div class="c-wish-pill">✨ Luôn Rạng Rỡ</div>
+                        <div class="c-wish-pill">💖 Luôn Được Nâng Niu</div>
+                        <div class="c-wish-pill">🍀 Vạn Sự May Mắn</div>
+                    </div>
+
+                    <p class="closing-plaque-footer">
+                        💐 Chúc em mỗi ngày đều thật hạnh phúc và ngập tràn niềm vui! 💐
+                    </p>
+
+                    <div class="closing-plaque-actions">
+                        <button type="button" class="closing-action-btn primary" id="btn-replay-flipbook">
+                            <span>📖</span> Lật mở lại cuốn sách
+                        </button>
+                        <a href="preview.html" class="closing-action-btn station-btn" id="btn-visit-station">
+                            <span>🌠</span> Trạm Nguyện Ước Ánh Sao
+                        </a>
+                        <a href="index.html" class="closing-action-btn secondary" id="btn-dismiss-celebration">
+                            <span>🏠</span> Trở về Trang chính
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    </main>
+
+    <!-- JavaScript riêng cho Cuốn Sách Kỷ Niệm 3D -->
+    <script src="js/book.js"></script>
+</body>
+
+</html>

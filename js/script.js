@@ -197,97 +197,41 @@ const text1 = document.getElementById('text-1');
                 "text": "không được như mong"
             }];
             const MUSIC_HOLD_TIME = 9.7;
-            const MUSIC_FADE_START = 8.35;
-            const MUSIC_VOLUME = 0.84;
-            let musicGateClosed = false;
-            let musicAllowedPastGate = false;
-            let musicFadeTimer = null;
-            let musicResumeFadeStart = 0;
-            let musicSeekingResume = false;
+            const MUSIC_VOLUME = 0.88;
             let lyricActiveIndex = -1;
             let lyricSlotIndex = -1;
             let lyricInterval = null;
+
+            // Nhạc nền phát liên tục, mượt mà suốt trải nghiệm, không ngắt quãng và tự động lặp lại
             tinySoundtrack.volume = MUSIC_VOLUME;
             tinySoundtrack.muted = false;
-            let musicHintTimer = null;
-            const musicWaitMessages = ['đợi chút xíu đii', 'đợi chút nữa thui', 'xíu nữa', 'sắp được rùi', '1 chút thuii'];
-            function showMusicWaitHint() {
-                const msg = musicWaitMessages[Math.floor(Math.random() * musicWaitMessages.length)];
-                musicWaitHint.textContent = msg;
-                musicWaitHint.classList.add('show');
-                clearTimeout(musicHintTimer);
-                musicHintTimer = setTimeout( () => musicWaitHint.classList.remove('show'), 1200);
-            }
+            tinySoundtrack.loop = true;
+
+            tinySoundtrack.addEventListener('ended', () => {
+                tinySoundtrack.currentTime = 0;
+                tinySoundtrack.volume = MUSIC_VOLUME;
+                tinySoundtrack.play().catch(() => {});
+            });
 
             function startMusicIfAllowed() {
-                // Trình duyệt có thể chặn autoplay có tiếng khi chưa có thao tác người dùng.
-                // Không hiện nút: thử phát khi mở, và thử lại trong lần click/chạm đầu tiên.
-                if (musicGateClosed && !musicAllowedPastGate)
-                    return;
-                if (!tinySoundtrack.paused)
-                    return;
-                const p = tinySoundtrack.play();
-                if (p && typeof p.catch === 'function')
-                    p.catch( () => {}
-                    );
+                if (!tinySoundtrack) return;
+                tinySoundtrack.volume = MUSIC_VOLUME;
+                tinySoundtrack.muted = false;
+                tinySoundtrack.loop = true;
+                if (tinySoundtrack.paused) {
+                    const p = tinySoundtrack.play();
+                    if (p && typeof p.catch === 'function')
+                        p.catch(() => {});
+                }
             }
 
             function musicFadeAndHold() {
-                // Nhạc nền phát liên tục, mượt mà suốt trải nghiệm, không ngắt quãng
-                musicAllowedPastGate = true;
-                musicGateClosed = false;
+                if (!tinySoundtrack) return;
                 tinySoundtrack.volume = MUSIC_VOLUME;
-                if (musicFadeTimer !== null) {
-                    clearInterval(musicFadeTimer);
-                    musicFadeTimer = null;
-                }
+                tinySoundtrack.loop = true;
             }
 
-            // Chỉ phát tiếp sau khi nghe đủ 9,7 giây VÀ click vào "ui em đẹp quá".
             function resumeMusicAtBeauty() {
-                if (musicAllowedPastGate)
-                    return;
-                if (!musicGateClosed || tinySoundtrack.currentTime < MUSIC_HOLD_TIME - .045)
-                    return;
-                musicAllowedPastGate = true;
-                musicGateClosed = false;
-                if (musicFadeTimer !== null) {
-                    clearInterval(musicFadeTimer);
-                    musicFadeTimer = null;
-                }
-                musicSeekingResume = true;
-                if (tinySoundtrack.readyState >= 1) {
-                    try {
-                        tinySoundtrack.currentTime = Math.max(MUSIC_HOLD_TIME, tinySoundtrack.currentTime);
-                    } catch (_) {}
-                } else {
-                    tinySoundtrack.addEventListener('loadedmetadata', () => {
-                        if (musicSeekingResume)
-                            tinySoundtrack.currentTime = MUSIC_HOLD_TIME;
-                    }
-                    , {
-                        once: true
-                    });
-                }
-                tinySoundtrack.volume = 0;
-                const fadeIn = (now) => {
-                    if (tinySoundtrack.paused || !musicAllowedPastGate)
-                        return;
-                    const v = Math.min(1, (now - musicResumeFadeStart) / 850);
-                    tinySoundtrack.volume = MUSIC_VOLUME * v;
-                    if (v < 1)
-                        requestAnimationFrame(fadeIn);
-                }
-                ;
-                // Đợi âm thanh PHÁT THỰC SỰ rồi mới đếm 850ms tăng âm lượng.
-                // Nếu bắt đầu rAF trước play() xong thì có thể bị kẹt tại volume=0.
-                tinySoundtrack.addEventListener('playing', () => {
-                    musicResumeFadeStart = performance.now();
-                    requestAnimationFrame(fadeIn);
-                }
-                , {
-                    once: true
-                });
                 startMusicIfAllowed();
             }
 
@@ -352,16 +296,9 @@ const text1 = document.getElementById('text-1');
             }
 
             tinySoundtrack.addEventListener('timeupdate', () => {
-                musicFadeAndHold();
                 if (activeWish === 'smile')
                     syncLyricWithMusic();
-            }
-            );
-            tinySoundtrack.addEventListener('play', () => {
-                if (!musicAllowedPastGate && !musicGateClosed && musicFadeTimer === null)
-                    musicFadeTimer = setInterval(musicFadeAndHold, 35);
-            }
-            );
+            });
             // Thử phát NGAY khi mở trang (và khi media sẵn sàng), không cần nút riêng.
             // Chrome/Safari có thể chặn tiếng khi chưa có tương tác: trường hợp đó click đầu tiên
             // trên trang sẽ khởi phát nhạc như trước, không thể vượt qua chính sách bằng JavaScript.
@@ -413,7 +350,7 @@ const text1 = document.getElementById('text-1');
                 introNudgeTimer = setTimeout( () => {
                     if (!musicGateClosed || musicAllowedPastGate || clickCount > 2 || document.hidden)
                         return;
-                    // Nếu người xem chưa đánh thức Tiny, Tiny tự mở mắt mời sang cảnh.
+                    // Nếu người xem chưa đánh thức Kai, Kai tự mở mắt mời sang cảnh.
                     matElements.forEach(eye => eye.classList.add('thuc'));
                     khungMat.classList.add('tiny-intro-urging');
                     introNudge?.classList.add('show');
@@ -438,7 +375,7 @@ const text1 = document.getElementById('text-1');
             let activeWish = '';
             let wishBlinkHandle = null;
             let wishBlinkToken = 0;
-            // Batch heavy scene initialization: the text and real Tiny eyes always retain full speed.
+            // Batch heavy scene initialization: the text and real Kai eyes always retain full speed.
             let tinyTransitionTimer = 0;
             function budgetSceneTransition(ms=760) {
                 clearTimeout(tinyTransitionTimer);
@@ -779,7 +716,7 @@ const text1 = document.getElementById('text-1');
                 matElements.forEach(eye => eye.classList.remove('wish-blink', 'wish-wink', 'nham'));
             }
 
-            function traMatTinyVeChinhGiua() {
+            function traMatKaiVeChinhGiua() {
                 khungMat.classList.remove('canh-chuc', 'canh-muon', 'me-man', 'wish-smile');
                 khungMat.classList.add('wish-beauty');
                 // Xoá trạng thái mắt nhắm của cảnh cũ trước khi mở dần thành vuông bo góc.
@@ -827,7 +764,7 @@ const text1 = document.getElementById('text-1');
                     beautyStage.classList.add('hien-thi');
                 smileStage.classList.remove('hien-thi');
                 cloverStage.classList.remove('hien-thi');
-                traMatTinyVeChinhGiua();
+                traMatKaiVeChinhGiua();
                 setTimeout( () => text8.classList.add('hien-thi'), 320);
                 setTimeout( () => {
                     if (activeWish !== 'beauty')
@@ -838,7 +775,7 @@ const text1 = document.getElementById('text-1');
                 , 1250);
             }
 
-            // Logic từ file mẫu Tiny nháy mắt bắn sao: morph viền vuông thành nét cong,
+            // Logic từ file mẫu Kai nháy mắt bắn sao: morph viền vuông thành nét cong,
             // nghiêng 24° mắt phải / 9° mắt trái; ngôi sao bắn theo đường Bézier.
             const tinyReferenceWink = ( () => {
                 const SVGNS = 'http://www.w3.org/2000/svg';
@@ -1343,58 +1280,73 @@ const text1 = document.getElementById('text-1');
                 else
                     smileStage.classList.add('hien-thi');
                 if (waguriSmile) {
-                    waguriSmile.muted = true;
-                    waguriSmile.loop = true;
-                    const revealOnce = ( () => {
-                        let shown = false;
-                        return () => {
-                            if (shown || activeWish !== 'smile' || window.tinyWaguriRevealId !== waguriRevealId)
-                                return;
-                            shown = true;
-                            requestAnimationFrame( () => requestAnimationFrame( () => {
-                                if (activeWish === 'smile' && window.tinyWaguriRevealId === waguriRevealId)
-                                    smileStage.classList.add('waguri-frame-visible');
+                    if (waguriSmile.tagName === 'IMG') {
+                        requestAnimationFrame(() => {
+                            if (activeWish === 'smile' && window.tinyWaguriRevealId === waguriRevealId) {
+                                smileStage.classList.add('waguri-frame-visible');
                             }
-                            ));
-                        }
-                        ;
-                    }
-                    )();
-                    const playWaguri = () => {
-                        if (activeWish !== 'smile' || window.tinyWaguriRevealId !== waguriRevealId)
-                            return;
-                        // Real decoded frame callback avoids a black/transparent late pop.
-                        if (typeof waguriSmile.requestVideoFrameCallback === 'function') {
-                            try {
-                                waguriSmile.requestVideoFrameCallback(revealOnce);
-                            } catch (_) {}
-                        } else {
-                            // Older Safari/Chrome fallback: wait until playback advanced.
-                            const onTimeUpdate = () => {
-                                if (waguriSmile.readyState >= 2 && waguriSmile.currentTime > 0) {
-                                    waguriSmile.removeEventListener('timeupdate', onTimeUpdate);
-                                    revealOnce();
+                        });
+                    } else {
+                        waguriSmile.muted = true;
+                        waguriSmile.loop = true;
+                        const revealOnce = ( () => {
+                            let shown = false;
+                            return () => {
+                                if (shown || activeWish !== 'smile' || window.tinyWaguriRevealId !== waguriRevealId)
+                                    return;
+                                shown = true;
+                                requestAnimationFrame( () => requestAnimationFrame( () => {
+                                    if (activeWish === 'smile' && window.tinyWaguriRevealId === waguriRevealId)
+                                        smileStage.classList.add('waguri-frame-visible');
                                 }
+                                ));
                             }
                             ;
-                            waguriSmile.addEventListener('timeupdate', onTimeUpdate);
-                            waguriSmile.addEventListener('playing', () => {
-                                if (waguriSmile.readyState >= 2)
-                                    requestAnimationFrame(revealOnce);
-                            }
-                            , {
-                                once: true
-                            });
                         }
-                        // Keep media initialization out of the scene's first render frame.
-                        waguriSmile.play().catch( () => {}
-                        );
+                        )();
+                        const playWaguri = () => {
+                            if (activeWish !== 'smile' || window.tinyWaguriRevealId !== waguriRevealId)
+                                return;
+                            // Real decoded frame callback avoids a black/transparent late pop.
+                            if (typeof waguriSmile.requestVideoFrameCallback === 'function') {
+                                try {
+                                    waguriSmile.requestVideoFrameCallback(revealOnce);
+                                } catch (_) {}
+                            } else {
+                                // Older Safari/Chrome fallback: wait until playback advanced.
+                                const onTimeUpdate = () => {
+                                    if (waguriSmile.readyState >= 2 && waguriSmile.currentTime > 0) {
+                                        waguriSmile.removeEventListener('timeupdate', onTimeUpdate);
+                                        revealOnce();
+                                    }
+                                }
+                                ;
+                                waguriSmile.addEventListener('timeupdate', onTimeUpdate);
+                                waguriSmile.addEventListener('playing', () => {
+                                    if (waguriSmile.readyState >= 2)
+                                        requestAnimationFrame(revealOnce);
+                                }, {
+                                    once: true
+                                });
+                            }
+
+                            // Failsafe reveal: chắc chắn hiện cô gái sau 350ms dù video autoplay có bị hoãn trên iOS
+                            setTimeout(() => {
+                                if (activeWish === 'smile') {
+                                    revealOnce();
+                                }
+                            }, 350);
+
+                            // Keep media initialization out of the scene's first render frame.
+                            waguriSmile.play().catch(() => {
+                                revealOnce();
+                            });
+                        };
+                        if (TINY_PERF.mobile)
+                            afterPaintIfCurrent('smile', playWaguri, 65);
+                        else
+                            playWaguri();
                     }
-                    ;
-                    if (TINY_PERF.mobile)
-                        afterPaintIfCurrent('smile', playWaguri, 65);
-                    else
-                        playWaguri();
                 }
                 wishBackdrop.className = 'smile';
                 khungMat.classList.remove('wish-beauty');
@@ -1526,7 +1478,7 @@ const text1 = document.getElementById('text-1');
 
             // Dựa trên logic mẫu mat-robot-xe-thanh-chu-x.html: 2 rect tròn đầu
             // chuyển từ mắt 160x160 -> khe dẹt -> hai nét rẽ ra thành > và <.
-            // SVG thay DUY NHẤT mắt của Tiny ở cảnh cỏ, má hồng //// không đụng tới.
+            // SVG thay DUY NHẤT mắt của Kai ở cảnh cỏ, má hồng //// không đụng tới.
             const cloverXEyes = ( () => {
                 const NS = 'http://www.w3.org/2000/svg';
                 const BOX = 160
@@ -2006,7 +1958,7 @@ const text1 = document.getElementById('text-1');
                     last = 0;
                     started = 0;
                     edgeLaneSeq = 0;
-                    // Mật độ ít hơn bản trước: không lấp kín màn hình hoặc mắt Tiny.
+                    // Mật độ ít hơn bản trước: không lấp kín màn hình hoặc mắt Kai.
                     const initial = isMobile() ? 8 : 13;
                     for (let i = 0; i < initial; i++)
                         taoHat(true);
@@ -2223,7 +2175,7 @@ const text1 = document.getElementById('text-1');
                 wishBackdrop.style.cssText = '';
 
                 khungMat.classList.remove('gift-centered', 'canh-chuc', 'canh-muon', 'me-man', 'wish-smile');
-                traMatTinyVeChinhGiua();
+                traMatKaiVeChinhGiua();
                 khungMat.classList.remove('wish-beauty');
                 khungMat.classList.add('wish-clover', 'wish-luck');
                 trucXElements.forEach(tx => {
@@ -2371,7 +2323,7 @@ const text1 = document.getElementById('text-1');
                 const tinyV8SetupQuestionEyes = () => {
                     if (activeWish !== 'question')
                         return;
-                    traMatTinyVeChinhGiua();
+                    traMatKaiVeChinhGiua();
                     khungMat.classList.remove('gift-centered', 'canh-chuc', 'canh-muon', 'me-man', 'wish-smile', 'question-one-eye');
                     khungMat.classList.remove('wish-beauty');
                     khungMat.classList.add('wish-clover', 'wish-luck');
@@ -2716,7 +2668,7 @@ const text1 = document.getElementById('text-1');
                 window.tinyWaguriRevealId = (window.tinyWaguriRevealId || 0) + 1;
                 const waguriSmile = document.getElementById('waguri-smile-video');
                 if (TINY_PERF.mobile) {
-                    // First paint: Tiny and the clover transition, not decoding/clearing old media.
+                    // First paint: Kai and the clover transition, not decoding/clearing old media.
                     document.documentElement.classList.add('tiny-v6-clover-switch');
                     setTimeout( () => {
                         if (activeWish !== 'clover')
@@ -2753,7 +2705,7 @@ const text1 = document.getElementById('text-1');
                     setTimeout( () => smileStage.classList.remove('waguri-frame-visible'), 800);
                 }
                 wishBackdrop.className = 'clover';
-                traMatTinyVeChinhGiua();
+                traMatKaiVeChinhGiua();
                 khungMat.classList.remove('wish-beauty', 'wish-smile');
                 khungMat.classList.add('wish-clover');
                 trucXElements.forEach(tx => {
@@ -2997,7 +2949,7 @@ const text1 = document.getElementById('text-1');
             }
 
             // ---- FINAL SHARE FLIGHT: dedicated scene after the wink/question scene ----
-            const SHARE_FLIGHT_URL = 'https://20-10-vuive.kazvndc-edu.workers.dev/';
+            const SHARE_FLIGHT_URL = (typeof window !== 'undefined' && window.location) ? window.location.href.split('#')[0].split('?')[0] : '';
             const shareFlightScene = document.getElementById('share-flight-scene');
             const shareFlightDevice = document.getElementById('share-flight-device');
             const shareFuelButton = document.getElementById('share-fuel-button');
@@ -3048,34 +3000,34 @@ const text1 = document.getElementById('text-1');
             const sharePipePath = document.getElementById('share-hose-flow-path');
             const sharePipeDrops = document.getElementById('share-flow-droplets');
             let shareFuelStarted = false;
-            const shareTiny = document.getElementById('share-tiny');
-            let shareTinyTimeout = null;
-            let shareTinyBlinkTimeout = null;
-            function scheduleTinyLookAtAgree() {
+            const shareKai = document.getElementById('share-tiny');
+            let shareKaiTimeout = null;
+            let shareKaiBlinkTimeout = null;
+            function scheduleKaiLookAtAgree() {
                 if (activeWish !== 'share' || shareFuelStarted)
                     return;
-                shareTinyTimeout = setTimeout( () => {
+                shareKaiTimeout = setTimeout( () => {
                     if (activeWish !== 'share' || shareFuelStarted)
                         return;
-                    shareTiny.classList.add('share-tiny-look');
-                    shareTinyTimeout = setTimeout( () => {
-                        shareTiny.classList.remove('share-tiny-look');
-                        scheduleTinyLookAtAgree();
+                    shareKai.classList.add('share-tiny-look');
+                    shareKaiTimeout = setTimeout( () => {
+                        shareKai.classList.remove('share-tiny-look');
+                        scheduleKaiLookAtAgree();
                     }
                     , 1350);
                 }
                 , 2400 + Math.random() * 2700);
             }
-            function scheduleShareTinyBlink() {
+            function scheduleShareKaiBlink() {
                 if (activeWish !== 'share' || shareFuelStarted)
                     return;
-                shareTinyBlinkTimeout = setTimeout( () => {
+                shareKaiBlinkTimeout = setTimeout( () => {
                     if (activeWish !== 'share' || shareFuelStarted)
                         return;
-                    shareTiny.classList.add('share-tiny-blink');
+                    shareKai.classList.add('share-tiny-blink');
                     setTimeout( () => {
-                        shareTiny.classList.remove('share-tiny-blink');
-                        scheduleShareTinyBlink();
+                        shareKai.classList.remove('share-tiny-blink');
+                        scheduleShareKaiBlink();
                     }
                     , 200);
                 }
@@ -3085,7 +3037,7 @@ const text1 = document.getElementById('text-1');
             // Chuyển CHÍNH đôi mắt đã có ở cảnh "liệu em có thể" vào vị trí share/aircraft.
             // Kĩ thuật FLIP giữ mắt liên tục nhìn thấy, vừa đi vừa thu nhỏ.
             let tinyMovedToShare = false;
-            function bringRealTinyToShare() {
+            function bringRealKaiToShare() {
                 if (tinyMovedToShare)
                     return;
                 tinyMovedToShare = true;
@@ -3111,9 +3063,9 @@ const text1 = document.getElementById('text-1');
                 );
                 khungMat.style.removeProperty('animation');
                 khungMat.style.removeProperty('transform');
-                shareTiny.appendChild(khungMat);
-                shareTiny.classList.remove('share-tiny-look');
-                shareTiny.classList.add('share-tiny-native');
+                shareKai.appendChild(khungMat);
+                shareKai.classList.remove('share-tiny-look');
+                shareKai.classList.add('share-tiny-native');
                 // Offset được tính khi đôi mắt đã ở bố cục đích; scale giữ kích thước nguồn.
                 const after = khungMat.getBoundingClientRect();
                 const bx = before.left + before.width / 2
@@ -3138,7 +3090,7 @@ const text1 = document.getElementById('text-1');
             }
             // Chỉ ở cảnh cảm ơn: biến CHÍNH hai mắt hình vuông thành squircle mềm,
             // từng cạnh phồng rất nhẹ theo một SVG path được nội suy. Không đổi sang mắt ^.
-            function nativeTinyHappyMorph() {
+            function nativeKaiHappyMorph() {
                 const ns = 'http://www.w3.org/2000/svg';
                 // Góc ban đầu bo 25%; dáng cuối chỉ nhô ra nhẹ ở giữa 4 cạnh.
                 const rounded = 'M 25 0 L 75 0 Q 100 0 100 25 L 100 75 Q 100 100 75 100 L 25 100 Q 0 100 0 75 L 0 25 Q 0 0 25 0 Z';
@@ -3251,9 +3203,9 @@ const text1 = document.getElementById('text-1');
                     afterPaintIfCurrent('share', syncFuelEatenText, 85);
                 else
                     requestAnimationFrame(syncFuelEatenText);
-                clearTimeout(shareTinyTimeout);
-                clearTimeout(shareTinyBlinkTimeout);
-                shareTiny.classList.remove('share-tiny-blink', 'share-tiny-cheer', 'tiny-caret-restored', 'share-tiny-thank-glow');
+                clearTimeout(shareKaiTimeout);
+                clearTimeout(shareKaiBlinkTimeout);
+                shareKai.classList.remove('share-tiny-blink', 'share-tiny-cheer', 'tiny-caret-restored', 'share-tiny-thank-glow');
                 matElements.forEach(eye => {
                     eye.classList.remove('tiny-actual-morph');
                     eye.querySelectorAll('.tiny-morph-svg,.tiny-restored-caret').forEach(el => el.remove());
@@ -3262,23 +3214,23 @@ const text1 = document.getElementById('text-1');
                 // Khi sang cảnh máy bay, hai mắt giữ trạng thái mở và nhìn thẳng.
                 // Đợi chuyển động di chuyển (1050ms) hoàn tất, nghỉ ổn định thêm 1200ms
                 // rồi mới liếc xuống nút Đồng ý lần đầu.
-                bringRealTinyToShare();
-                shareTiny.classList.remove('share-tiny-look');
-                shareTinyTimeout = setTimeout( () => {
+                bringRealKaiToShare();
+                shareKai.classList.remove('share-tiny-look');
+                shareKaiTimeout = setTimeout( () => {
                     if (activeWish !== 'share' || shareFuelStarted)
                         return;
-                    shareTiny.classList.add('share-tiny-look');
-                    shareTinyTimeout = setTimeout( () => {
+                    shareKai.classList.add('share-tiny-look');
+                    shareKaiTimeout = setTimeout( () => {
                         if (activeWish !== 'share' || shareFuelStarted)
                             return;
-                        shareTiny.classList.remove('share-tiny-look');
-                        scheduleTinyLookAtAgree();
+                        shareKai.classList.remove('share-tiny-look');
+                        scheduleKaiLookAtAgree();
                         // những lần sau vẫn ngẫu nhiên như cũ
                     }
                     , 1350);
                 }
                 , 1050 + 1200);
-                scheduleShareTinyBlink();
+                scheduleShareKaiBlink();
             }
 
             // Last stage: the SAME two DOM eyes that accompanied the plane come closer,
@@ -3308,7 +3260,7 @@ const text1 = document.getElementById('text-1');
             // One continuous 8-cubic squircle: all four sides smoothly bow OUT,
             // including the cyan fill; white gleams appear DURING the approach.
             // Uses equal SVG-path commands for guaranteed smooth interpolation.
-            function prepareApproachingTinyEyes() {
+            function prepareApproachingKaiEyes() {
                 const SVGNS = 'http://www.w3.org/2000/svg';
                 // Superellipse (a mathematically smooth convex squircle): no extra
                 // bumps at the corners or jagged joining between edge/corner paths.
@@ -3382,7 +3334,7 @@ const text1 = document.getElementById('text-1');
                 return draw;
             }
 
-            function beginTinyRealityScene() {
+            function beginKaiRealityScene() {
                 budgetSceneTransition(1450);
                 if (tinyRealityStarted)
                     return;
@@ -3392,10 +3344,10 @@ const text1 = document.getElementById('text-1');
                     document.documentElement.classList.add('tiny-v9-reality-enter');
                     setTimeout( () => document.documentElement.classList.remove('tiny-v9-reality-enter'), 1600);
                 }
-                clearTimeout(shareTinyTimeout);
-                clearTimeout(shareTinyBlinkTimeout);
+                clearTimeout(shareKaiTimeout);
+                clearTimeout(shareKaiBlinkTimeout);
                 const previous = khungMat.getBoundingClientRect();
-                shareTiny.classList.remove('share-tiny-cheer', 'share-tiny-look', 'share-tiny-blink', 'share-tiny-thank-glow', 'tiny-folding-smile');
+                shareKai.classList.remove('share-tiny-cheer', 'share-tiny-look', 'share-tiny-blink', 'share-tiny-thank-glow', 'tiny-folding-smile');
                 matElements.forEach(eye => eye.querySelectorAll('.tiny-folding-smile-svg,.tiny-restored-caret').forEach(el => el.remove()));
                 // Finish previous ^ morph before changing to big round eyes.
                 matElements.forEach(eye => {
@@ -3425,7 +3377,7 @@ const text1 = document.getElementById('text-1');
                 const sx = previous.width / Math.max(next.width, 1);
                 const sy = previous.height / Math.max(next.height, 1);
                 // Morph starts together with the approach (NOT after moving stops).
-                const drawApproachEyes = prepareApproachingTinyEyes();
+                const drawApproachEyes = prepareApproachingKaiEyes();
                 const FLY_MS = 1650;
                 const fly = khungMat.animate([{
                     transform: `translate(${dx.toFixed(1)}px,${dy.toFixed(1)}px) scale(${sx.toFixed(3)},${sy.toFixed(3)})`
@@ -3470,7 +3422,7 @@ const text1 = document.getElementById('text-1');
                 setTimeout(convert, FLY_MS + 180);
             }
 
-            // Khi năng lượng bơm xong, máy bay tự bay ngay và hai mắt Tiny
+            // Khi năng lượng bơm xong, máy bay tự bay ngay và hai mắt Kai
             // bắt đầu di chuyển sang cảnh cuối ĐỒNG THỜI. Máy bay được đưa ra
             // một lớp nổi (giữ nguyên SVG gốc) để cảnh cũ mờ đi mà nó không bị ẩn.
             function launchSharePlane() {
@@ -3500,9 +3452,9 @@ const text1 = document.getElementById('text-1');
                 // FLIP đôi mắt cùng một lượt ngay khi năng lượng đầy (không đợi frame sau).
                 shareAirplane.classList.add('share-flying');
                 if (TINY_PERF.mobile)
-                    requestAnimationFrame( () => beginTinyRealityScene());
+                    requestAnimationFrame( () => beginKaiRealityScene());
                 else
-                    beginTinyRealityScene();
+                    beginKaiRealityScene();
                 let didFinish = false;
                 const onDepartEnd = event => {
                     if (event.target === shareAirplane && event.animationName === 'sharePlaneDepart')
@@ -3555,12 +3507,12 @@ const text1 = document.getElementById('text-1');
                 if (shareFuelStarted || activeWish !== 'share')
                     return;
                 shareFuelStarted = true;
-                clearTimeout(shareTinyTimeout);
-                clearTimeout(shareTinyBlinkTimeout);
-                shareTiny.classList.remove('share-tiny-look', 'share-tiny-blink', 'share-tiny-cheer');
+                clearTimeout(shareKaiTimeout);
+                clearTimeout(shareKaiBlinkTimeout);
+                shareKai.classList.remove('share-tiny-look', 'share-tiny-blink', 'share-tiny-cheer');
                 // Cảnh máy bay: giữ đôi mắt cyan bình thường, KHÔNG tạo phản sáng long lanh.
                 // Biểu cảm ở đây chỉ chuyển từ mắt thường sang ^^; long lanh để dành cảnh cuối.
-                shareTiny.classList.remove('share-tiny-thank-glow');
+                shareKai.classList.remove('share-tiny-thank-glow');
                 matElements.forEach(eye => {
                     eye.classList.remove('tiny-actual-morph');
                     eye.querySelectorAll('.tiny-morph-svg').forEach(svg => svg.remove());
@@ -3637,8 +3589,7 @@ const text1 = document.getElementById('text-1');
             document.addEventListener('click', function(event) {
                 if (tinyIsControl(event.target))
                     return;
-                if (document.getElementById('shop-product-modal')?.classList.contains('show'))
-                    return;
+                if (document.getElementById('memory-gallery-page')?.classList.contains('is-open')) return;
                 chuyenCanh();
             });
 
@@ -4600,7 +4551,7 @@ const text1 = document.getElementById('text-1');
                 if (!beauty || !health || document.getElementById('tiny-meadow-scene'))
                     return;
                 beauty.insertAdjacentHTML('afterbegin', '<svg class="tiny-meadow-scene" id="tiny-meadow-scene" viewBox="0 0 1600 900" preserveAspectRatio="none" aria-hidden="true">\n<defs><linearGradient id="tinyHillGradient" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#352238" stop-opacity=".86"/><stop offset=".55" stop-color="#1b152a" stop-opacity=".96"/><stop offset="1" stop-color="#0b0919" stop-opacity="1"/></linearGradient>\n<mask id="tinyStarAboveHorizon" maskUnits="userSpaceOnUse"><rect width="1600" height="900" fill="#fff"/><path d="M0 890 C130 862 226 824 390 791 S580 761 730 740 C930 712 1007 722 1080 751 C1240 795 1380 815 1600 898 L1600 950 L0 950 Z" fill="#000"/></mask>\n<radialGradient id="tinyStarGlow"><stop offset="0" stop-color="#f4faff" stop-opacity=".55"/><stop offset=".38" stop-color="#d4e9f8" stop-opacity=".19"/><stop offset="1" stop-color="#c8dbef" stop-opacity="0"/></radialGradient><radialGradient id="tinyMoonFace" cx="34%" cy="28%" r="75%"><stop offset="0" stop-color="#fffef7"/><stop offset=".37" stop-color="#eef5f6"/><stop offset=".75" stop-color="#cedfea"/><stop offset="1" stop-color="#9db8cf"/></radialGradient>\n<filter id="tinyStarBloom" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="5"/></filter></defs>\n<path id="tinyOrbitFlightPath" d="M930 954 C1070 823 1024 780 1115 680 C1230 528 1320 354 1410 165 C1450 81 1453 18 1468 -68" fill="none" stroke="none"/>\n<g mask="url(#tinyStarAboveHorizon)"><g id="tiny-orbit-trails" class="tiny-orbit-trail"></g><g id="tiny-orbit-star" class="tiny-orbit-star tiny-glow-planet tiny-moon" style="opacity:0">\n <!-- A soft, larger Moon; no planetary ring. Entire group travels down the existing orbit. -->\n <circle r="104" fill="url(#tinyStarGlow)" opacity=".53"/>\n <circle r="50" fill="none" stroke="#e1f0ff" stroke-width="3" opacity=".09"/>\n <circle class="tiny-planet-sphere" r="34" fill="url(#tinyMoonFace)" stroke="#f1f9fb" stroke-width="1.15"/>\n <ellipse cx="-11" cy="-9" rx="9" ry="6.8" fill="#a9bdcb" opacity=".19" transform="rotate(-22 -11 -9)"/>\n <ellipse cx="13" cy="12" rx="7" ry="5" fill="#a3b9ca" opacity=".15" transform="rotate(-17 13 12)"/>\n <circle cx="14" cy="-16" r="4.2" fill="#b0c4d0" opacity=".14"/>\n <circle cx="-15" cy="17" r="3.8" fill="#a5b5c7" opacity=".16"/>\n <path d="M-20 -19 Q -10 -25 2 -25" stroke="#fff" stroke-width="2" opacity=".19" fill="none" stroke-linecap="round"/>\n </g></g>\n<path class="tiny-terrain" d="M0 890 C130 862 226 824 390 791 S580 761 730 740 C930 712 1007 722 1080 751 C1240 795 1380 815 1600 898 L1600 950 L0 950 Z"/>\n<path class="tiny-horizon-rim" d="M0 890 C130 862 226 824 390 791 S580 761 730 740 C930 712 1007 722 1080 751 C1240 795 1380 815 1600 898"/>\n<g class="tiny-meadow-flowers"><g class="tiny-meadow-blossom" style="--wave:4.2s;--delay:-0.00s" transform="translate(82 861) scale(0.7)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:4.9s;--delay:-0.27s" transform="translate(175 835) scale(0.85)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:5.5s;--delay:-0.54s" transform="translate(257 813) scale(0.8)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:6.2s;--delay:-0.81s" transform="translate(345 795) scale(1)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:6.8s;--delay:-1.08s" transform="translate(460 775) scale(0.65)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:4.2s;--delay:-1.35s" transform="translate(555 764) scale(0.7)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:4.9s;--delay:-1.62s" transform="translate(652 746) scale(0.8)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:5.5s;--delay:-1.89s" transform="translate(1190 773) scale(0.8)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:6.2s;--delay:-2.16s" transform="translate(1320 808) scale(0.75)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:6.8s;--delay:-2.43s" transform="translate(1454 851) scale(0.9)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g><g class="tiny-meadow-blossom" style="--wave:4.2s;--delay:-2.70s" transform="translate(1538 887) scale(0.62)"><path class="stem" d="M0 0 Q -7 -15 0 -32 M-2 -13 Q-14 -24 -16 -20 M0 -21 Q11 -29 14 -22"/><g transform="translate(0 -33)" class="flowerhead"><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(0 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(72 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(144 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(216 0 0)"/><ellipse cx="0" cy="-10" rx="3.8" ry="7" transform="rotate(288 0 0)"/></g><circle class="center" cx="0" cy="-33" r="3.9"/></g></g></svg>');
-                // Beautiful light bugs fill the sky, without covering Tiny or the title.
+                // Beautiful light bugs fill the sky, without covering Kai or the title.
                 const mobile = matchMedia('(max-width:700px)').matches;
                 for (let i = 0, n = mobile ? 4 : 14; i < n; i++) {
                     const b = document.createElement('i');
@@ -4896,246 +4847,6 @@ const text1 = document.getElementById('text-1');
             }
             )();
 
-/* ---------- Script #7: tiny-shop-next-script ---------- */
-( () => {
-                const scene = document.getElementById('tiny-shop-scene');
-                const oldScene = document.getElementById('tiny-reality-scene');
-                const newHost = document.getElementById('shop-tiny-host');
-                const butterfly = document.getElementById('shop-flying-butterfly');
-                const note = document.getElementById('shop-coming-note');
-                const frame = document.getElementById('khung-mat');
-                if (!scene || !oldScene || !frame || !newHost)
-                    return;
-                let started = false
-                  , flightBusy = false
-                  , butterflyTimer = 0
-                  , blinkTimer = 0
-                  , noteTimer = 0
-                  , activeAnimation = 0
-                  , activatedAt = 0;
-                const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                const eyes = () => Array.from(frame.querySelectorAll('.con-mat'));
-                const traces = () => Array.from(frame.querySelectorAll('.truc-x'));
-                function resetLook() {
-                    newHost.classList.remove('shop-tracking');
-                    newHost.style.setProperty('--follow-x', '0px');
-                    newHost.style.setProperty('--follow-y', '0px');
-                    newHost.style.setProperty('--follow-a', '0deg');
-                }
-                function blink() {
-                    if (!started || flightBusy)
-                        return;
-                    newHost.classList.add('shop-blinking');
-                    setTimeout( () => newHost.classList.remove('shop-blinking'), 170);
-                }
-                function nextBlink() {
-                    if (!started)
-                        return;
-                    blinkTimer = setTimeout( () => {
-                        blink();
-                        nextBlink()
-                    }
-                    , 2400 + Math.random() * 3000);
-                }
-                function nextButterfly() {
-                    if (!started)
-                        return;
-                    butterflyTimer = setTimeout( () => {
-                        flyButterfly()
-                    }
-                    , 4200 + Math.random() * 4700);
-                }
-                function flyButterfly() {
-                    if (!started || flightBusy)
-                        return;
-                    flightBusy = true;
-                    const begin = performance.now()
-                      , duration = reduceMotion ? 100 : 4900;
-                    butterfly.style.opacity = '1';
-                    const host = newHost.getBoundingClientRect()
-                      , w = innerWidth
-                      , h = innerHeight;
-                    const start = {
-                        x: w + 65,
-                        y: h * .26
-                    };
-                    const near = {
-                        x: host.left + host.width * .54,
-                        y: host.top - 25
-                    };
-                    const end = {
-                        x: -90,
-                        y: h * .22
-                    };
-                    function anim(now) {
-                        if (!started) {
-                            flightBusy = false;
-                            return
-                        }
-                        const t = Math.min(1, (now - begin) / duration);
-                        // Bay từ phải sang trái, lượn nhẹ ngang khu vực Tiny.
-                        const u = 1 - t;
-                        const x = u * u * start.x + 2 * u * t * near.x + t * t * end.x;
-                        const y = u * u * start.y + 2 * u * t * (near.y - 65) + t * t * end.y + Math.sin(t * Math.PI * 6) * 13;
-                        butterfly.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${(Math.sin(t * 7) * 9).toFixed(1)}deg)`;
-                        butterfly.style.opacity = String(Math.min(1, t * 9, (1 - t) * 10));
-                        const eyeBox = host;
-                        // no forced layout read on each animation frame
-                        const dx = x - (eyeBox.left + eyeBox.width / 2)
-                          , dy = y - (eyeBox.top + eyeBox.height / 2);
-                        newHost.style.setProperty('--follow-x', Math.max(-9, Math.min(9, dx / 34)).toFixed(1) + 'px');
-                        newHost.style.setProperty('--follow-y', Math.max(-7, Math.min(7, dy / 32)).toFixed(1) + 'px');
-                        newHost.style.setProperty('--follow-a', Math.max(-8, Math.min(8, dx / 85)).toFixed(1) + 'deg');
-                        newHost.classList.add('shop-tracking');
-                        if (t < 1) {
-                            activeAnimation = requestAnimationFrame(anim)
-                        } else {
-                            butterfly.style.opacity = '0';
-                            flightBusy = false;
-                            resetLook();
-                            nextButterfly();
-                        }
-                    }
-                    activeAnimation = requestAnimationFrame(anim);
-                }
-                function openShops() {
-                    if (started)
-                        return;
-                    window.tinyPauseDecorForTransition?.(1250);
-                    if (!oldScene.classList.contains('reality-visible'))
-                        return;
-                    // Giữ ĐÚNG cặp mắt đã có. FLIP để chúng bay về vòng đỏ rồi thu nhỏ.
-                    started = true;
-                    activatedAt = performance.now();
-                    const oldBounds = frame.getBoundingClientRect();
-                    frame.getAnimations().forEach(a => a.cancel());
-                    scene.classList.add('shop-visible');
-                    scene.setAttribute('aria-hidden', 'false');
-                    if (document.documentElement.classList.contains('tiny-mobile')) {
-                        scene.classList.add('tiny-shop-opening');
-                        setTimeout( () => scene.classList.remove('tiny-shop-opening'), 1680);
-                    }
-                    newHost.appendChild(frame);
-                    // Hủy hiệu ứng tỉ lệ/đảo mắt từ cảnh cũ trước khi thiết lập hình thái bình thường.
-                    frame.style.transform = 'none';
-                    frame.style.removeProperty('animation');
-                    frame.classList.remove('question-one-eye', 'canh-muon', 'canh-chuc', 'wish-smile', 'wish-beauty');
-                    traces().forEach(tx => {
-                        tx.style.removeProperty('transform');
-                        tx.style.removeProperty('animation')
-                    }
-                    );
-                    eyes().forEach(e => {
-                        e.style.removeProperty('transform');
-                        e.style.removeProperty('animation');
-                        e.style.removeProperty('opacity');
-                        e.classList.remove('tiny-actual-morph', 'nham')
-                    }
-                    );
-                    const newBounds = frame.getBoundingClientRect();
-                    const sx = oldBounds.width / Math.max(1, newBounds.width);
-                    const sy = oldBounds.height / Math.max(1, newBounds.height);
-                    const dx = oldBounds.left + oldBounds.width / 2 - newBounds.left - newBounds.width / 2;
-                    const dy = oldBounds.top + oldBounds.height / 2 - newBounds.top - newBounds.height / 2;
-                    const length = reduceMotion ? 150 : 1330;
-                    frame.animate([{
-                        transform: `translate(${dx}px,${dy}px) scale(${sx},${sy})`
-                    }, {
-                        transform: 'translate(0px,0px) scale(1,1)'
-                    }], {
-                        duration: length,
-                        easing: 'cubic-bezier(.2,.75,.17,1)'
-                    });
-                    oldScene.classList.add('shop-departing');
-                    // Đốm trắng tan dần trong lúc đôi mắt thu nhỏ, không bật/tắt chớp đột ngột.
-                    setTimeout( () => eyes().forEach(e => {
-                        e.querySelectorAll('.reality-one-piece-svg').forEach(svg => svg.remove());
-                        e.classList.remove('reality-morphing')
-                    }
-                    ), document.documentElement.classList.contains('tiny-mobile') ? length + 100 : length * .65);
-                    setTimeout( () => {
-                        oldScene.classList.remove('reality-visible');
-                        oldScene.setAttribute('aria-hidden', 'true')
-                    }
-                    , 1170);
-                    setTimeout( () => {
-                        if (started) {
-                            nextBlink();
-                            nextButterfly()
-                        }
-                    }
-                    , length + 500);
-                }
-                // Mở gian hàng bằng click/chạm trên nền, áp dụng cả PC và mobile.
-                const shopIsInteractive = target => target instanceof Element && !!target.closest('a,button,input,textarea,select,summary,[role="button"],[contenteditable="true"]');
-                document.addEventListener('click', e => {
-                    if (started || shopIsInteractive(e.target))
-                        return;
-                    if (e.target.closest && e.target.closest('#shop-tiny-host'))
-                        return;
-                    if (oldScene.classList.contains('reality-cute') && oldScene.classList.contains('reality-visible'))
-                        openShops();
-                }
-                );
-                // Popup chi tiết sản phẩm trước khi mở link Shopee.
-                const modal = document.getElementById('shop-product-modal');
-                const modalThumb = document.getElementById('shop-modal-thumb');
-                const modalKicker = document.getElementById('shop-modal-kicker');
-                const modalTitle = document.getElementById('shop-modal-title');
-                const modalPrice = document.getElementById('shop-modal-price');
-                const modalRandom = document.getElementById('shop-modal-random');
-                const modalBuy = document.getElementById('shop-modal-buy');
-                const girlNotes = ['cái này hợp với cậu nè', 'vòi ny mua này nè', 'cậu dùng thì sẽ rất xinh', 'món này cũng hợp với cậu luôn'];
-                const boyNotes = ['mua ngay cho bạn nữ nào', 'đến lúc thể hiện tình cảm rồi', 'mạnh dạn lên nào', 'cái này sẽ khiến cậu ấy vui đấy'];
-                function pick(arr) {
-                    return arr[Math.floor(Math.random() * arr.length)]
-                }
-                function openProductModal(link) {
-                    if (!modal)
-                        return;
-                    const gender = link.dataset.shopGender || 'girls';
-                    const title = link.dataset.productTitle || link.querySelector('.shop-product-name')?.textContent?.trim() || 'Sản phẩm';
-                    const price = link.dataset.productPrice || 'Xem giá trên Shopee';
-                    const thumb = link.querySelector('.shop-product-thumb');
-                    modalKicker.textContent = gender === 'boys' ? 'gian hàng cho nam' : 'gian hàng cho nữ';
-                    modalTitle.textContent = title;
-                    modalPrice.textContent = price;
-                    modalRandom.textContent = pick(gender === 'boys' ? boyNotes : girlNotes);
-                    modalBuy.href = link.href;
-                    modalThumb.innerHTML = thumb ? thumb.innerHTML : '';
-                    modal.classList.add('show');
-                    modal.setAttribute('aria-hidden', 'false');
-                    scene.classList.add('shop-modal-active');
-                    resetLook();
-                }
-                function closeProductModal() {
-                    if (!modal)
-                        return;
-                    modal.classList.remove('show');
-                    modal.setAttribute('aria-hidden', 'true');
-                    scene.classList.remove('shop-modal-active');
-                    resetLook();
-                }
-                scene.querySelectorAll('.shop-product').forEach(link => link.addEventListener('click', event => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    openProductModal(link);
-                }
-                ));
-                modal?.querySelectorAll('[data-shop-modal-close]').forEach(el => el.addEventListener('click', event => {
-                    event.stopPropagation();
-                    closeProductModal();
-                }
-                ));
-                document.addEventListener('keydown', event => {
-                    if (event.key === 'Escape' && modal?.classList.contains('show'))
-                        closeProductModal();
-                }
-                );
-                modalBuy?.addEventListener('click', event => event.stopPropagation());
-            }
-            )();
-
 /* ---------- Script #8: tiny-reality-moon-rover-script ---------- */
 ( () => {
                 const scene = document.getElementById('tiny-reality-scene');
@@ -5206,44 +4917,6 @@ const text1 = document.getElementById('text-1');
                     });
                 document.addEventListener('visibilitychange', sync);
                 sync();
-            }
-            )();
-
-/* ---------- Script #9: tiny-shop-magical-script ---------- */
-( () => {
-                const field = document.getElementById('shop-magical-field');
-                if (!field)
-                    return;
-                let seed = 20261020;
-                const rand = () => {
-                    seed = (seed * 1664525 + 1013904223) >>> 0;
-                    return seed / 4294967296;
-                }
-                ;
-                const palette = ['#b3faff', '#ffb8dd', '#fff2b7', '#c5ceff'];
-                const fragment = document.createDocumentFragment();
-                // Ambient fireflies and petals, fewer on small viewports, no animation on reduced motion.
-                const small = window.matchMedia('(max-width: 700px)').matches;
-                const fireCount = TINY_PERF.mobile ? 8 : small ? 10 : 23
-                  , petalCount = TINY_PERF.mobile ? 2 : small ? 3 : 6;
-                for (let i = 0; i < fireCount + petalCount; i++) {
-                    const petal = i >= fireCount
-                      , el = document.createElement('span');
-                    el.className = petal ? 'shop-magical-petal' : 'shop-magical-firefly';
-                    el.setAttribute('aria-hidden', 'true');
-                    const x = petal ? (rand() < .5 ? rand() * 15 : 85 + rand() * 15) : rand() * 100;
-                    const y = 20 + rand() * 73;
-                    el.style.setProperty('--fx', x.toFixed(2) + '%');
-                    el.style.setProperty('--fy', y.toFixed(2) + '%');
-                    el.style.setProperty('--fs', petal ? (12 + rand() * 11).toFixed(1) + 'px' : (1.8 + rand() * 2.8).toFixed(1) + 'px');
-                    el.style.setProperty('--fc', palette[Math.floor(rand() * palette.length)]);
-                    el.style.setProperty('--ft', (petal ? 6 + rand() * 5 : 2.5 + rand() * 4.5).toFixed(2) + 's');
-                    el.style.setProperty('--fd', (-rand() * 8).toFixed(2) + 's');
-                    if (petal)
-                        el.textContent = ['✿', '✧', '❀'][Math.floor(rand() * 3)];
-                    fragment.appendChild(el);
-                }
-                field.appendChild(fragment);
             }
             )();
 
@@ -5366,965 +5039,14 @@ if (window.TINY_PERF && !window.TINY_PERF.mobile) {
             }
             )();
 
-/* ---------- Script #14: memory-book-flipbook-script ---------- */
+
+/* ---------- Navigation to book.html ---------- */
 (function() {
-  // ELEMENTS
-  const modal = document.getElementById('memory-gallery-page');
-  const closeBtn = document.getElementById('close-memory-gallery');
-  const prevBtn = document.getElementById('book-nav-prev');
-  const nextBtn = document.getElementById('book-nav-next');
-  const book3D = document.getElementById('book-3d');
-  const sheets = Array.from(document.querySelectorAll('.book-sheet'));
-  const dots = Array.from(document.querySelectorAll('.book-page-dot'));
-  const mobileCounter = document.getElementById('book-mobile-counter');
-  const readAgainBtn = document.getElementById('btn-read-again');
-  const closeBackCoverBtn = document.getElementById('btn-close-back-cover');
-  const envelope = document.getElementById('secret-envelope');
-  const waxBtn = document.getElementById('envelope-wax-btn');
-  const letterCloseBtn = document.getElementById('letter-close-btn');
   const finalCard = document.getElementById('final-photo-card');
-
-  // Collect all 10 faces in order for mobile single-page sequence
-  const allFaces = [];
-  sheets.forEach((sheet, sIdx) => {
-    const front = sheet.querySelector('.sheet-front');
-    const back = sheet.querySelector('.sheet-back');
-    if (front) {
-      front.dataset.faceIndex = sIdx * 2;
-      allFaces.push(front);
-    }
-    if (back) {
-      back.dataset.faceIndex = sIdx * 2 + 1;
-      allFaces.push(back);
-    }
-  });
-
-  const totalSheets = sheets.length; // 5 sheets (0 to 4) on desktop
-  const totalFaces = allFaces.length; // 10 faces (0 to 9) on mobile
-
-  let currentSheetIndex = 0; // Desktop index: 0..5
-  let mobilePageIndex = 0;   // Mobile index: 0..9
-  let sharedAudioCtx = null;
-  function getSharedAudioCtx() {
-    try {
-      if (!sharedAudioCtx) {
-        const AudioCtx = window.AudioContext || window.webkitAudioContext;
-        if (AudioCtx) sharedAudioCtx = new AudioCtx();
-      }
-      if (sharedAudioCtx && sharedAudioCtx.state === 'suspended') {
-        sharedAudioCtx.resume();
-      }
-      return sharedAudioCtx;
-    } catch(e) {
-      return null;
-    }
-  }
-
-  function isMobile() {
-    return window.innerWidth <= 768;
-  }
-
-  // SUBTLE PAPER RUSTLE SOUND SYNTHESIZER
-  function playPaperSound() {
-    try {
-      const ctx = getSharedAudioCtx();
-      if (!ctx) return;
-      const dur = 0.2;
-      const bufferSize = Math.floor(ctx.sampleRate * dur);
-      const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        const decay = Math.exp(-i / (bufferSize * 0.28));
-        data[i] = (Math.random() * 2 - 1) * decay;
-      }
-      const source = ctx.createBufferSource();
-      source.buffer = buffer;
-
-      const filter = ctx.createBiquadFilter();
-      filter.type = 'bandpass';
-      filter.frequency.setValueAtTime(1200, ctx.currentTime);
-      filter.frequency.exponentialRampToValueAtTime(3600, ctx.currentTime + 0.12);
-      filter.Q.value = 1.3;
-
-      const gain = ctx.createGain();
-      gain.gain.setValueAtTime(0.22, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + dur);
-
-      source.connect(filter);
-      filter.connect(gain);
-      gain.connect(ctx.destination);
-      source.start();
-    } catch(e) {}
-  }
-
-  // UPDATE VIEW ENGINE (HANDLES BOTH DESKTOP AND MOBILE)
-  function updateView(animate = true) {
-    if (isMobile()) {
-      // ===== MOBILE VIEW (10 PAGES SEQUENTIAL DECK) =====
-      allFaces.forEach((face, idx) => {
-        face.classList.remove('active-mobile-face', 'prev-mobile-face', 'next-mobile-face');
-        if (idx === mobilePageIndex) {
-          face.classList.add('active-mobile-face');
-        } else if (idx < mobilePageIndex) {
-          face.classList.add('prev-mobile-face');
-        } else {
-          face.classList.add('next-mobile-face');
-        }
-      });
-
-      // Update mobile counter
-      if (mobileCounter) {
-        if (mobilePageIndex === 0) {
-          mobileCounter.textContent = 'Bìa Trước · 1/10';
-        } else if (mobilePageIndex === totalFaces - 1) {
-          mobileCounter.textContent = 'Bìa Sau · 10/10';
-        } else {
-          mobileCounter.textContent = 'Trang ' + mobilePageIndex + ' / 10';
-        }
-      }
-
-      // Arrow buttons state on mobile: Ẩn hoàn toàn trên điện thoại để giao diện thoáng, không vướng
-      if (prevBtn) {
-        prevBtn.disabled = (mobilePageIndex === 0);
-        prevBtn.style.setProperty('display', 'none', 'important');
-      }
-      if (nextBtn) {
-        nextBtn.disabled = (mobilePageIndex === totalFaces - 1);
-        nextBtn.style.setProperty('display', 'none', 'important');
-      }
-
-      if (book3D) book3D.style.transform = 'none';
-
-    } else {
-      // ===== DESKTOP VIEW (5 SHEETS 3D SPREAD) =====
-      sheets.forEach((sheet, index) => {
-        if (animate) {
-          sheet.classList.add('is-turning');
-          window.setTimeout(() => sheet.classList.remove('is-turning'), 900);
-        }
-
-        if (index < currentSheetIndex) {
-          sheet.classList.add('flipped');
-          sheet.style.zIndex = index + 1;
-        } else {
-          sheet.classList.remove('flipped');
-          sheet.style.zIndex = totalSheets - index + 1;
-        }
-      });
-
-      // Desktop active dot
-      dots.forEach((dot, idx) => {
-        dot.classList.toggle('active', idx === currentSheetIndex);
-      });
-
-      // Arrow buttons state on desktop: hiển thị lại bình thường
-      if (prevBtn) {
-        prevBtn.style.removeProperty('display');
-        prevBtn.disabled = (currentSheetIndex === 0);
-      }
-      if (nextBtn) {
-        nextBtn.style.removeProperty('display');
-        nextBtn.disabled = (currentSheetIndex === totalSheets);
-      }
-
-      // Centering book perspective on desktop
-      if (book3D) {
-        if (currentSheetIndex === 0) {
-          book3D.style.transform = 'translateX(-25%)';
-        } else if (currentSheetIndex === totalSheets) {
-          book3D.style.transform = 'translateX(25%)';
-        } else {
-          book3D.style.transform = 'translateX(0)';
-        }
-      }
-    }
-  }
-
-  // TURN PAGE FUNCTIONS
-  function turnNext() {
-    if (isMobile()) {
-      if (mobilePageIndex < totalFaces - 1) {
-        playPaperSound();
-        mobilePageIndex++;
-        currentSheetIndex = Math.min(totalSheets, Math.ceil((mobilePageIndex + 1) / 2));
-        updateView(true);
-      }
-    } else {
-      if (currentSheetIndex < totalSheets) {
-        playPaperSound();
-        currentSheetIndex++;
-        mobilePageIndex = Math.min(totalFaces - 1, currentSheetIndex * 2);
-        updateView(true);
-      }
-    }
-  }
-
-  function turnPrev() {
-    if (isMobile()) {
-      if (mobilePageIndex > 0) {
-        playPaperSound();
-        mobilePageIndex--;
-        currentSheetIndex = Math.floor(mobilePageIndex / 2);
-        updateView(true);
-      }
-    } else {
-      if (currentSheetIndex > 0) {
-        playPaperSound();
-        currentSheetIndex--;
-        mobilePageIndex = Math.max(0, currentSheetIndex * 2 - 1);
-        updateView(true);
-      }
-    }
-  }
-
-  function jumpToSheet(index) {
-    playPaperSound();
-    currentSheetIndex = index;
-    mobilePageIndex = Math.min(totalFaces - 1, index * 2);
-    updateView(true);
-  }
-
-  // OPEN & CLOSE MODAL
-  function openBook() {
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('book-modal-active');
-    document.body.style.overflow = 'hidden';
-    updateView(false);
-    startAmbientParticles();
-  }
-
-  function closeBook() {
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('book-modal-active');
-    document.body.style.overflow = '';
-  }
-
-  // EVENT LISTENERS
-  if (closeBtn) closeBtn.addEventListener('click', closeBook);
-  if (prevBtn) prevBtn.addEventListener('click', turnPrev);
-  if (nextBtn) nextBtn.addEventListener('click', turnNext);
-
-  if (readAgainBtn) {
-    readAgainBtn.addEventListener('click', () => {
-      mobilePageIndex = 0;
-      currentSheetIndex = 0;
-      playPaperSound();
-      updateView(true);
-    });
-  }
-  if (closeBackCoverBtn) {
-    closeBackCoverBtn.addEventListener('click', closeBook);
-  }
-
-  // Helper: check if final scene is active / visible
-  function isFinalSceneActive() {
-    const s = document.getElementById('share-flight-scene');
-    if (!s) return false;
-    const style = window.getComputedStyle(s);
-    const isDisplayed = style.display !== 'none' && style.opacity !== '0' && style.visibility !== 'hidden';
-    const hasClass = s.classList.contains('share-visible') || s.classList.contains('share-thank-you') || s.getAttribute('aria-hidden') === 'false';
-    return isDisplayed && hasClass;
-  }
-
-  // Track when final scene becomes visible to debounce click 12
-  let finalSceneActivatedAt = 0;
-  const shareFlightScene = document.getElementById('share-flight-scene');
-  function checkFinalSceneReady() {
-    if (finalSceneActivatedAt === 0 && isFinalSceneActive()) {
-      finalSceneActivatedAt = Date.now();
-    }
-  }
-  if (shareFlightScene) {
-    const obs = new MutationObserver(checkFinalSceneReady);
-    obs.observe(shareFlightScene, { attributes: true, attributeFilter: ['class', 'style', 'aria-hidden'] });
-    setInterval(checkFinalSceneReady, 500);
-  }
-
-  // 2. Open book when user explicitly taps/clicks the final card or invitation badge
-  function handleCardClickToOpen(e) {
-    if (modal.classList.contains('is-open')) return;
-    if (e.target.closest('#photo-editor')) return;
-    // Debounce to prevent click 12 from instantly skipping the card page
-    if (finalSceneActivatedAt > 0 && (Date.now() - finalSceneActivatedAt < 800)) {
-      return;
-    }
-    openBook();
-  }
-
   if (finalCard) {
-    finalCard.addEventListener('click', handleCardClickToOpen);
-  }
-
-  const invitationBadge = document.getElementById('final-card-book-invitation');
-  if (invitationBadge) {
-    invitationBadge.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openBook();
+    finalCard.addEventListener('click', function(e) {
+      if (e.target.closest('#photo-editor, a, button, input, select, .final-scene-compact-dock, [role="button"]')) return;
+      window.location.href = 'book.html';
     });
   }
-
-
-
-  // Click on dots to jump
-  dots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      const target = Number(dot.dataset.sheetIndex);
-      jumpToSheet(target);
-    });
-  });
-
-  // Click on dog-ear curls to turn pages
-  document.querySelectorAll('.dog-ear-curl').forEach(curl => {
-    curl.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (curl.classList.contains('left-curl')) {
-        turnPrev();
-      } else {
-        turnNext();
-      }
-    });
-  });
-
-  // Click on right page turns next, click on left page turns prev
-  sheets.forEach((sheet, idx) => {
-    const front = sheet.querySelector('.sheet-front');
-    const back = sheet.querySelector('.sheet-back');
-    const ignoreSelector = 'button, a, input, select, .envelope-wrapper, .dog-ear-curl, .wish-card, .wishing-jar-stage, .wishes-grid, .ch5-thumbs-row, .ch5-thumb';
-    if (front) {
-      front.addEventListener('click', (e) => {
-        if (e.target.closest(ignoreSelector)) return;
-        if (isMobile()) {
-          // On mobile, tap right half turns next, tap left half turns prev
-          const rect = front.getBoundingClientRect();
-          const clickX = e.clientX - rect.left;
-          if (clickX > rect.width * 0.4) turnNext();
-          else turnPrev();
-        } else {
-          if (idx === currentSheetIndex) turnNext();
-        }
-      });
-    }
-    if (back) {
-      back.addEventListener('click', (e) => {
-        if (e.target.closest(ignoreSelector)) return;
-        if (isMobile()) {
-          const rect = back.getBoundingClientRect();
-          const clickX = e.clientX - rect.left;
-          if (clickX > rect.width * 0.4) turnNext();
-          else turnPrev();
-        } else {
-          if (idx === currentSheetIndex - 1) turnPrev();
-        }
-      });
-    }
-  });
-
-  // CHAPTER 5 INTERACTIVE PHOTO & CAPTION & WISH SWITCHER
-  function initCh5Switcher() {
-    const ch5Buttons = document.querySelectorAll('.ch5-thumb');
-    const imgEl = document.getElementById('book-img-slot-5');
-    const capEl = document.getElementById('ch5-caption');
-    const bodyEl = document.getElementById('ch5-body-text');
-
-    ch5Buttons.forEach(btn => {
-      function handleSwitch(e) {
-        if (e) {
-          e.stopPropagation();
-        }
-        ch5Buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-
-        const newSrc = btn.getAttribute('data-src');
-        const newCap = btn.getAttribute('data-caption');
-        const newText = btn.getAttribute('data-text');
-
-        if (imgEl && newSrc) {
-          imgEl.style.transition = 'opacity 0.22s ease, transform 0.22s ease';
-          imgEl.style.opacity = '0';
-          imgEl.style.transform = 'scale(0.96)';
-          setTimeout(() => {
-            imgEl.src = newSrc;
-            imgEl.style.opacity = '1';
-            imgEl.style.transform = 'scale(1)';
-          }, 220);
-        }
-
-        if (capEl && newCap) {
-          capEl.style.transition = 'opacity 0.2s ease';
-          capEl.style.opacity = '0';
-          setTimeout(() => {
-            capEl.textContent = newCap;
-            capEl.style.opacity = '1';
-          }, 200);
-        }
-
-        if (bodyEl && newText) {
-          bodyEl.style.transition = 'opacity 0.2s ease';
-          bodyEl.style.opacity = '0';
-          setTimeout(() => {
-            bodyEl.textContent = newText;
-            bodyEl.style.opacity = '1';
-          }, 200);
-        }
-      }
-
-      btn.addEventListener('click', handleSwitch);
-    });
-  }
-  initCh5Switcher();
-
-  // KEYBOARD NAVIGATION
-  document.addEventListener('keydown', (e) => {
-    if (!modal.classList.contains('is-open')) {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
-        openBook();
-      }
-      return;
-    }
-    if (e.key === 'Escape') {
-      closeBook();
-    } else if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
-      turnNext();
-    } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
-      turnPrev();
-    }
-  });
-
-  // TOUCH SWIPE NAVIGATION ON MOBILE (FLAWLESS & INTUITIVE)
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchFromInteractive = false;
-  modal.addEventListener('touchstart', (e) => {
-    touchFromInteractive = !!e.target.closest('button, a, input, select, .envelope-wrapper, .dog-ear-curl, .wish-card, .wishing-jar-stage, .wishes-grid, .ch5-thumbs-row, .ch5-thumb');
-    touchStartX = e.changedTouches[0].clientX;
-    touchStartY = e.changedTouches[0].clientY;
-  }, { passive: true });
-
-  modal.addEventListener('touchend', (e) => {
-    if (touchFromInteractive) return;
-    const diffX = e.changedTouches[0].clientX - touchStartX;
-    const diffY = e.changedTouches[0].clientY - touchStartY;
-    if (Math.abs(diffX) > 45 && Math.abs(diffX) > Math.abs(diffY)) {
-      if (diffX < 0) turnNext(); // swipe left -> next page
-      else turnPrev();          // swipe right -> prev page
-    }
-  }, { passive: true });
-
-  // WINDOW RESIZE RECALCULATION
-  window.addEventListener('resize', () => {
-    if (modal.classList.contains('is-open')) {
-      updateView(false);
-    }
-  });
-
-  // INTERACTIVE ENVELOPE
-  if (waxBtn) {
-    waxBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      envelope.classList.add('is-open');
-    });
-  }
-  if (letterCloseBtn) {
-    letterCloseBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      envelope.classList.remove('is-open');
-    });
-  }
-
-  // AMBIENT PARTICLES & PETALS CANVAS
-  let particlesAnimId = null;
-  function startAmbientParticles() {
-    const canvas = document.getElementById('book-ambient-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let width = (canvas.width = window.innerWidth);
-    let height = (canvas.height = window.innerHeight);
-
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-    });
-
-    const mobile = isMobile();
-    const particles = [];
-    const numParticles = mobile ? 12 : 36;
-    for (let i = 0; i < numParticles; i++) {
-      particles.push({
-        x: Math.random() * width,
-        y: Math.random() * height,
-        r: Math.random() * 2 + 0.8,
-        speedY: Math.random() * 0.35 + 0.15,
-        speedX: Math.sin(Math.random() * 6) * 0.25,
-        opacity: Math.random() * 0.5 + 0.2,
-        hue: Math.random() > 0.4 ? 335 : 45
-      });
-    }
-
-    function render() {
-      if (!modal.classList.contains('is-open')) {
-        cancelAnimationFrame(particlesAnimId);
-        return;
-      }
-      ctx.clearRect(0, 0, width, height);
-
-      particles.forEach(p => {
-        p.y -= p.speedY;
-        p.x += p.speedX;
-        if (p.y < -10) {
-          p.y = height + 10;
-          p.x = Math.random() * width;
-        }
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${p.hue}, 85%, 75%, ${p.opacity})`;
-        if (!mobile) {
-          ctx.shadowBlur = 6;
-          ctx.shadowColor = `hsla(${p.hue}, 85%, 70%, 0.8)`;
-        }
-        ctx.fill();
-      });
-
-      particlesAnimId = requestAnimationFrame(render);
-    }
-
-    render();
-  }
-
-  // CELEBRATION ELEMENTS
-  const celebrationModal = document.getElementById('closing-grand-celebration');
-  const replayBtn = document.getElementById('btn-replay-flipbook');
-  const dismissBtn = document.getElementById('btn-dismiss-celebration');
-  const secretLetterCard = document.getElementById('secret-letter-card');
-
-  // ENVELOPE OPEN & CLOSE LOGIC (FLAWLESS)
-  function openSecretLetter(e) {
-    if (e) e.stopPropagation();
-    if (secretLetterCard) {
-      secretLetterCard.classList.add('is-open');
-      playPaperSound();
-    }
-  }
-
-  function closeSecretLetter(e) {
-    if (e) e.stopPropagation();
-    if (secretLetterCard) {
-      secretLetterCard.classList.remove('is-open');
-      playPaperSound();
-    }
-  }
-
-  if (waxBtn) waxBtn.addEventListener('click', openSecretLetter);
-  if (envelope) envelope.addEventListener('click', openSecretLetter);
-  if (letterCloseBtn) letterCloseBtn.addEventListener('click', closeSecretLetter);
-
-  // CHAPTER 6 INTERACTIVE WISH CARDS & THEMATIC PARTICLE ENGINE
-  function initChapter6Wishes() {
-    const wishCards = document.querySelectorAll('.wish-card');
-    const wishingJar = document.getElementById('wishing-jar-interactive');
-    const overlay = document.getElementById('wish-particles-overlay');
-
-    const WISH_THEMES = {
-      peace: {
-        emojis: ['🌸', '💮', '🌺', '✨', '🍃', '💖'],
-        colors: ['#ff85b8', '#ffb3d1', '#ffffff', '#ffd1dc'],
-        toast: '🌸 Nguyện chúc em một đời an yên, thanh thản và dịu dàng!',
-        soundChord: [523.25, 659.25, 783.99, 1046.50, 1318.51] // C Major
-      },
-      radiant: {
-        emojis: ['✨', '⭐', '🌟', '💫', '✦', '✧', '💛'],
-        colors: ['#f5a623', '#ffd166', '#fff9db', '#ffa94d'],
-        toast: '✨ Nguyện chúc nụ cười em luôn tỏa sáng rạng ngời như ánh ban mai!',
-        soundChord: [587.33, 739.99, 880.00, 1174.66, 1479.98] // D Major
-      },
-      loved: {
-        emojis: ['💖', '❤️', '💕', '💓', '💗', '🎀'],
-        colors: ['#ff4d6d', '#ff758f', '#ff8fa3', '#ffffff'],
-        toast: '💖 Nguyện chúc em luôn được chở che, yêu chiều và trân trọng nhất!',
-        soundChord: [440.00, 554.37, 659.25, 880.00, 1108.73] // A Major
-      },
-      luck: {
-        emojis: ['🍀', '☘️', '🍃', '✨', '💚', '🌟'],
-        colors: ['#2ec4b6', '#52b788', '#b7e4c7', '#d8f3dc'],
-        toast: '🍀 Nguyện chúc mọi điều may mắn và tốt lành nhất đều mỉm cười với em!',
-        soundChord: [523.25, 659.25, 783.99, 987.77, 1318.51] // C Maj7
-      }
-    };
-
-    const wishMsgEl = document.getElementById('ch6-wish-message');
-
-    function showWishMessage(text, themeColor) {
-      if (!wishMsgEl) return;
-      wishMsgEl.textContent = text;
-      wishMsgEl.style.color = themeColor;
-      wishMsgEl.classList.remove('is-wished-active');
-      requestAnimationFrame(() => {
-        wishMsgEl.classList.add('is-wished-active');
-      });
-    }
-
-    function spawnThemedWishParticles(card, wishKey) {
-      if (!overlay) return;
-      const theme = WISH_THEMES[wishKey] || WISH_THEMES.peace;
-
-      // Limit particle clutter for 60fps performance
-      while (overlay.children.length > 20) {
-        overlay.removeChild(overlay.firstChild);
-      }
-
-      const overlayRect = overlay.getBoundingClientRect();
-      const rect = card.getBoundingClientRect();
-      const startX = (rect.left + rect.width / 2) - overlayRect.left;
-      const startY = (rect.top + rect.height / 2) - overlayRect.top;
-
-      const fragment = document.createDocumentFragment();
-
-      // 1. Burst floating themed elements
-      const count = isMobile() ? 9 : 14;
-      for (let i = 0; i < count; i++) {
-        const el = document.createElement('div');
-        el.className = 'floating-wish-blossom';
-        el.textContent = theme.emojis[Math.floor(Math.random() * theme.emojis.length)];
-
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 80 + 35;
-        const burstX = Math.cos(angle) * speed;
-        const burstY = Math.sin(angle) * speed - (Math.random() * 50 + 25);
-        const floatY = -(Math.random() * 180 + 120);
-        const swayX = (Math.random() - 0.5) * 100;
-        const rot = (Math.random() - 0.5) * 540;
-        const size = Math.random() * 8 + 15;
-        const duration = Math.random() * 0.5 + 1.4;
-        const delay = Math.random() * 0.08;
-
-        el.style.left = startX + 'px';
-        el.style.top = startY + 'px';
-        el.style.fontSize = size + 'px';
-        el.style.setProperty('--burst-x', burstX + 'px');
-        el.style.setProperty('--burst-y', burstY + 'px');
-        el.style.setProperty('--float-y', floatY + 'px');
-        el.style.setProperty('--sway-x', swayX + 'px');
-        el.style.setProperty('--rotate-deg', rot + 'deg');
-        el.style.animationDuration = duration + 's';
-        el.style.animationDelay = delay + 's';
-
-        fragment.appendChild(el);
-        setTimeout(() => {
-          if (el.parentNode) el.parentNode.removeChild(el);
-        }, (duration + delay) * 1000 + 50);
-      }
-
-      // 2. Stream of stardust into the jar
-      if (wishingJar) {
-        const jRect = wishingJar.getBoundingClientRect();
-        const targetX = (jRect.left + jRect.width / 2) - overlayRect.left;
-        const targetY = (jRect.top + jRect.height * 0.45) - overlayRect.top;
-        const starCount = isMobile() ? 5 : 7;
-
-        for (let k = 0; k < starCount; k++) {
-          const star = document.createElement('div');
-          star.className = 'stardust-stream-particle';
-          star.textContent = k % 2 === 0 ? '✦' : '✧';
-          star.style.color = theme.colors[k % theme.colors.length];
-          star.style.left = startX + 'px';
-          star.style.top = startY + 'px';
-
-          const dx = targetX - startX;
-          const dy = targetY - startY;
-          const arcControlY = Math.min(startY, targetY) - (Math.random() * 70 + 30);
-
-          star.style.setProperty('--dx', dx + 'px');
-          star.style.setProperty('--dy', dy + 'px');
-          star.style.setProperty('--arc-y', (arcControlY - startY) + 'px');
-          star.style.animationDelay = (k * 0.04) + 's';
-
-          fragment.appendChild(star);
-          setTimeout(() => {
-            if (star.parentNode) star.parentNode.removeChild(star);
-          }, 650);
-        }
-
-        // Jar pulse when stardust enters
-        setTimeout(() => {
-          wishingJar.classList.add('jar-pulse-glow');
-          setTimeout(() => wishingJar.classList.remove('jar-pulse-glow'), 550);
-        }, 320);
-      }
-
-      // Single paint pass
-      overlay.appendChild(fragment);
-
-      // Instant message feedback & audio
-      showWishMessage(theme.toast, theme.colors[0]);
-      playMelodicChime(theme.soundChord);
-    }
-
-    wishCards.forEach(card => {
-      card.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        const wishKey = card.getAttribute('data-wish') || 'peace';
-        
-        card.classList.add('is-wished');
-        card.classList.remove('just-clicked');
-        requestAnimationFrame(() => {
-          card.classList.add('just-clicked');
-        });
-
-        spawnThemedWishParticles(card, wishKey);
-      });
-    });
-
-    // Clicking jar directly releases celebration burst
-    if (wishingJar) {
-      wishingJar.addEventListener('click', (e) => {
-        e.stopPropagation();
-        e.preventDefault();
-        wishingJar.classList.add('jar-pulse-glow');
-        setTimeout(() => wishingJar.classList.remove('jar-pulse-glow'), 550);
-
-        if (overlay) {
-          while (overlay.children.length > 20) {
-            overlay.removeChild(overlay.firstChild);
-          }
-          const overlayRect = overlay.getBoundingClientRect();
-          const rect = wishingJar.getBoundingClientRect();
-          const startX = (rect.left + rect.width / 2) - overlayRect.left;
-          const startY = (rect.top + rect.height / 2) - overlayRect.top;
-          const allEmojis = ['🌸', '✨', '💖', '🍀', '⭐', '🌟', '💕', '🎀'];
-          const frag = document.createDocumentFragment();
-          const pCount = isMobile() ? 12 : 18;
-
-          for (let i = 0; i < pCount; i++) {
-            const el = document.createElement('div');
-            el.className = 'floating-wish-blossom';
-            el.textContent = allEmojis[Math.floor(Math.random() * allEmojis.length)];
-
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 85 + 40;
-            const burstX = Math.cos(angle) * speed;
-            const burstY = Math.sin(angle) * speed - (Math.random() * 60 + 20);
-            const floatY = -(Math.random() * 200 + 120);
-            const swayX = (Math.random() - 0.5) * 110;
-            const rot = (Math.random() - 0.5) * 540;
-            const duration = Math.random() * 0.5 + 1.5;
-
-            el.style.left = startX + 'px';
-            el.style.top = startY + 'px';
-            el.style.fontSize = (Math.random() * 8 + 16) + 'px';
-            el.style.setProperty('--burst-x', burstX + 'px');
-            el.style.setProperty('--burst-y', burstY + 'px');
-            el.style.setProperty('--float-y', floatY + 'px');
-            el.style.setProperty('--sway-x', swayX + 'px');
-            el.style.setProperty('--rotate-deg', rot + 'deg');
-            el.style.animationDuration = duration + 's';
-
-            frag.appendChild(el);
-            setTimeout(() => {
-              if (el.parentNode) el.parentNode.removeChild(el);
-            }, duration * 1000 + 50);
-          }
-          overlay.appendChild(frag);
-        }
-
-        showWishMessage('🌟 Cả một bầu trời yêu thương và may mắn dành riêng cho em!', '#d48806');
-        playMelodicChime([523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98]);
-      });
-    }
-  }
-
-  function playMelodicChime(chord) {
-    try {
-      const ctx = getSharedAudioCtx();
-      if (!ctx) return;
-      const notes = chord || [523.25, 659.25, 783.99, 1046.50];
-      const now = ctx.currentTime;
-      notes.forEach((f, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        const start = now + idx * 0.055;
-        osc.frequency.setValueAtTime(f, start);
-        gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(0.12, start + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + 0.55);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(start);
-        osc.stop(start + 0.6);
-      });
-    } catch(err) {}
-  }
-
-  initChapter6Wishes();
-
-  // GRAND CLOSING CELEBRATION
-  let fireworksAnimId = null;
-  function triggerSpecialBookClosing() {
-    closeBook();
-    if (celebrationModal) {
-      celebrationModal.classList.add('is-active');
-      celebrationModal.setAttribute('aria-hidden', 'false');
-      playCelebrationChord();
-      startCelebrationFireworks();
-    }
-  }
-
-  function dismissCelebration() {
-    if (celebrationModal) {
-      celebrationModal.classList.remove('is-active');
-      celebrationModal.setAttribute('aria-hidden', 'true');
-      if (fireworksAnimId) cancelAnimationFrame(fireworksAnimId);
-    }
-  }
-
-  function replayFromBeginning() {
-    dismissCelebration();
-    currentSheetIndex = 0;
-    mobilePageIndex = 0;
-    updateView(false);
-    openBook();
-  }
-
-  if (closeBackCoverBtn) {
-    closeBackCoverBtn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      triggerSpecialBookClosing();
-    });
-  }
-
-  if (replayBtn) replayBtn.addEventListener('click', replayFromBeginning);
-  if (dismissBtn) dismissBtn.addEventListener('click', dismissCelebration);
-
-  function playCelebrationChord() {
-    try {
-      const ctx = getSharedAudioCtx();
-      if (!ctx) return;
-      const chord = [392.00, 523.25, 659.25, 783.99, 1046.50, 1318.51];
-      const now = ctx.currentTime;
-      chord.forEach((f, idx) => {
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'sine';
-        const start = now + idx * 0.08;
-        osc.frequency.setValueAtTime(f, start);
-        gain.gain.setValueAtTime(0.0001, start);
-        gain.gain.exponentialRampToValueAtTime(0.14, start + 0.03);
-        gain.gain.exponentialRampToValueAtTime(0.0001, start + 1.1);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start(start);
-        osc.stop(start + 1.2);
-      });
-    } catch(e) {}
-  }
-
-  // FIREWORKS & FLOATING HEARTS CANVAS
-  function startCelebrationFireworks() {
-    const canvas = document.getElementById('closing-fireworks-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    let w = (canvas.width = window.innerWidth);
-    let h = (canvas.height = window.innerHeight);
-
-    window.addEventListener('resize', () => {
-      w = canvas.width = window.innerWidth;
-      h = canvas.height = window.innerHeight;
-    });
-
-    const particles = [];
-    const colors = ['#ff6b8b', '#ffd166', '#06d6a0', '#118ab2', '#ff9f1c', '#e056fd', '#f8a5c2'];
-
-    function spawnRocket() {
-      const startX = Math.random() * (w * 0.8) + w * 0.1;
-      const targetY = Math.random() * (h * 0.5) + h * 0.1;
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      const count = isMobile() ? 28 : 55;
-      for (let i = 0; i < count; i++) {
-        const angle = (Math.PI * 2 * i) / count + (Math.random() - 0.5) * 0.2;
-        const speed = Math.random() * 4.5 + 2;
-        particles.push({
-          x: startX,
-          y: targetY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          color: color,
-          alpha: 1,
-          decay: Math.random() * 0.015 + 0.01,
-          size: Math.random() * 2.5 + 1.5,
-          isHeart: Math.random() > 0.7
-        });
-      }
-    }
-
-    // Click to add more fireworks
-    canvas.addEventListener('click', (e) => {
-      const color = colors[Math.floor(Math.random() * colors.length)];
-      for (let i = 0; i < 40; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const speed = Math.random() * 5 + 1.5;
-        particles.push({
-          x: e.clientX,
-          y: e.clientY,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          color: color,
-          alpha: 1,
-          decay: Math.random() * 0.018 + 0.012,
-          size: Math.random() * 3 + 1.5,
-          isHeart: true
-        });
-      }
-      playChimeSound();
-    });
-
-    let rocketTimer = 0;
-    function render() {
-      if (!celebrationModal.classList.contains('is-active')) return;
-      ctx.clearRect(0, 0, w, h);
-
-      rocketTimer++;
-      if (rocketTimer % 45 === 0) {
-        spawnRocket();
-      }
-
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.05; // gravity
-        p.vx *= 0.98; // drag
-        p.alpha -= p.decay;
-
-        if (p.alpha <= 0) {
-          particles.splice(i, 1);
-          continue;
-        }
-
-        ctx.save();
-        ctx.globalAlpha = p.alpha;
-        ctx.fillStyle = p.color;
-        ctx.shadowBlur = 8;
-        ctx.shadowColor = p.color;
-        if (p.isHeart) {
-          ctx.font = (p.size * 5) + "px Arial";
-          ctx.fillText('💖', p.x, p.y);
-        } else {
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-          ctx.fill();
-        }
-        ctx.restore();
-      }
-
-      fireworksAnimId = requestAnimationFrame(render);
-    }
-
-    spawnRocket();
-    setTimeout(spawnRocket, 300);
-    render();
-  }
-
 })();
-

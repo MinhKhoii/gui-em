@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trạm Nguyện Ước Ánh Sao · Góc Nhỏ Dịu Dàng Của Em 🌸</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+
+    <!-- Google Fonts cao cấp, hỗ trợ tiếng Việt mượt mà -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;600;700&family=Dancing+Script:wght@600;700&family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <link rel="stylesheet" href="css/preview.css">
+</head>
+
+<body>
+    <!-- Nền vũ trụ Canvas siêu nhẹ -->
+    <canvas id="sky-canvas"></canvas>
+
+    <!-- Ánh sáng cực quang mờ ảo -->
+    <div class="aurora-glow" aria-hidden="true">
+        <div class="aurora-circle-1"></div>
+        <div class="aurora-circle-2"></div>
+    </div>
+
+    <!-- Nhạc nền từ dự án gốc -->
+    <audio id="ambient-audio" src="audio/soundtrack.mp3" preload="auto" loop></audio>
+
+    <!-- Thanh trên cùng: Nút quay lại, Sổ nguyện ước & Nút phát nhạc -->
+    <nav class="top-navbar" aria-label="Thanh điều hướng">
+        <a class="back-link" href="index.html" title="Trở lại trang chính">
+            <span>←</span> Trang chính
+        </a>
+        <div class="nav-right-actions">
+            <a href="book.html" class="journal-nav-btn" style="text-decoration:none;" title="Mở Cuốn Sách Kỷ Niệm">
+                <span>📖 Sách</span>
+            </a>
+            <button type="button" class="journal-nav-btn" id="open-journal-nav-btn" title="Mở Sổ Nguyện Ước Ánh Sao">
+                <span>✨ Sổ Sao</span>
+                <span class="count-badge" id="nav-star-count">0</span>
+            </button>
+            <div class="music-unified-capsule" id="music-unified-capsule">
+                <button type="button" class="music-capsule-toggle" id="music-btn" title="Bật/Tắt phát nhạc">
+                    <span class="disc-icon">🎵</span>
+                    <span id="music-btn-text">Bật nhạc</span>
+                </button>
+                <div class="music-capsule-divider" aria-hidden="true"></div>
+                <button type="button" class="music-capsule-menu" id="open-music-modal-btn"
+                    title="Hộp Nhạc Giai Điệu - Đổi bài hát hoặc tải nhạc mới">
+                    <span>🎶</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Tiêu đề mở đầu  -->
+    <header class="preview-header">
+        <div class="preview-badge">✨ GÓC BÌNH YÊN & ĐIỀU KỲ DIỆU ✨</div>
+        <h1 class="preview-title">Trạm Nguyện Ước Ánh Sao</h1>
+        <p class="preview-subtitle">
+            Chạm vào chiếc lọ thủy tinh để nhận những lời nhắn gửi bí mật, đính kèm một bức ảnh kỷ niệm và thả những
+            điều ước của riêng em lên dải ngân hà nhé 💫
+        </p>
+    </header>
+
+    <!-- KHU VỰC CHIẾC LỌ THỦY TINH ƯỚC NGUYỆN -->
+    <section class="jar-stage-section" aria-label="Chiếc lọ ước nguyện">
+        <div class="jar-halo" aria-hidden="true"></div>
+
+        <div class="magic-jar-wrapper" id="magic-jar" title="Chạm để mở một ngôi sao ước nguyện">
+            <div class="jar-cork"></div>
+            <div class="jar-neck"></div>
+            <div class="jar-ribbon"></div>
+            <div class="jar-seal-badge">🌸</div>
+
+            <div class="jar-body" id="jar-body-container">
+                <!-- Các ngôi sao phát sáng bên trong lọ -->
+                <span class="jar-star"
+                    style="top:25%; left:30%; --sz:20px; --col:#ffe680; --mx:6px; --my:-6px; --dur:2.8s; --del:0s;">★</span>
+                <span class="jar-star"
+                    style="top:45%; left:60%; --sz:16px; --col:#ff9ebb; --mx:-5px; --my:-8px; --dur:3.4s; --del:-0.8s;">✦</span>
+                <span class="jar-star"
+                    style="top:65%; left:25%; --sz:22px; --col:#b3f0ff; --mx:7px; --my:5px; --dur:3.1s; --del:-1.5s;">★</span>
+                <span class="jar-star"
+                    style="top:35%; left:65%; --sz:15px; --col:#ffd1dc; --mx:-6px; --my:6px; --dur:2.6s; --del:-2.2s;">✧</span>
+                <span class="jar-star"
+                    style="top:75%; left:55%; --sz:19px; --col:#ffeaa7; --mx:5px; --my:-7px; --dur:3.6s; --del:-0.4s;">★</span>
+                <span class="jar-star"
+                    style="top:55%; left:40%; --sz:17px; --col:#c5b3ff; --mx:-4px; --my:-5px; --dur:3.0s; --del:-1.1s;">✦</span>
+            </div>
+        </div>
+
+        <div class="jar-hint-wrap">
+            <button type="button" class="jar-action-btn" id="open-wish-btn">
+                <span>✨</span> Mở một ngôi sao may mắn <span>🌸</span>
+            </button>
+            <p class="jar-subhint">Chạm vào chiếc lọ hoặc nút bấm để khám phá thông điệp</p>
+        </div>
+    </section>
+
+    <!-- HỘP THOẠI POPUP: NỘI DUNG ĐIỀU ƯỚC KHI MỞ LỌ -->
+    <div class="wish-modal-overlay" id="wish-modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="wish-card">
+            <button type="button" class="wish-close-btn" id="close-modal-btn" aria-label="Đóng">✕</button>
+            <span class="wish-star-icon">🌟</span>
+            <p class="wish-card-kicker">MÓN QUÀ DÀNH CHO TÂM HỒN EM</p>
+            <div class="wish-card-text" id="wish-quote-text">
+                "Mong em mỗi sáng thức dậy đều thấy lòng bình yên, mỗi tối đi ngủ đều mỉm cười thanh thản ✨"
+            </div>
+            <p class="wish-card-footer">Ngôi sao này thuộc về em. Mong cuộc sống luôn dịu dàng với em 🌸</p>
+            <div class="wish-modal-actions">
+                <button type="button" class="wish-save-journal-btn" id="save-current-wish-btn">
+                    <span>⭐</span> Lưu vào sổ sao
+                </button>
+                <button type="button" class="wish-next-btn" id="another-wish-btn">
+                    <span>🔄</span> Mở ngôi sao khác
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- KHU VỰC: EM TỰ VIẾT ĐIỀU ƯỚC + ĐÍNH KÈM ẢNH KỶ NIỆM + LƯU LẠI -->
+    <section class="user-wish-box" aria-label="Gửi điều ước">
+        <h2 class="user-wish-title">
+            <span>🌠</span> Thả Một Ngôi Sao Ước Nguyện <span>✨</span>
+        </h2>
+        <p class="user-wish-desc">
+            Nhập vào mong ước của em và có thể đính kèm một bức ảnh kỷ niệm, ngôi sao sẽ mang nó bay vút vào dải ngân hà
+            và lưu giữ lại mãi mãi:
+        </p>
+
+        <form id="wish-form" class="user-wish-form" onsubmit="return false;">
+            <div class="wish-input-row">
+                <input type="text" id="user-wish-input" class="user-wish-input" maxlength="120"
+                    placeholder="Ví dụ: Mong luôn bình yên, vui vẻ và đạt được ước mơ..." autocomplete="off">
+                <button type="submit" id="send-wish-btn" class="user-wish-send-btn">
+                    <span>🚀</span> Thả sao
+                </button>
+            </div>
+
+            <!-- Thanh đính kèm ảnh -->
+            <div class="photo-attach-bar">
+                <label for="wish-photo-input" class="photo-attach-btn" title="Chọn một bức ảnh kỷ niệm từ máy của em">
+                    <span>📷</span>
+                    <span id="photo-attach-label">Đính kèm ảnh</span>
+                </label>
+                <input type="file" id="wish-photo-input" accept="image/*" style="display:none;">
+
+                <!-- Chip hiển thị ảnh xem trước -->
+                <div id="photo-preview-chip" class="photo-preview-chip" style="display:none;">
+                    <img id="photo-preview-img" src="" alt="Ảnh kỷ niệm">
+                    <span id="photo-chip-name" class="photo-chip-name">anh-ky-niem.jpg</span>
+                    <button type="button" id="photo-remove-btn" class="photo-remove-btn" title="Gỡ ảnh">✕</button>
+                </div>
+            </div>
+        </form>
+    </section>
+
+    <!-- KHU VỰC: 3 TẤM THẺ ĐẶC QUYỀN  -->
+    <section class="privilege-section" aria-label="Đặc quyền dành riêng cho em">
+        <h2 class="privilege-heading">3 Tấm Thẻ Đặc Quyền Dành Cho Em</h2>
+        <p class="privilege-sub">Chạm vào từng tấm thẻ bí mật để lật mở những điều bất ngờ dành riêng cho em 💌</p>
+
+        <div class="cards-grid">
+            <!-- Thẻ 1 -->
+            <div class="flip-card" tabindex="0" role="button" aria-label="Đặc quyền số 1">
+                <div class="flip-card-inner">
+                    <div class="card-front">
+                        <span class="card-seal">👑</span>
+                        <div>
+                            <p class="card-title">Đặc Quyền 01</p>
+                            <span class="card-tap-hint">Chạm để lật</span>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <span class="card-reward-icon">💖</span>
+                        <div>
+                            <p class="card-reward-title">Quyền Nuông Chiều</p>
+                            <p class="card-reward-desc">Bất kể khi nào em mệt mỏi hay buồn bực, em luôn là điều quý giá
+                                nhất. Mọi mong muốn đều được ưu tiên!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thẻ 2 -->
+            <div class="flip-card" tabindex="0" role="button" aria-label="Đặc quyền số 2">
+                <div class="flip-card-inner">
+                    <div class="card-front">
+                        <span class="card-seal">🍰</span>
+                        <div>
+                            <p class="card-title">Đặc Quyền 02</p>
+                            <span class="card-tap-hint">Chạm để lật</span>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <span class="card-reward-icon">🍰</span>
+                        <div>
+                            <p class="card-reward-title">Quyền Ăn Ngon</p>
+                            <p class="card-reward-desc">Tặng em một chầu trà sữa hoặc món ăn yêu thích bất cứ khi nào em
+                                thèm!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Thẻ 3 -->
+            <div class="flip-card" tabindex="0" role="button" aria-label="Đặc quyền số 3">
+                <div class="flip-card-inner">
+                    <div class="card-front">
+                        <span class="card-seal">🎧</span>
+                        <div>
+                            <p class="card-title">Đặc Quyền 03</p>
+                            <span class="card-tap-hint">Chạm để lật</span>
+                        </div>
+                    </div>
+                    <div class="card-back">
+                        <span class="card-reward-icon">🌸</span>
+                        <div>
+                            <p class="card-reward-title">Trạm Lắng Nghe</p>
+                            <p class="card-reward-desc">Bất cứ lúc nào em cần người tâm sự, luôn có một người sẵn sàng
+                                lắng nghe 24/7.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER LỜI CHÚC & NÚT QUAY LẠI -->
+    <footer class="preview-footer">
+        <p class="footer-tagline">"Mong em mỗi ngày đều ngập tràn niềm vui và được yêu thương!"</p>
+        <div class="footer-action-row">
+            <a href="book.html" class="footer-btn primary">
+                <span>📖</span> Mở Cuốn Sách Kỷ Niệm
+            </a>
+            <a href="index.html" class="footer-btn secondary">
+                <span>🏠</span> Trở về Trang Chính
+            </a>
+        </div>
+    </footer>
+
+    <!-- MODAL SỔ NGUYỆN ƯỚC ÁNH SAO (LƯU TRỮ VĨNH VIỄN VÀO LOCALSTORAGE) -->
+    <div class="journal-modal-overlay" id="journal-modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="journal-sheet">
+            <button type="button" class="wish-close-btn" id="close-journal-btn" aria-label="Đóng sổ">✕</button>
+            <div class="journal-header">
+                <h3>📖 Sổ Nguyện Ước Ánh Sao</h3>
+                <p>Nơi lưu giữ những mong ước và khoảnh khắc đẹp đẽ của em ✨</p>
+            </div>
+
+            <div class="journal-list" id="journal-list">
+                <!-- Nội dung danh sách điều ước sẽ được render tại đây -->
+            </div>
+
+            <div class="journal-footer">
+                <button type="button" class="journal-close-pill-btn" id="journal-close-pill-btn">
+                    <span>✕</span> Đóng Sổ Sao
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LIGHTBOX PHÓNG TO ẢNH KỶ NIỆM -->
+    <div class="lightbox-overlay" id="lightbox-modal">
+        <img id="lightbox-img" src="" alt="Ảnh kỷ niệm phóng to">
+    </div>
+
+    <!-- MODAL HỘP NHẠC GIAI ĐIỆU (QUẢN LÝ BÀI HÁT & TẢI NHẠC MỚI) -->
+    <div class="music-modal-overlay" id="music-modal" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="music-sheet">
+            <button type="button" class="wish-close-btn" id="close-music-btn" aria-label="Đóng hộp nhạc">✕</button>
+            <div class="music-header">
+                <h3>🎶 Hộp Nhạc Giai Điệu</h3>
+                <p>Chọn bài hát du dương hoặc tải lên ca khúc yêu thích của em ✨</p>
+            </div>
+
+            <!-- Thanh điều khiển chính ngay trong modal -->
+            <div class="music-master-card">
+                <div class="music-now-info">
+                    <span class="disc-icon" id="modal-disc-icon">🎵</span>
+                    <div>
+                        <p class="music-now-title" id="modal-now-title">Bản Nhạc Gốc</p>
+                        <span class="music-now-status" id="modal-now-status">Đang phát 🌸</span>
+                    </div>
+                </div>
+                <button type="button" class="music-master-toggle-btn" id="modal-master-toggle-btn">
+                    <span id="modal-toggle-icon">⏸</span>
+                    <span id="modal-toggle-text">Tạm dừng</span>
+                </button>
+            </div>
+
+            <!-- Danh sách bài hát -->
+            <div class="music-playlist" id="music-playlist">
+                <!-- Được render tự động từ IndexedDB và bài gốc -->
+            </div>
+
+            <!-- Nút tải nhạc mới lên -->
+            <div class="music-upload-section">
+                <label for="music-file-input" class="music-upload-btn">
+                    <span>➕</span> Tải bài hát yêu thích lên (.mp3, .wav, .m4a)
+                </label>
+                <input type="file" id="music-file-input" accept="audio/*" style="display:none;">
+                <p class="music-upload-hint">✨ Nhạc tải lên được lưu an toàn trên máy, không bị mất khi thoát trang</p>
+            </div>
+
+            <div class="journal-footer">
+                <button type="button" class="journal-close-pill-btn" id="music-close-pill-btn">
+                    <span>✕</span> Đóng Hộp Nhạc
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast thông báo -->
+    <div id="toast-msg">✨ Điều ước đã bay vào dải ngân hà!</div>
+
+    <!-- ================= LOGIC TOÀN BỘ TRẠM NGUYỆN ƯỚC ================= -->
+    <script src="js/preview.js"></script>
+</body>
+
+</html>

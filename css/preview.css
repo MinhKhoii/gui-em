@@ -1,0 +1,1543 @@
+/* ================= RESET & CỐT LÕI SIÊU NHẸ CHO MOBILE ================= */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background: #080614;
+            color: #ffffff;
+            font-family: 'Comfortaa', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+        }
+
+        /* Ẩn hoàn toàn thanh cuộn (scrollbar/con lăn) trên mọi trình duyệt */
+        html::-webkit-scrollbar,
+        body::-webkit-scrollbar,
+        *::-webkit-scrollbar {
+            width: 0 !important;
+            height: 0 !important;
+            display: none !important;
+            background: transparent !important;
+        }
+
+        body {
+            position: relative;
+            background: radial-gradient(circle at 50% 18%, #1f1238 0%, #0e0922 45%, #05030e 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            padding: 16px 14px 60px;
+        }
+
+        /* ================= CANVAS VŨ TRỤ & PHÁO HOA TƯƠNG TÁC ================= */
+        #sky-canvas {
+            position: fixed;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Đốm sáng cực quang nền nhẹ, không tốn GPU */
+        .aurora-glow {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .aurora-circle-1 {
+            position: absolute;
+            top: -10vh;
+            left: 20%;
+            width: 60vw;
+            height: 60vw;
+            max-width: 500px;
+            max-height: 500px;
+            background: radial-gradient(circle, rgba(225, 105, 180, 0.16) 0%, rgba(138, 43, 226, 0.08) 50%, transparent 70%);
+            filter: blur(40px);
+            animation: floatGlow 14s ease-in-out infinite alternate;
+        }
+
+        .aurora-circle-2 {
+            position: absolute;
+            bottom: 5vh;
+            right: 10%;
+            width: 50vw;
+            height: 50vw;
+            max-width: 450px;
+            max-height: 450px;
+            background: radial-gradient(circle, rgba(72, 209, 204, 0.13) 0%, rgba(65, 105, 225, 0.06) 50%, transparent 70%);
+            filter: blur(40px);
+            animation: floatGlow 18s ease-in-out infinite alternate-reverse;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(25px, 20px) scale(1.12); }
+        }
+
+        /* ================= THANH ĐIỀU HƯỚNG & ÂM NHẠC ================= */
+        .top-navbar {
+            width: 100%;
+            max-width: 580px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 50;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: rgba(25, 17, 44, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 190, 230, 0.35);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 105, 180, 0.15);
+            margin: 0 auto 20px;
+            gap: 6px;
+            box-sizing: border-box;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #ffd8ec;
+            text-decoration: none;
+            font-size: 12.5px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 180, 220, 0.35);
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .back-link:hover, .back-link:active {
+            background: rgba(255, 105, 180, 0.3);
+            border-color: rgba(255, 220, 245, 0.75);
+            color: #ffffff;
+            box-shadow: 0 2px 10px rgba(255, 105, 180, 0.35);
+            transform: translateX(-2px);
+        }
+
+        .nav-right-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .journal-nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: rgba(255, 215, 0, 0.15);
+            border: 1px solid rgba(255, 230, 130, 0.5);
+            color: #fff2ba;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 11px;
+            border-radius: 999px;
+            cursor: pointer;
+            white-space: nowrap;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .journal-nav-btn:active {
+            transform: scale(0.96);
+        }
+
+        .journal-nav-btn .count-badge {
+            background: #ff578a;
+            color: #fff;
+            font-size: 10px;
+            padding: 1px 6px;
+            border-radius: 999px;
+            font-weight: 700;
+        }
+
+        /* Capsule âm nhạc tích hợp 2 trong 1 cực kỳ gọn gàng */
+        .music-unified-capsule {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(225, 105, 180, 0.28), rgba(120, 60, 220, 0.28));
+            border: 1px solid rgba(255, 185, 225, 0.55);
+            box-shadow: 0 0 14px rgba(255, 105, 180, 0.2);
+            overflow: hidden;
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .music-unified-capsule:hover {
+            border-color: rgba(255, 215, 240, 0.85);
+            box-shadow: 0 0 18px rgba(255, 105, 180, 0.35);
+        }
+
+        .music-capsule-toggle {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 10px;
+            background: transparent;
+            border: none;
+            color: #fff2f8;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.2s ease;
+        }
+
+        .music-capsule-toggle:active {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .music-capsule-toggle.playing .disc-icon {
+            animation: spinDisc 3s linear infinite;
+        }
+
+        .music-capsule-divider {
+            width: 1px;
+            height: 16px;
+            background: rgba(255, 200, 235, 0.4);
+            flex-shrink: 0;
+        }
+
+        .music-capsule-menu {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 9px;
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: #ffd8ec;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .music-capsule-menu:hover, .music-capsule-menu:active {
+            background: rgba(255, 105, 180, 0.35);
+            color: #ffffff;
+        }
+
+        .disc-icon {
+            font-size: 13.5px;
+            display: inline-block;
+        }c-icon {
+            font-size: 14px;
+            display: inline-block;
+        }
+
+        @keyframes spinDisc {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ================= HERO HEADER ================= */
+        .preview-header {
+            text-align: center;
+            max-width: 540px;
+            margin: 0 auto 24px;
+            z-index: 10;
+            position: relative;
+        }
+
+        .preview-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 16px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, rgba(255, 140, 195, 0.18), rgba(160, 95, 230, 0.15));
+            border: 1px solid rgba(255, 195, 230, 0.45);
+            box-shadow: 0 0 16px rgba(255, 105, 180, 0.2);
+            color: #ffcae4;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .preview-title {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(32px, 8vw, 44px);
+            font-weight: 700;
+            line-height: 1.25;
+            color: #ffe6f3;
+            text-shadow: 0 0 24px rgba(255, 130, 195, 0.6), 0 0 45px rgba(255, 105, 180, 0.3);
+            margin-bottom: 8px;
+        }
+
+        .preview-subtitle {
+            font-size: clamp(13px, 3.3vw, 14.5px);
+            color: #d8cde6;
+            line-height: 1.55;
+            font-weight: 500;
+        }
+
+        /* ================= CHIẾC LỌ THỦY TINH ƯỚC NGUYỆN ================= */
+        .jar-stage-section {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 32px;
+            z-index: 10;
+        }
+
+        .jar-halo {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 150, 210, 0.28) 0%, rgba(138, 43, 226, 0.12) 50%, transparent 72%);
+            filter: blur(28px);
+            pointer-events: none;
+            animation: jarHaloPulse 4s ease-in-out infinite alternate;
+        }
+
+        @keyframes jarHaloPulse {
+            0% { transform: scale(0.92); opacity: 0.65; }
+            100% { transform: scale(1.12); opacity: 0.95; }
+        }
+
+        /* Thân lọ thủy tinh 3D phát sáng */
+        .magic-jar-wrapper {
+            position: relative;
+            width: 170px;
+            height: 230px;
+            cursor: pointer;
+            transition: transform 0.35s cubic-bezier(0.2, 1, 0.3, 1);
+            animation: jarFloat 4.8s ease-in-out infinite alternate;
+        }
+
+        .magic-jar-wrapper:hover, .magic-jar-wrapper:active {
+            transform: scale(1.05) translateY(-4px);
+        }
+
+        @keyframes jarFloat {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+
+        .jar-cork {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 76px;
+            height: 24px;
+            background: linear-gradient(to right, #9e6443, #c9885c 40%, #8b5536 100%);
+            border-radius: 6px 6px 3px 3px;
+            border: 1px solid rgba(255, 215, 185, 0.4);
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.3), 0 3px 6px rgba(0,0,0,0.4);
+            z-index: 6;
+        }
+
+        .jar-neck {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 94px;
+            height: 18px;
+            background: rgba(255, 220, 245, 0.18);
+            border-radius: 6px;
+            border: 1.5px solid rgba(255, 210, 240, 0.55);
+            backdrop-filter: blur(6px);
+            z-index: 5;
+            box-shadow: 0 0 15px rgba(255, 140, 200, 0.25);
+        }
+
+        .jar-ribbon {
+            position: absolute;
+            top: 26px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 84px;
+            height: 6px;
+            background: #ff75a6;
+            border-radius: 3px;
+            box-shadow: 0 0 8px #ff75a6;
+            z-index: 7;
+        }
+
+        .jar-seal-badge {
+            position: absolute;
+            top: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #ff578a, #c41e57);
+            border: 1px solid #ffd1e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 0 10px rgba(255, 105, 180, 0.6);
+            z-index: 8;
+        }
+
+        .jar-body {
+            position: absolute;
+            top: 34px;
+            left: 0;
+            width: 100%;
+            height: 196px;
+            border-radius: 26px 26px 44px 44px;
+            background: linear-gradient(135deg, rgba(255, 235, 250, 0.16) 0%, rgba(185, 120, 235, 0.08) 50%, rgba(255, 150, 215, 0.22) 100%);
+            border: 2px solid rgba(255, 215, 245, 0.65);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: inset 0 0 25px rgba(255, 180, 225, 0.25), inset 3px 0 12px rgba(255, 255, 255, 0.4), inset -3px 0 12px rgba(255, 130, 200, 0.3), 0 16px 45px rgba(0, 0, 0, 0.55), 0 0 35px rgba(255, 105, 180, 0.3);
+            overflow: hidden;
+            z-index: 4;
+        }
+
+        .jar-body::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            width: 14px;
+            height: 85%;
+            background: linear-gradient(to bottom, rgba(255, 255, 255, 0.75) 0%, rgba(255, 255, 255, 0.1) 75%, transparent 100%);
+            border-radius: 10px;
+            filter: blur(2px);
+            pointer-events: none;
+        }
+
+        .jar-star {
+            position: absolute;
+            font-size: var(--sz, 18px);
+            color: var(--col, #ffeb99);
+            filter: drop-shadow(0 0 8px var(--col, #ffeb99));
+            animation: starBob var(--dur, 3s) ease-in-out infinite alternate var(--del, 0s);
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        @keyframes starBob {
+            0% { transform: translate(0, 0) rotate(0deg) scale(0.95); }
+            100% { transform: translate(var(--mx, 6px), var(--my, -8px)) rotate(var(--rot, 15deg)) scale(1.1); }
+        }
+
+        .jar-hint-wrap {
+            text-align: center;
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .jar-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ff659c 0%, #a855f7 100%);
+            border: 1px solid rgba(255, 220, 240, 0.75);
+            color: #ffffff;
+            font-family: 'Comfortaa', sans-serif;
+            font-size: 13.5px;
+            font-weight: 700;
+            box-shadow: 0 6px 24px rgba(235, 65, 125, 0.45), 0 0 25px rgba(255, 140, 205, 0.35);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .jar-action-btn:hover, .jar-action-btn:active {
+            transform: translateY(-2px) scale(1.03);
+            box-shadow: 0 8px 30px rgba(235, 65, 125, 0.6), 0 0 35px rgba(255, 160, 220, 0.5);
+        }
+
+        .jar-subhint {
+            font-size: 12px;
+            color: #d1c5e2;
+            font-style: italic;
+        }
+
+        /* ================= HỘP THOẠI POPUP MỞ ĐIỀU ƯỚC ================= */
+        .wish-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 4, 15, 0.82);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .wish-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .wish-card {
+            width: min(100%, 420px);
+            background: radial-gradient(circle at 50% 0%, #2f1742 0%, #170f29 60%, #0d0818 100%);
+            border: 1.5px solid rgba(255, 195, 235, 0.55);
+            border-radius: 26px;
+            padding: 26px 20px 20px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75), 0 0 50px rgba(255, 105, 180, 0.35);
+            position: relative;
+            transform: scale(0.9) translateY(18px);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .wish-modal-overlay.active .wish-card {
+            transform: scale(1) translateY(0);
+        }
+
+        .wish-close-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.14);
+            border: 1.5px solid rgba(255, 205, 235, 0.6);
+            color: #ffffff;
+            font-size: 20px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 60;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.45);
+            transition: all 0.2s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        .wish-close-btn:hover {
+            background: rgba(255, 87, 138, 0.5);
+            border-color: #ffffff;
+            transform: scale(1.08) rotate(90deg);
+        }
+
+        .wish-close-btn:active {
+            transform: scale(0.92);
+            background: rgba(255, 60, 120, 0.65);
+        }
+
+        .wish-star-icon {
+            font-size: 38px;
+            display: inline-block;
+            margin-bottom: 6px;
+            animation: pulseStar 2s infinite alternate ease-in-out;
+            filter: drop-shadow(0 0 16px #ffe680);
+        }
+
+        @keyframes pulseStar {
+            0% { transform: scale(0.92) rotate(-5deg); }
+            100% { transform: scale(1.1) rotate(5deg); }
+        }
+
+        .wish-card-kicker {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            color: #ffb8dc;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .wish-card-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(23px, 6.5vw, 28px);
+            font-weight: 700;
+            line-height: 1.42;
+            color: #fff2f8;
+            margin: 10px 0 14px;
+            text-shadow: 0 0 16px rgba(255, 140, 205, 0.5);
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .wish-card-footer {
+            font-size: 12px;
+            color: #d8cde6;
+            margin-bottom: 16px;
+        }
+
+        .wish-modal-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .wish-save-journal-btn {
+            background: rgba(255, 215, 0, 0.18);
+            border: 1px solid rgba(255, 230, 130, 0.6);
+            color: #fff4c2;
+            font-weight: 700;
+            padding: 9px 16px;
+            border-radius: 999px;
+            font-size: 12.5px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .wish-save-journal-btn:active {
+            transform: scale(0.96);
+        }
+
+        .wish-next-btn {
+            background: linear-gradient(135deg, #e55688, #9333ea);
+            border: 1px solid rgba(255, 210, 240, 0.6);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 9px 18px;
+            border-radius: 999px;
+            font-size: 12.5px;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(225, 60, 120, 0.4);
+            transition: all 0.25s ease;
+        }
+
+        .wish-next-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* ================= KHU VỰC TỰ VIẾT ĐIỀU ƯỚC & TẢI ẢNH LÊN ================= */
+        .user-wish-box {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(27, 18, 46, 0.68);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255, 195, 230, 0.38);
+            border-radius: 24px;
+            padding: 20px 18px;
+            margin-bottom: 34px;
+            text-align: center;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+            z-index: 10;
+        }
+
+        .user-wish-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #ffd8ec;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .user-wish-desc {
+            font-size: 12px;
+            color: #cfc2df;
+            margin-bottom: 14px;
+            line-height: 1.45;
+        }
+
+        .user-wish-form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .wish-input-row {
+            display: flex;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .user-wish-input {
+            flex: 1;
+            background: rgba(14, 9, 26, 0.88);
+            border: 1px solid rgba(255, 180, 225, 0.45);
+            border-radius: 999px;
+            padding: 11px 18px;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 13.5px;
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+
+        .user-wish-input:focus {
+            border-color: #ff7ebb;
+            box-shadow: 0 0 15px rgba(255, 126, 187, 0.35);
+        }
+
+        .user-wish-input::placeholder {
+            color: #8c7f9f;
+        }
+
+        .user-wish-send-btn {
+            background: linear-gradient(135deg, #ff659c, #ff9472);
+            border: 1px solid rgba(255, 215, 200, 0.7);
+            color: #fff;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 11px 20px;
+            border-radius: 999px;
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(255, 105, 140, 0.4);
+            transition: all 0.25s ease;
+            white-space: nowrap;
+        }
+
+        .user-wish-send-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* Thanh đính kèm ảnh kỷ niệm */
+        .photo-attach-bar {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            padding: 4px 6px;
+            flex-wrap: wrap;
+        }
+
+        .photo-attach-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px dashed rgba(255, 180, 225, 0.55);
+            color: #ffd4eb;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .photo-attach-btn:hover, .photo-attach-btn:active {
+            background: rgba(255, 105, 180, 0.2);
+            border-color: rgba(255, 180, 225, 0.8);
+            transform: translateY(-1px);
+        }
+
+        .photo-preview-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 105, 180, 0.18);
+            border: 1px solid rgba(255, 180, 225, 0.6);
+            border-radius: 999px;
+            padding: 4px 10px 4px 5px;
+            max-width: 100%;
+        }
+
+        .photo-preview-chip img {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #ffd4eb;
+        }
+
+        .photo-chip-name {
+            font-size: 11.5px;
+            color: #ffe6f3;
+            max-width: 140px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .photo-remove-btn {
+            background: rgba(255, 255, 255, 0.15);
+            border: none;
+            color: #ff94b8;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .photo-remove-btn:hover {
+            background: rgba(255, 80, 80, 0.3);
+            color: #ff4d6d;
+        }
+
+        /* ================= 3 TẤM THẺ ĐẶC QUYỀN ================= */
+        .privilege-section {
+            width: 100%;
+            max-width: 520px;
+            z-index: 10;
+            margin-bottom: 36px;
+            text-align: center;
+        }
+
+        .privilege-heading {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(26px, 6.5vw, 34px);
+            color: #ffe6f3;
+            margin-bottom: 6px;
+            text-shadow: 0 0 16px rgba(255, 130, 195, 0.5);
+        }
+
+        .privilege-sub {
+            font-size: 12.5px;
+            color: #cfc1e2;
+            margin-bottom: 18px;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            width: 100%;
+        }
+
+        .flip-card {
+            background: transparent;
+            height: 180px;
+            perspective: 800px;
+            cursor: pointer;
+        }
+
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.65s cubic-bezier(0.2, 0.8, 0.2, 1);
+            transform-style: preserve-3d;
+            border-radius: 18px;
+        }
+
+        .flip-card.flipped .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 10px;
+            border: 1px solid rgba(255, 195, 230, 0.45);
+        }
+
+        .card-front {
+            background: linear-gradient(145deg, rgba(46, 26, 68, 0.85), rgba(20, 13, 34, 0.95));
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 0 15px rgba(255, 150, 210, 0.12);
+        }
+
+        .card-seal {
+            font-size: 26px;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 10px rgba(255, 180, 220, 0.6));
+        }
+
+        .card-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #ffd8ec;
+            margin-bottom: 6px;
+        }
+
+        .card-tap-hint {
+            font-size: 10px;
+            color: #b5a4ca;
+            background: rgba(255, 255, 255, 0.08);
+            padding: 3px 8px;
+            border-radius: 999px;
+        }
+
+        .card-back {
+            background: linear-gradient(145deg, rgba(82, 33, 76, 0.95), rgba(35, 18, 54, 0.98));
+            transform: rotateY(180deg);
+            border-color: rgba(255, 150, 210, 0.7);
+            box-shadow: 0 10px 30px rgba(225, 65, 125, 0.35);
+        }
+
+        .card-reward-icon {
+            font-size: 22px;
+            margin-bottom: 4px;
+        }
+
+        .card-reward-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #ffe680;
+            margin-bottom: 4px;
+        }
+
+        .card-reward-desc {
+            font-size: 10px;
+            line-height: 1.35;
+            color: #fff2f8;
+            font-weight: 500;
+        }
+
+        /* ================= MODAL SỔ NGUYỆN ƯỚC (JOURNAL MODAL) ================= */
+        .journal-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 4, 15, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 120;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .journal-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .journal-sheet {
+            width: min(100%, 460px);
+            max-height: 85vh;
+            background: radial-gradient(circle at 50% 0%, #2f1742 0%, #160e27 60%, #0a0614 100%);
+            border: 1.5px solid rgba(255, 215, 150, 0.5);
+            border-radius: 26px;
+            padding: 24px 18px 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 45px rgba(255, 215, 0, 0.25);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .journal-modal-overlay.active .journal-sheet {
+            transform: scale(1) translateY(0);
+        }
+
+        .journal-header {
+            text-align: center;
+            margin-bottom: 14px;
+            position: relative;
+        }
+
+        .journal-header h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            color: #ffe680;
+            text-shadow: 0 0 16px rgba(255, 230, 120, 0.5);
+        }
+
+        .journal-header p {
+            font-size: 12px;
+            color: #d1c5e2;
+            margin-top: 2px;
+        }
+
+        .journal-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 4px 6px 12px;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 180, 220, 0.4) transparent;
+        }
+
+        .journal-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .journal-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 180, 220, 0.4);
+            border-radius: 4px;
+        }
+
+        .journal-item {
+            background: rgba(38, 22, 60, 0.7);
+            border: 1px solid rgba(255, 195, 230, 0.3);
+            border-radius: 16px;
+            padding: 12px 14px;
+            position: relative;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            transition: all 0.25s ease;
+        }
+
+        .journal-item:hover {
+            border-color: rgba(255, 215, 150, 0.6);
+            background: rgba(48, 28, 76, 0.85);
+        }
+
+        .journal-item-thumb {
+            width: 58px;
+            height: 58px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 1.5px solid rgba(255, 215, 180, 0.6);
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        .journal-item-thumb:active {
+            transform: scale(0.95);
+        }
+
+        .journal-item-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .journal-item-text {
+            font-size: 13.5px;
+            color: #fff2f8;
+            line-height: 1.45;
+            margin-bottom: 6px;
+            word-break: break-word;
+        }
+
+        .journal-item-date {
+            font-size: 11px;
+            color: #bfaed5;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .journal-del-btn {
+            background: transparent;
+            border: none;
+            color: #a491ba;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .journal-del-btn:hover {
+            color: #ff6584;
+        }
+
+        .journal-empty-note {
+            text-align: center;
+            padding: 30px 10px;
+            color: #bfaed5;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .journal-empty-icon {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 0 12px #ffe680);
+        }
+
+        .journal-footer {
+            text-align: center;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 215, 180, 0.2);
+            flex-shrink: 0;
+        }
+
+        .journal-close-pill-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 9px 24px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.12);
+            border: 1px solid rgba(255, 205, 235, 0.45);
+            color: #ffe6f3;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .journal-close-pill-btn:hover, .journal-close-pill-btn:active {
+            background: rgba(255, 105, 180, 0.35);
+            border-color: #ffd4eb;
+            transform: scale(0.96);
+        }
+
+        /* Lightbox phóng to ảnh kỷ niệm */
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 250;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+        }
+
+        .lightbox-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lightbox-overlay img {
+            max-width: 92vw;
+            max-height: 85vh;
+            border-radius: 14px;
+            border: 2px solid rgba(255, 215, 230, 0.8);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 105, 180, 0.5);
+        }
+
+        /* ================= MODAL HỘP NHẠC GIAI ĐIỆU ================= */
+        .music-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(6, 4, 15, 0.85);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 120;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .music-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .music-sheet {
+            width: min(100%, 460px);
+            max-height: 85vh;
+            background: radial-gradient(circle at 50% 0%, #351a4c 0%, #170f29 60%, #0a0614 100%);
+            border: 1.5px solid rgba(255, 185, 235, 0.55);
+            border-radius: 26px;
+            padding: 24px 18px 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 45px rgba(236, 72, 153, 0.25);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .music-modal-overlay.active .music-sheet {
+            transform: scale(1) translateY(0);
+        }
+
+        .music-header {
+            text-align: center;
+            margin-bottom: 16px;
+        }
+
+        .music-header h3 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 28px;
+            color: #ffd8ec;
+            text-shadow: 0 0 16px rgba(255, 130, 195, 0.6);
+        }
+
+        .music-header p {
+            font-size: 12px;
+            color: #d1c5e2;
+            margin-top: 3px;
+        }
+
+        .music-master-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 105, 180, 0.16);
+            border: 1px solid rgba(255, 180, 225, 0.45);
+            border-radius: 18px;
+            padding: 10px 14px;
+            margin-bottom: 12px;
+            gap: 10px;
+        }
+
+        .music-now-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .music-now-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffd8ec;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-now-status {
+            font-size: 11px;
+            color: #cfc1e2;
+        }
+
+        .music-master-toggle-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 16px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #ff659c, #a855f7);
+            border: 1px solid rgba(255, 215, 240, 0.6);
+            color: #ffffff;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: all 0.2s ease;
+        }
+
+        .music-master-toggle-btn:active {
+            transform: scale(0.96);
+        }
+
+        .music-playlist {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding: 4px 6px 12px;
+            max-height: 40vh;
+        }
+
+        .music-item {
+            background: rgba(38, 22, 60, 0.7);
+            border: 1px solid rgba(255, 195, 230, 0.3);
+            border-radius: 16px;
+            padding: 12px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            transition: all 0.25s ease;
+        }
+
+        .music-item.active {
+            border-color: #ff7ebb;
+            background: rgba(82, 33, 76, 0.75);
+            box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
+        }
+
+        .music-item-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            min-width: 0;
+            flex: 1;
+        }
+
+        .music-item-icon {
+            font-size: 22px;
+            flex-shrink: 0;
+        }
+
+        .music-item-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #ffffff;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .music-item-sub {
+            font-size: 11px;
+            color: #d8cde6;
+        }
+
+        .music-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+        }
+
+        .music-play-btn {
+            background: linear-gradient(135deg, #ff659c, #a855f7);
+            border: 1px solid rgba(255, 220, 240, 0.6);
+            color: #ffffff;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 6px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .music-play-btn.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ffd8ec;
+            color: #ffd8ec;
+        }
+
+        .music-del-btn {
+            background: transparent;
+            border: none;
+            color: #a491ba;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 6px;
+        }
+
+        .music-del-btn:hover {
+            color: #ff4d6d;
+        }
+
+        .music-upload-section {
+            margin-top: 12px;
+            text-align: center;
+        }
+
+        .music-upload-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 11px 18px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1.5px dashed rgba(255, 180, 225, 0.65);
+            color: #ffe6f3;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.25s ease;
+        }
+
+        .music-upload-btn:hover, .music-upload-btn:active {
+            background: rgba(255, 105, 180, 0.2);
+            border-color: #ff9ebb;
+            transform: translateY(-1px);
+        }
+
+        .music-upload-hint {
+            font-size: 11px;
+            color: #c5b5d8;
+            margin-top: 6px;
+            font-style: italic;
+        }
+
+        /* ================= FOOTER LỜI CHÚC & TÍCH HỢP ================= */
+        .preview-footer {
+            text-align: center;
+            max-width: 480px;
+            z-index: 10;
+            margin-top: 10px;
+        }
+
+        .footer-tagline {
+            font-family: 'Dancing Script', cursive;
+            font-size: 22px;
+            color: #ffb8d6;
+            margin-bottom: 14px;
+        }
+
+        .footer-action-row {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .footer-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.25s ease;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .footer-btn.primary {
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.45), rgba(168, 85, 247, 0.45));
+            border: 1px solid rgba(255, 205, 235, 0.65);
+            color: #ffffff;
+            box-shadow: 0 4px 18px rgba(225, 65, 115, 0.35);
+        }
+
+        .footer-btn.primary:hover {
+            background: linear-gradient(135deg, rgba(255, 105, 180, 0.7), rgba(168, 85, 247, 0.7));
+            border-color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(225, 65, 115, 0.55);
+        }
+
+        .footer-btn.secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 200, 230, 0.4);
+            color: #ffe8f4;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+        }
+
+        .footer-btn.secondary:hover {
+            background: rgba(255, 105, 180, 0.25);
+            border-color: #ffffff;
+            color: #ffffff;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 105, 180, 0.35);
+        }
+
+        /* Toast thông báo siêu nhẹ */
+        #toast-msg {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%) translateY(50px);
+            background: rgba(36, 19, 58, 0.95);
+            border: 1px solid rgba(255, 195, 230, 0.6);
+            color: #fff2f8;
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-size: 13px;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5), 0 0 20px rgba(255, 105, 180, 0.4);
+            z-index: 200;
+            pointer-events: none;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.2, 1, 0.3, 1);
+        }
+
+        #toast-msg.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive điều chỉnh cho màn hình điện thoại rất nhỏ */
+        @media (max-width: 440px) {
+            .top-navbar {
+                padding: 4px 6px;
+                gap: 4px;
+                margin-bottom: 14px;
+            }
+            .back-link {
+                padding: 5px 8px;
+                font-size: 11px;
+                gap: 4px;
+            }
+            .journal-nav-btn {
+                padding: 5px 7px;
+                font-size: 11px;
+                gap: 3px;
+            }
+            .music-capsule-toggle {
+                padding: 5px 7px;
+                font-size: 11px;
+                gap: 4px;
+            }
+            .music-capsule-menu {
+                padding: 5px 6px;
+                font-size: 11px;
+            }
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            .flip-card {
+                height: 110px;
+            }
+            .card-front, .card-back {
+                flex-direction: row;
+                gap: 12px;
+                padding: 10px 16px;
+                text-align: left;
+            }
+            .card-seal, .card-reward-icon {
+                font-size: 28px;
+                margin-bottom: 0;
+            }
+            .card-front div, .card-back div {
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .wish-input-row {
+                flex-direction: column;
+            }
+            .user-wish-send-btn {
+                width: 100%;
+            }
+        }
