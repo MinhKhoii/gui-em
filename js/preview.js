@@ -557,242 +557,34 @@
             const audio = document.getElementById('ambient-audio');
             const musicBtn = document.getElementById('music-btn');
             const musicBtnText = document.getElementById('music-btn-text');
-            const openMusicModalBtn = document.getElementById('open-music-modal-btn');
-            const closeMusicBtn = document.getElementById('close-music-btn');
-            const musicClosePillBtn = document.getElementById('music-close-pill-btn');
-            const musicModal = document.getElementById('music-modal');
-            const musicPlaylist = document.getElementById('music-playlist');
-            const musicFileInput = document.getElementById('music-file-input');
-
-            const MUSIC_DB_NAME = 'StarlightMusicDB_v1';
-            const MUSIC_STORE = 'custom_songs';
+            // === ÂM NHẠC NỀN DU DƯƠNG CHO TRẠM NGUYỆN ƯỚC (BẢN NHẠC GỐC) ===
             let isPlaying = false;
-            let currentActiveTrackId = localStorage.getItem('starlight_active_song_id') || 'default';
-            let currentBlobUrl = null;
 
-            function openMusicDB() {
-                return new Promise((resolve, reject) => {
-                    const req = indexedDB.open(MUSIC_DB_NAME, 1);
-                    req.onupgradeneeded = function (e) {
-                        const db = e.target.result;
-                        if (!db.objectStoreNames.contains(MUSIC_STORE)) {
-                            db.createObjectStore(MUSIC_STORE, { keyPath: 'id' });
-                        }
-                    };
-                    req.onsuccess = e => resolve(e.target.result);
-                    req.onerror = e => reject(e.target.error);
-                });
-            }
-
-            async function getSavedSongsFromDB() {
-                try {
-                    const db = await openMusicDB();
-                    return new Promise((resolve) => {
-                        const tx = db.transaction(MUSIC_STORE, 'readonly');
-                        const store = tx.objectStore(MUSIC_STORE);
-                        const req = store.getAll();
-                        req.onsuccess = () => resolve(req.result || []);
-                        req.onerror = () => resolve([]);
-                    });
-                } catch (e) {
-                    return [];
-                }
-            }
-
-            async function saveSongToDB(name, blob) {
-                const db = await openMusicDB();
-                return new Promise((resolve, reject) => {
-                    const tx = db.transaction(MUSIC_STORE, 'readwrite');
-                    const store = tx.objectStore(MUSIC_STORE);
-                    const now = new Date();
-                    const song = {
-                        id: 'song_' + Date.now(),
-                        name: name,
-                        blob: blob,
-                        date: `${now.getDate()}/${now.getMonth() + 1}`
-                    };
-                    const req = store.put(song);
-                    req.onsuccess = () => resolve(song);
-                    req.onerror = () => reject(req.error);
-                });
-            }
-
-            async function deleteSongFromDB(id) {
-                const db = await openMusicDB();
-                return new Promise((resolve) => {
-                    const tx = db.transaction(MUSIC_STORE, 'readwrite');
-                    const store = tx.objectStore(MUSIC_STORE);
-                    store.delete(id);
-                    tx.oncomplete = () => resolve();
-                });
-            }
-
-            async function switchTrack(trackId, songName, blob = null) {
-                currentActiveTrackId = trackId;
-                localStorage.setItem('starlight_active_song_id', trackId);
-
-                if (currentBlobUrl) {
-                    URL.revokeObjectURL(currentBlobUrl);
-                    currentBlobUrl = null;
-                }
-
-                if (trackId === 'default') {
-                    audio.src = 'audio/soundtrack.mp3';
-                } else if (blob) {
-                    currentBlobUrl = URL.createObjectURL(blob);
-                    audio.src = currentBlobUrl;
+            function updateMusicUI() {
+                if (!musicBtn) return;
+                if (isPlaying) {
+                    musicBtn.classList.add('playing');
+                    musicBtn.title = "Đang phát nhạc nền du dương (Nhấn để tạm dừng)";
                 } else {
-                    const songs = await getSavedSongsFromDB();
-                    const found = songs.find(s => s.id === trackId);
-                    if (found && found.blob) {
-                        currentBlobUrl = URL.createObjectURL(found.blob);
-                        audio.src = currentBlobUrl;
-                    } else {
-                        audio.src = 'audio/soundtrack.mp3';
-                        currentActiveTrackId = 'default';
-                        localStorage.setItem('starlight_active_song_id', 'default');
-                    }
+                    musicBtn.classList.remove('playing');
+                    musicBtn.title = "Bật nhạc nền du dương";
                 }
+            }
 
+            function tryPlayAudio() {
+                if (!audio) return Promise.reject();
                 audio.volume = 0.65;
-                audio.play().then(() => {
-                    isPlaying = true;
-                    updateMasterControlUI(songName || 'Bản Nhạc Gốc');
-                    showToast(`🎵 Đang phát: ${songName || 'Bản Nhạc Gốc'}`);
-                }).catch(() => {});
-
-                renderPlaylistUI();
-            }
-
-            async function renderPlaylistUI() {
-                const songs = await getSavedSongsFromDB();
-                musicPlaylist.innerHTML = '';
-
-                // 1. Bản nhạc gốc
-                const defaultItem = document.createElement('div');
-                defaultItem.className = 'music-item' + (currentActiveTrackId === 'default' ? ' active' : '');
-                defaultItem.innerHTML = `
-                    <div class="music-item-info">
-                        <span class="music-item-icon">🌸</span>
-                        <div>
-                            <p class="music-item-title">Bản Nhạc Gốc (Mặc Định)</p>
-                            <span class="music-item-sub">${currentActiveTrackId === 'default' && isPlaying ? 'Đang phát 🎵' : 'Giai điệu dịu êm'}</span>
-                        </div>
-                    </div>
-                    <div class="music-item-actions">
-                        <button type="button" class="music-play-btn ${currentActiveTrackId === 'default' ? 'active' : ''}">
-                            ${currentActiveTrackId === 'default' ? 'Đang chọn' : 'Phát bài này'}
-                        </button>
-                    </div>
-                `;
-                defaultItem.querySelector('.music-play-btn').addEventListener('click', () => {
-                    switchTrack('default', 'Bản Nhạc Gốc');
-                });
-                musicPlaylist.appendChild(defaultItem);
-
-                // 2. Các bài hát tải lên
-                songs.forEach(song => {
-                    const item = document.createElement('div');
-                    item.className = 'music-item' + (currentActiveTrackId === song.id ? ' active' : '');
-                    item.innerHTML = `
-                        <div class="music-item-info">
-                            <span class="music-item-icon">⭐</span>
-                            <div>
-                                <p class="music-item-title">${escapeHtml(song.name)}</p>
-                                <span class="music-item-sub">${currentActiveTrackId === song.id && isPlaying ? 'Đang phát 🎵' : 'Bài hát của em · Đã lưu'}</span>
-                            </div>
-                        </div>
-                        <div class="music-item-actions">
-                            <button type="button" class="music-play-btn ${currentActiveTrackId === song.id ? 'active' : ''}">
-                                ${currentActiveTrackId === song.id ? 'Đang chọn' : 'Phát bài này'}
-                            </button>
-                            <button type="button" class="music-del-btn" title="Xóa bài hát này">✕</button>
-                        </div>
-                    `;
-
-                    item.querySelector('.music-play-btn').addEventListener('click', () => {
-                        switchTrack(song.id, song.name, song.blob);
+                const p = audio.play();
+                if (p && typeof p.then === 'function') {
+                    return p.then(() => {
+                        isPlaying = true;
+                        updateMusicUI();
+                        removeUnlockListeners();
+                    }).catch((err) => {
+                        throw err;
                     });
-
-                    item.querySelector('.music-del-btn').addEventListener('click', async (e) => {
-                        e.stopPropagation();
-                        if (confirm(`Em có muốn gỡ bài hát "${song.name}" không?`)) {
-                            await deleteSongFromDB(song.id);
-                            if (currentActiveTrackId === song.id) {
-                                switchTrack('default', 'Bản Nhạc Gốc');
-                            } else {
-                                renderPlaylistUI();
-                            }
-                            showToast("Đã gỡ bài hát khỏi hộp nhạc");
-                        }
-                    });
-
-                    musicPlaylist.appendChild(item);
-                });
-            }
-
-            function openMusicModal() {
-                renderPlaylistUI();
-                musicModal.classList.add('active');
-                musicModal.setAttribute('aria-hidden', 'false');
-            }
-            function closeMusicModal() {
-                musicModal.classList.remove('active');
-                musicModal.setAttribute('aria-hidden', 'true');
-            }
-
-            if (openMusicModalBtn) openMusicModalBtn.addEventListener('click', openMusicModal);
-            if (closeMusicBtn) closeMusicBtn.addEventListener('click', closeMusicModal);
-            if (musicClosePillBtn) musicClosePillBtn.addEventListener('click', closeMusicModal);
-            if (musicModal) {
-                musicModal.addEventListener('click', (e) => {
-                    if (e.target === musicModal) closeMusicModal();
-                });
-            }
-
-            if (musicFileInput) {
-                musicFileInput.addEventListener('change', async function () {
-                    const file = this.files && this.files[0];
-                    if (!file) return;
-
-                    showToast("⏳ Đang lưu bài hát vào hộp nhạc...");
-                    try {
-                        const songName = file.name.replace(/\.[^/.]+$/, "") || "Bài hát yêu thích";
-                        const saved = await saveSongToDB(songName, file);
-                        showToast("🎶 Đã lưu bài hát thành công!");
-                        switchTrack(saved.id, saved.name, saved.blob);
-                        this.value = '';
-                    } catch (err) {
-                        showToast("⚠️ Không thể lưu bài hát này, em thử lại nhé!");
-                    }
-                });
-            }
-
-            const modalMasterToggleBtn = document.getElementById('modal-master-toggle-btn');
-            const modalNowTitle = document.getElementById('modal-now-title');
-            const modalNowStatus = document.getElementById('modal-now-status');
-            const modalToggleIcon = document.getElementById('modal-toggle-icon');
-            const modalToggleText = document.getElementById('modal-toggle-text');
-            const modalDiscIcon = document.getElementById('modal-disc-icon');
-
-            function updateMasterControlUI(songName) {
-                if (modalNowTitle && songName) modalNowTitle.textContent = songName;
-                if (modalNowStatus) {
-                    modalNowStatus.textContent = isPlaying ? "Đang phát nhạc 🌸" : "Đang tạm dừng ⏸";
                 }
-                if (modalToggleIcon) modalToggleIcon.textContent = isPlaying ? "⏸" : "▶";
-                if (modalToggleText) modalToggleText.textContent = isPlaying ? "Tạm dừng" : "Tiếp tục phát";
-                if (modalDiscIcon) {
-                    if (isPlaying) modalDiscIcon.classList.add('playing');
-                    else modalDiscIcon.classList.remove('playing');
-                }
-                if (musicBtn) {
-                    if (isPlaying) musicBtn.classList.add('playing');
-                    else musicBtn.classList.remove('playing');
-                }
-                if (musicBtnText) {
-                    musicBtnText.textContent = isPlaying ? "Đang phát" : "Bật nhạc";
-                }
+                return Promise.resolve();
             }
 
             function toggleMusic() {
@@ -800,47 +592,81 @@
                 if (isPlaying) {
                     audio.pause();
                     isPlaying = false;
-                    updateMasterControlUI();
+                    updateMusicUI();
                 } else {
-                    audio.volume = 0.65;
-                    audio.play().then(() => {
-                        isPlaying = true;
-                        updateMasterControlUI();
-                    }).catch(() => {});
+                    tryPlayAudio().catch(() => {});
                 }
             }
 
-            musicBtn.addEventListener('click', toggleMusic);
-            if (modalMasterToggleBtn) {
-                modalMasterToggleBtn.addEventListener('click', toggleMusic);
+            if (musicBtn) {
+                musicBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    toggleMusic();
+                });
             }
 
-            async function initActiveTrack() {
-                if (currentActiveTrackId && currentActiveTrackId !== 'default') {
-                    const songs = await getSavedSongsFromDB();
-                    const found = songs.find(s => s.id === currentActiveTrackId);
-                    if (found && found.blob) {
-                        currentBlobUrl = URL.createObjectURL(found.blob);
-                        audio.src = currentBlobUrl;
-                    }
-                }
-            }
-            initActiveTrack();
+            if (audio) {
+                audio.src = 'audio/soundtrack.mp3';
+                audio.volume = 0.65;
+                updateMusicUI();
 
-            function autoStartMusicOnce() {
-                if (!isPlaying && audio) {
-                    audio.volume = 0.65;
-                    audio.play().then(() => {
-                        musicBtn.classList.add('playing');
-                        musicBtnText.textContent = "Đang phát 🎵";
-                        isPlaying = true;
-                    }).catch(() => {});
-                }
-                document.removeEventListener('click', autoStartMusicOnce);
-                document.removeEventListener('touchstart', autoStartMusicOnce);
+                audio.addEventListener('play', () => {
+                    isPlaying = true;
+                    updateMusicUI();
+                    removeUnlockListeners();
+                });
+                audio.addEventListener('pause', () => {
+                    isPlaying = false;
+                    updateMusicUI();
+                });
+                audio.addEventListener('ended', () => {
+                    audio.currentTime = 0;
+                    tryPlayAudio().catch(() => {});
+                });
             }
-            document.addEventListener('click', autoStartMusicOnce, { once: true });
-            document.addEventListener('touchstart', autoStartMusicOnce, { once: true });
+
+            const unlockEvents = ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown', 'scroll', 'wheel'];
+            function onUserInteractUnlock() {
+                tryPlayAudio().catch(() => {});
+            }
+
+            let unlockListenersAttached = false;
+            function addUnlockListeners() {
+                if (unlockListenersAttached) return;
+                unlockListenersAttached = true;
+                unlockEvents.forEach(evt => {
+                    window.addEventListener(evt, onUserInteractUnlock, { capture: true, passive: true });
+                    document.addEventListener(evt, onUserInteractUnlock, { capture: true, passive: true });
+                });
+            }
+
+            function removeUnlockListeners() {
+                if (!unlockListenersAttached) return;
+                unlockListenersAttached = false;
+                unlockEvents.forEach(evt => {
+                    window.removeEventListener(evt, onUserInteractUnlock, { capture: true });
+                    document.removeEventListener(evt, onUserInteractUnlock, { capture: true });
+                });
+            }
+
+            addUnlockListeners();
+            tryPlayAudio().catch(() => {});
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => tryPlayAudio().catch(() => {}));
+            }
+            window.addEventListener('load', () => tryPlayAudio().catch(() => {}));
+            window.addEventListener('pageshow', () => tryPlayAudio().catch(() => {}));
+            if (audio) {
+                audio.addEventListener('canplay', () => tryPlayAudio().catch(() => {}));
+                audio.addEventListener('canplaythrough', () => tryPlayAudio().catch(() => {}));
+            }
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && !isPlaying) {
+                    tryPlayAudio().catch(() => {});
+                }
+            });
+
             updateJournalCounter();
 
         })();

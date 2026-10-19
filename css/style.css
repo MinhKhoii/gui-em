@@ -889,8 +889,8 @@ body {
                 }
 
                 #khung-mat.canh-chuc {
-                    gap: 42px;
-                    transform: translateX(-6.8vw) translateY(2px) scale(1.01);
+                    gap: 38px;
+                    transform: translate(-3vw, -17dvh) scale(.72);
                 }
 
                 #khung-mat.canh-chuc .truc-x:first-child {
@@ -2674,8 +2674,8 @@ body {
                 }
 
                 #khung-mat.canh-chuc {
-                    gap: 46px;
-                    transform: translate(-4vw,-16dvh) scale(.93);
+                    gap: 40px;
+                    transform: translate(-3vw, -17dvh) scale(.72);
                 }
 
                 #khung-mat.wish-beauty {
@@ -10057,8 +10057,10 @@ body {
                 animation-play-state: paused!important
             }
 
-            .tiny-mobile #woman-scene {
-                background-image: url('../img/woman-scene-mobile.webp') !important;
+            .tiny-mobile #woman-scene,
+            .tiny-mobile #woman-scene.hien-thi {
+                background-image: none !important;
+                background-color: transparent !important;
             }
 
             /* ===== Mobile Scene Stability v2: chỉ Android/iOS/điện thoại; desktop nguyên bản. ===== */
@@ -10963,7 +10965,6 @@ body {
             #legacy-share-elements { display:none !important; }
 
             /* Khung anh ky niem cuoi cung - vua van man hinh ca tren desktop va mobile, sach se khong vuong nut */
-            /* Khung anh ky niem cuoi cung - vua van man hinh ca tren desktop va mobile, sach se khong vuong nut */
             #final-photo-card {
                 position: relative;
                 z-index: 100;
@@ -11074,7 +11075,6 @@ body {
                 margin: 10px 0 4px;
             }
 
-            
             @keyframes finalCardHalo {
                 0% { box-shadow: 0 0 45px rgba(255, 105, 180, 0.22), 0 0 80px rgba(255, 180, 225, 0.12); }
                 100% { box-shadow: 0 0 65px rgba(255, 105, 180, 0.38), 0 0 110px rgba(255, 180, 225, 0.25); transform: translateY(-2px); }

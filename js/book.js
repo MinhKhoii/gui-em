@@ -1,4 +1,4 @@
-(function() {
+(function () {
   // ELEMENTS
   const modal = document.getElementById('memory-gallery-page');
   const closeBtn = document.getElementById('close-memory-gallery');
@@ -46,7 +46,7 @@
         sharedAudioCtx.resume();
       }
       return sharedAudioCtx;
-    } catch(e) {
+    } catch (e) {
       return null;
     }
   }
@@ -85,7 +85,7 @@
       filter.connect(gain);
       gain.connect(ctx.destination);
       source.start();
-    } catch(e) {}
+    } catch (e) { }
   }
 
   // UPDATE VIEW ENGINE (HANDLES BOTH DESKTOP AND MOBILE)
@@ -378,7 +378,9 @@
       return;
     }
     if (e.key === 'Escape') {
-      if (celebrationModal && celebrationModal.classList.contains('is-active')) {
+      if (bookMusicModal && bookMusicModal.classList.contains('active')) {
+        closeBookMusicModal();
+      } else if (celebrationModal && celebrationModal.classList.contains('is-active')) {
         dismissCelebration();
       } else if (secretLetterCard && secretLetterCard.classList.contains('is-open')) {
         closeSecretLetter();
@@ -386,8 +388,10 @@
         closeBook();
       }
     } else if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+      if (bookMusicModal && bookMusicModal.classList.contains('active')) return;
       turnNext();
     } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+      if (bookMusicModal && bookMusicModal.classList.contains('active')) return;
       turnPrev();
     }
   });
@@ -397,7 +401,7 @@
   let touchStartY = 0;
   let touchFromInteractive = false;
   modal.addEventListener('touchstart', (e) => {
-    touchFromInteractive = !!e.target.closest('button, a, input, select, .envelope-wrapper, .dog-ear-curl, .wish-card, .wishing-jar-stage, .wishes-grid, .ch5-thumbs-row, .ch5-thumb');
+    touchFromInteractive = !!e.target.closest('button, a, input, select, .envelope-wrapper, .dog-ear-curl, .wish-card, .wishing-jar-stage, .wishes-grid, .ch5-thumbs-row, .ch5-thumb, .book-music-modal, .book-music-card, .book-music-control-group');
     touchStartX = e.changedTouches[0].clientX;
     touchStartY = e.changedTouches[0].clientY;
   }, { passive: true });
@@ -665,7 +669,7 @@
         e.stopPropagation();
         e.preventDefault();
         const wishKey = card.getAttribute('data-wish') || 'peace';
-        
+
         card.classList.add('is-wished');
         card.classList.remove('just-clicked');
         requestAnimationFrame(() => {
@@ -754,7 +758,7 @@
         osc.start(start);
         osc.stop(start + 0.6);
       });
-    } catch(err) {}
+    } catch (err) { }
   }
 
   initChapter6Wishes();
@@ -816,7 +820,7 @@
         osc.start(start);
         osc.stop(start + 1.2);
       });
-    } catch(e) {}
+    } catch (e) { }
   }
 
   // FIREWORKS & FLOATING HEARTS CANVAS
@@ -926,32 +930,102 @@
   }
 
 
-  // Background audio toggle
+  // === MUSIC PLAYER FOR 3D FLIPBOOK (BẢN NHẠC GỐC DU DƯƠNG) ===
   const bookAudio = document.getElementById('book-bg-audio');
   const bookAudioBtn = document.getElementById('book-audio-btn');
-  if (bookAudioBtn && bookAudio) {
-    bookAudioBtn.addEventListener('click', () => {
-      if (bookAudio.paused) {
-        bookAudio.play().then(() => {
-          bookAudioBtn.classList.add('playing');
-        }).catch(() => {});
-      } else {
-        bookAudio.pause();
-        bookAudioBtn.classList.remove('playing');
+
+  function updateBookMusicUI() {
+    if (!bookAudioBtn) return;
+    if (bookAudio && !bookAudio.paused) {
+      bookAudioBtn.classList.add('playing');
+      bookAudioBtn.title = "Đang phát nhạc nền du dương (Nhấn để tạm dừng)";
+    } else {
+      bookAudioBtn.classList.remove('playing');
+      bookAudioBtn.title = "Phát nhạc nền du dương (Nhấn để bật)";
+    }
+  }
+
+  if (bookAudio) {
+    bookAudio.src = 'audio/soundtrack.mp3';
+    bookAudio.volume = 0.65;
+    updateBookMusicUI();
+
+    function tryPlayBookAudio() {
+      if (!bookAudio) return Promise.reject();
+      bookAudio.volume = 0.65;
+      const playPromise = bookAudio.play();
+      if (playPromise !== undefined) {
+        return playPromise.then(() => {
+          updateBookMusicUI();
+          removeBookUnlockListeners();
+        }).catch((err) => {
+          throw err;
+        });
+      }
+      return Promise.resolve();
+    }
+
+    const bookUnlockEvents = ['pointerdown', 'touchstart', 'touchend', 'click', 'keydown', 'scroll', 'wheel'];
+    function onBookUnlockInteract() {
+      tryPlayBookAudio().catch(() => {});
+    }
+
+    let bookUnlockAttached = false;
+    function addBookUnlockListeners() {
+      if (bookUnlockAttached) return;
+      bookUnlockAttached = true;
+      bookUnlockEvents.forEach(evt => {
+        window.addEventListener(evt, onBookUnlockInteract, { capture: true, passive: true });
+        document.addEventListener(evt, onBookUnlockInteract, { capture: true, passive: true });
+      });
+    }
+
+    function removeBookUnlockListeners() {
+      if (!bookUnlockAttached) return;
+      bookUnlockAttached = false;
+      bookUnlockEvents.forEach(evt => {
+        window.removeEventListener(evt, onBookUnlockInteract, { capture: true });
+        document.removeEventListener(evt, onBookUnlockInteract, { capture: true });
+      });
+    }
+
+    addBookUnlockListeners();
+    tryPlayBookAudio().catch(() => {});
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => tryPlayBookAudio().catch(() => {}));
+    }
+    window.addEventListener('load', () => tryPlayBookAudio().catch(() => {}));
+    window.addEventListener('pageshow', () => tryPlayBookAudio().catch(() => {}));
+    bookAudio.addEventListener('canplay', () => tryPlayBookAudio().catch(() => {}));
+    bookAudio.addEventListener('canplaythrough', () => tryPlayBookAudio().catch(() => {}));
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden && bookAudio && bookAudio.paused) {
+        tryPlayBookAudio().catch(() => {});
       }
     });
 
-    const startAudioOnce = () => {
-      if (bookAudio.paused) {
-        bookAudio.play().then(() => {
-          bookAudioBtn.classList.add('playing');
-        }).catch(() => {});
-      }
-      window.removeEventListener('click', startAudioOnce);
-      window.removeEventListener('touchstart', startAudioOnce);
-    };
-    window.addEventListener('click', startAudioOnce, { once: true });
-    window.addEventListener('touchstart', startAudioOnce, { once: true });
+    if (bookAudioBtn) {
+      bookAudioBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (bookAudio.paused) {
+          tryPlayBookAudio().catch(() => {});
+        } else {
+          bookAudio.pause();
+          updateBookMusicUI();
+        }
+      });
+    }
+
+    bookAudio.addEventListener('play', () => {
+      updateBookMusicUI();
+      removeBookUnlockListeners();
+    });
+    bookAudio.addEventListener('pause', updateBookMusicUI);
+    bookAudio.addEventListener('ended', () => {
+      bookAudio.currentTime = 0;
+      tryPlayBookAudio().catch(() => {});
+    });
   }
 
   // Automatic Initialization for Standalone 3D Flipbook

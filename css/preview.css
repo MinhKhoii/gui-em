@@ -179,71 +179,60 @@
             font-weight: 700;
         }
 
-        /* Capsule âm nhạc tích hợp 2 trong 1 cực kỳ gọn gàng */
-        .music-unified-capsule {
-            display: inline-flex;
-            align-items: center;
-            border-radius: 999px;
-            background: linear-gradient(135deg, rgba(225, 105, 180, 0.28), rgba(120, 60, 220, 0.28));
-            border: 1px solid rgba(255, 185, 225, 0.55);
-            box-shadow: 0 0 14px rgba(255, 105, 180, 0.2);
-            overflow: hidden;
-            flex-shrink: 0;
-            transition: all 0.25s ease;
-        }
-
-        .music-unified-capsule:hover {
-            border-color: rgba(255, 215, 240, 0.85);
-            box-shadow: 0 0 18px rgba(255, 105, 180, 0.35);
-        }
-
-        .music-capsule-toggle {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 10px;
-            background: transparent;
-            border: none;
-            color: #fff2f8;
-            font-family: inherit;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: background 0.2s ease;
-        }
-
-        .music-capsule-toggle:active {
-            background: rgba(255, 255, 255, 0.15);
-        }
-
-        .music-capsule-toggle.playing .disc-icon {
-            animation: spinDisc 3s linear infinite;
-        }
-
-        .music-capsule-divider {
-            width: 1px;
-            height: 16px;
-            background: rgba(255, 200, 235, 0.4);
-            flex-shrink: 0;
-        }
-
-        .music-capsule-menu {
+        /* Nút âm nhạc tròn nhỏ gọn & tinh tế trên thanh điều hướng */
+        .preview-audio-btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            padding: 6px 9px;
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            color: #ffd8ec;
-            font-size: 12px;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(35, 18, 55, 0.75);
+            border: 1px solid rgba(255, 195, 230, 0.5);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: #fff;
             cursor: pointer;
-            transition: all 0.2s ease;
+            font-size: 13.5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            flex-shrink: 0;
+            padding: 0;
+            line-height: 1;
         }
 
-        .music-capsule-menu:hover, .music-capsule-menu:active {
-            background: rgba(255, 105, 180, 0.35);
-            color: #ffffff;
+        .preview-audio-btn:hover {
+            transform: scale(1.08);
+            border-color: rgba(255, 215, 240, 0.9);
+            box-shadow: 0 0 14px rgba(255, 105, 180, 0.45);
+        }
+
+        .preview-audio-btn:active {
+            transform: scale(0.92);
+        }
+
+        .preview-audio-btn.playing {
+            background: linear-gradient(135deg, #ff659c, #a855f7);
+            border-color: #ffffff;
+            box-shadow: 0 0 14px rgba(255, 105, 180, 0.65);
+        }
+
+        .preview-audio-btn.playing .disc-icon {
+            display: inline-block;
+            animation: spinMusicDisc 3s linear infinite;
+        }
+
+        @keyframes spinMusicDisc {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 480px) {
+            .preview-audio-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
         }
 
         .disc-icon {
@@ -1179,248 +1168,7 @@
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 105, 180, 0.5);
         }
 
-        /* ================= MODAL HỘP NHẠC GIAI ĐIỆU ================= */
-        .music-modal-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(6, 4, 15, 0.88);
-            backdrop-filter: none;
-            -webkit-backdrop-filter: none;
-            z-index: 120;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 16px;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
 
-        .music-modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .music-sheet {
-            width: min(100%, 460px);
-            max-height: 85vh;
-            background: radial-gradient(circle at 50% 0%, #351a4c 0%, #170f29 60%, #0a0614 100%);
-            border: 1.5px solid rgba(255, 185, 235, 0.55);
-            border-radius: 26px;
-            padding: 24px 18px 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 45px rgba(236, 72, 153, 0.25);
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            transform: scale(0.92) translateY(20px);
-            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .music-modal-overlay.active .music-sheet {
-            transform: scale(1) translateY(0);
-        }
-
-        .music-header {
-            text-align: center;
-            margin-bottom: 16px;
-        }
-
-        .music-header h3 {
-            font-family: 'Dancing Script', cursive;
-            font-size: 28px;
-            color: #ffd8ec;
-            text-shadow: 0 0 16px rgba(255, 130, 195, 0.6);
-        }
-
-        .music-header p {
-            font-size: 12px;
-            color: #d1c5e2;
-            margin-top: 3px;
-        }
-
-        .music-master-card {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: rgba(255, 105, 180, 0.16);
-            border: 1px solid rgba(255, 180, 225, 0.45);
-            border-radius: 18px;
-            padding: 10px 14px;
-            margin-bottom: 12px;
-            gap: 10px;
-        }
-
-        .music-now-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            min-width: 0;
-            flex: 1;
-        }
-
-        .music-now-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #ffd8ec;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .music-now-status {
-            font-size: 11px;
-            color: #cfc1e2;
-        }
-
-        .music-master-toggle-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 16px;
-            border-radius: 999px;
-            background: linear-gradient(135deg, #ff659c, #a855f7);
-            border: 1px solid rgba(255, 215, 240, 0.6);
-            color: #ffffff;
-            font-size: 12px;
-            font-weight: 700;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: all 0.2s ease;
-        }
-
-        .music-master-toggle-btn:active {
-            transform: scale(0.96);
-        }
-
-        .music-playlist {
-            flex: 1;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            padding: 4px 6px 12px;
-            max-height: 40vh;
-        }
-
-        .music-item {
-            background: rgba(38, 22, 60, 0.7);
-            border: 1px solid rgba(255, 195, 230, 0.3);
-            border-radius: 16px;
-            padding: 12px 14px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            transition: all 0.25s ease;
-        }
-
-        .music-item.active {
-            border-color: #ff7ebb;
-            background: rgba(82, 33, 76, 0.75);
-            box-shadow: 0 0 15px rgba(255, 105, 180, 0.3);
-        }
-
-        .music-item-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            min-width: 0;
-            flex: 1;
-        }
-
-        .music-item-icon {
-            font-size: 22px;
-            flex-shrink: 0;
-        }
-
-        .music-item-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: #ffffff;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .music-item-sub {
-            font-size: 11px;
-            color: #d8cde6;
-        }
-
-        .music-item-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-        }
-
-        .music-play-btn {
-            background: linear-gradient(135deg, #ff659c, #a855f7);
-            border: 1px solid rgba(255, 220, 240, 0.6);
-            color: #ffffff;
-            font-size: 11.5px;
-            font-weight: 700;
-            padding: 6px 14px;
-            border-radius: 999px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .music-play-btn.active {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #ffd8ec;
-            color: #ffd8ec;
-        }
-
-        .music-del-btn {
-            background: transparent;
-            border: none;
-            color: #a491ba;
-            font-size: 14px;
-            cursor: pointer;
-            padding: 6px;
-        }
-
-        .music-del-btn:hover {
-            color: #ff4d6d;
-        }
-
-        .music-upload-section {
-            margin-top: 12px;
-            text-align: center;
-        }
-
-        .music-upload-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            width: 100%;
-            padding: 11px 18px;
-            border-radius: 999px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1.5px dashed rgba(255, 180, 225, 0.65);
-            color: #ffe6f3;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.25s ease;
-        }
-
-        .music-upload-btn:hover, .music-upload-btn:active {
-            background: rgba(255, 105, 180, 0.2);
-            border-color: #ff9ebb;
-            transform: translateY(-1px);
-        }
-
-        .music-upload-hint {
-            font-size: 11px;
-            color: #c5b5d8;
-            margin-top: 6px;
-            font-style: italic;
-        }
 
         /* ================= FOOTER LỜI CHÚC & TÍCH HỢP ================= */
         .preview-footer {
@@ -1629,3 +1377,4 @@
                 opacity: 0.8;
             }
         }
+

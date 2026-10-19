@@ -27,8 +27,8 @@
         <div class="aurora-circle-2"></div>
     </div>
 
-    <!-- Nhạc nền từ dự án gốc -->
-    <audio id="ambient-audio" src="audio/soundtrack.mp3" preload="auto" loop></audio>
+    <!-- Nhạc nền du dương (Mặc định: Bản nhạc gốc) -->
+    <audio id="ambient-audio" src="audio/soundtrack.mp3" preload="auto" loop autoplay playsinline></audio>
 
     <!-- Thanh trên cùng: Nút quay lại, Sổ nguyện ước & Nút phát nhạc -->
     <nav class="top-navbar" aria-label="Thanh điều hướng">
@@ -43,17 +43,10 @@
                 <span>✨</span> <span class="nav-text">Sổ Sao</span>
                 <span class="count-badge" id="nav-star-count">0</span>
             </button>
-            <div class="music-unified-capsule" id="music-unified-capsule">
-                <button type="button" class="music-capsule-toggle" id="music-btn" title="Bật/Tắt phát nhạc">
-                    <span class="disc-icon">🎵</span>
-                    <span id="music-btn-text" class="music-btn-text">Bật nhạc</span>
-                </button>
-                <div class="music-capsule-divider" aria-hidden="true"></div>
-                <button type="button" class="music-capsule-menu" id="open-music-modal-btn"
-                    title="Hộp Nhạc Giai Điệu - Đổi bài hát hoặc tải nhạc mới">
-                    <span>🎶</span>
-                </button>
-            </div>
+            <button type="button" class="preview-audio-btn" id="music-btn" title="Bật/Tắt phát nhạc"
+                aria-label="Bật hoặc tắt nhạc nền">
+                <span class="disc-icon">🎵</span>
+            </button>
         </div>
     </nav>
 
@@ -270,51 +263,7 @@
         <img id="lightbox-img" src="" alt="Ảnh kỷ niệm phóng to">
     </div>
 
-    <!-- MODAL HỘP NHẠC GIAI ĐIỆU (QUẢN LÝ BÀI HÁT & TẢI NHẠC MỚI) -->
-    <div class="music-modal-overlay" id="music-modal" role="dialog" aria-modal="true" aria-hidden="true">
-        <div class="music-sheet">
-            <button type="button" class="wish-close-btn" id="close-music-btn" aria-label="Đóng hộp nhạc">✕</button>
-            <div class="music-header">
-                <h3>🎶 Hộp Nhạc Giai Điệu</h3>
-                <p>Chọn bài hát du dương hoặc tải lên ca khúc yêu thích của em ✨</p>
-            </div>
 
-            <!-- Thanh điều khiển chính ngay trong modal -->
-            <div class="music-master-card">
-                <div class="music-now-info">
-                    <span class="disc-icon" id="modal-disc-icon">🎵</span>
-                    <div>
-                        <p class="music-now-title" id="modal-now-title">Bản Nhạc Gốc</p>
-                        <span class="music-now-status" id="modal-now-status">Đang phát 🌸</span>
-                    </div>
-                </div>
-                <button type="button" class="music-master-toggle-btn" id="modal-master-toggle-btn">
-                    <span id="modal-toggle-icon">⏸</span>
-                    <span id="modal-toggle-text">Tạm dừng</span>
-                </button>
-            </div>
-
-            <!-- Danh sách bài hát -->
-            <div class="music-playlist" id="music-playlist">
-                <!-- Được render tự động từ IndexedDB và bài gốc -->
-            </div>
-
-            <!-- Nút tải nhạc mới lên -->
-            <div class="music-upload-section">
-                <label for="music-file-input" class="music-upload-btn">
-                    <span>➕</span> Tải bài hát yêu thích lên (.mp3, .wav, .m4a)
-                </label>
-                <input type="file" id="music-file-input" accept="audio/*" style="display:none;">
-                <p class="music-upload-hint">✨ Nhạc tải lên được lưu an toàn trên máy, không bị mất khi thoát trang</p>
-            </div>
-
-            <div class="journal-footer">
-                <button type="button" class="journal-close-pill-btn" id="music-close-pill-btn">
-                    <span>✕</span> Đóng Hộp Nhạc
-                </button>
-            </div>
-        </div>
-    </div>
 
     <!-- Toast thông báo -->
     <div id="toast-msg">✨ Điều ước đã bay vào dải ngân hà!</div>

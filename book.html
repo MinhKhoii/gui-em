@@ -20,8 +20,8 @@
 </head>
 
 <body>
-    <!-- Nhạc nền du dương -->
-    <audio id="book-bg-audio" src="audio/soundtrack.mp3" preload="auto" loop></audio>
+    <!-- Nhạc nền du dương (Mặc định: Bản nhạc gốc) -->
+    <audio id="book-bg-audio" src="audio/soundtrack.mp3" preload="auto" loop autoplay playsinline></audio>
 
     <main id="memory-gallery-page" class="is-open" aria-label="Cuốn sách kỷ niệm lật trang 3D">
         <canvas id="book-ambient-canvas"></canvas>
@@ -50,9 +50,9 @@
                 <a href="preview.html" class="book-nav-station-btn" title="Ghé thăm Trạm Nguyện Ước Ánh Sao">
                     <span>🌠</span> Trạm Ước
                 </a>
-                <button type="button" class="book-audio-btn" id="book-audio-btn" title="Bật/Tắt nhạc nền"
+                <button type="button" class="book-audio-btn" id="book-audio-btn" title="Bật/Tắt phát nhạc"
                     aria-label="Bật hoặc tắt nhạc nền">
-                    <span>🎵</span>
+                    <span id="book-audio-icon">🎵</span>
                 </button>
             </div>
         </header>
@@ -521,6 +521,7 @@
                 </div>
             </div>
         </div>
+
 
 
     </main>
