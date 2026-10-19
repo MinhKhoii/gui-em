@@ -67,9 +67,10 @@
             height: 60vw;
             max-width: 500px;
             max-height: 500px;
-            background: radial-gradient(circle, rgba(225, 105, 180, 0.16) 0%, rgba(138, 43, 226, 0.08) 50%, transparent 70%);
-            filter: blur(40px);
-            animation: floatGlow 14s ease-in-out infinite alternate;
+            background: radial-gradient(circle at 50% 50%, rgba(225, 105, 180, 0.18) 0%, rgba(138, 43, 226, 0.08) 45%, transparent 70%);
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            animation: floatGlow 16s ease-in-out infinite alternate;
         }
 
         .aurora-circle-2 {
@@ -80,14 +81,15 @@
             height: 50vw;
             max-width: 450px;
             max-height: 450px;
-            background: radial-gradient(circle, rgba(72, 209, 204, 0.13) 0%, rgba(65, 105, 225, 0.06) 50%, transparent 70%);
-            filter: blur(40px);
-            animation: floatGlow 18s ease-in-out infinite alternate-reverse;
+            background: radial-gradient(circle at 50% 50%, rgba(72, 209, 204, 0.15) 0%, rgba(65, 105, 225, 0.07) 45%, transparent 70%);
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
+            animation: floatGlow 20s ease-in-out infinite alternate-reverse;
         }
 
         @keyframes floatGlow {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(25px, 20px) scale(1.12); }
+            0% { transform: translate3d(0, 0, 0) scale(1); }
+            100% { transform: translate3d(22px, 18px, 0) scale(1.1); }
         }
 
         /* ================= THANH ĐIỀU HƯỚNG & ÂM NHẠC ================= */
@@ -101,13 +103,15 @@
             padding: 6px 12px;
             border-radius: 999px;
             background: rgba(25, 17, 44, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 190, 230, 0.35);
             box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px rgba(255, 105, 180, 0.15);
             margin: 0 auto 20px;
             gap: 6px;
             box-sizing: border-box;
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
         }
 
         .back-link {
@@ -245,9 +249,6 @@
         .disc-icon {
             font-size: 13.5px;
             display: inline-block;
-        }c-icon {
-            font-size: 14px;
-            display: inline-block;
         }
 
         @keyframes spinDisc {
@@ -316,15 +317,16 @@
             width: 250px;
             height: 250px;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(255, 150, 210, 0.28) 0%, rgba(138, 43, 226, 0.12) 50%, transparent 72%);
-            filter: blur(28px);
+            background: radial-gradient(circle at 50% 50%, rgba(255, 150, 210, 0.35) 0%, rgba(138, 43, 226, 0.14) 38%, transparent 70%);
             pointer-events: none;
+            will-change: transform, opacity;
+            transform: translate3d(0, 0, 0);
             animation: jarHaloPulse 4s ease-in-out infinite alternate;
         }
 
         @keyframes jarHaloPulse {
-            0% { transform: scale(0.92); opacity: 0.65; }
-            100% { transform: scale(1.12); opacity: 0.95; }
+            0% { transform: scale(0.92) translate3d(0, 0, 0); opacity: 0.65; }
+            100% { transform: scale(1.12) translate3d(0, 0, 0); opacity: 0.95; }
         }
 
         /* Thân lọ thủy tinh 3D phát sáng */
@@ -334,16 +336,18 @@
             height: 230px;
             cursor: pointer;
             transition: transform 0.35s cubic-bezier(0.2, 1, 0.3, 1);
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
             animation: jarFloat 4.8s ease-in-out infinite alternate;
         }
 
         .magic-jar-wrapper:hover, .magic-jar-wrapper:active {
-            transform: scale(1.05) translateY(-4px);
+            transform: scale(1.05) translateY(-4px) translate3d(0, 0, 0);
         }
 
         @keyframes jarFloat {
-            0% { transform: translateY(0); }
-            100% { transform: translateY(-10px); }
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(0, -10px, 0); }
         }
 
         .jar-cork {
@@ -370,7 +374,7 @@
             background: rgba(255, 220, 245, 0.18);
             border-radius: 6px;
             border: 1.5px solid rgba(255, 210, 240, 0.55);
-            backdrop-filter: blur(6px);
+            backdrop-filter: blur(4px);
             z-index: 5;
             box-shadow: 0 0 15px rgba(255, 140, 200, 0.25);
         }
@@ -416,11 +420,13 @@
             border-radius: 26px 26px 44px 44px;
             background: linear-gradient(135deg, rgba(255, 235, 250, 0.16) 0%, rgba(185, 120, 235, 0.08) 50%, rgba(255, 150, 215, 0.22) 100%);
             border: 2px solid rgba(255, 215, 245, 0.65);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: inset 0 0 25px rgba(255, 180, 225, 0.25), inset 3px 0 12px rgba(255, 255, 255, 0.4), inset -3px 0 12px rgba(255, 130, 200, 0.3), 0 16px 45px rgba(0, 0, 0, 0.55), 0 0 35px rgba(255, 105, 180, 0.3);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            box-shadow: inset 0 0 18px rgba(255, 180, 225, 0.3), 0 12px 30px rgba(0, 0, 0, 0.5), 0 0 25px rgba(255, 105, 180, 0.25);
             overflow: hidden;
             z-index: 4;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
         }
 
         .jar-body::before {
@@ -440,15 +446,17 @@
             position: absolute;
             font-size: var(--sz, 18px);
             color: var(--col, #ffeb99);
-            filter: drop-shadow(0 0 8px var(--col, #ffeb99));
+            text-shadow: 0 0 8px var(--col, #ffeb99);
             animation: starBob var(--dur, 3s) ease-in-out infinite alternate var(--del, 0s);
             pointer-events: none;
             transition: all 0.3s ease;
+            will-change: transform;
+            transform: translate3d(0, 0, 0);
         }
 
         @keyframes starBob {
-            0% { transform: translate(0, 0) rotate(0deg) scale(0.95); }
-            100% { transform: translate(var(--mx, 6px), var(--my, -8px)) rotate(var(--rot, 15deg)) scale(1.1); }
+            0% { transform: translate3d(0, 0, 0) rotate(0deg) scale(0.95); }
+            100% { transform: translate3d(var(--mx, 6px), var(--my, -8px), 0) rotate(var(--rot, 15deg)) scale(1.1); }
         }
 
         .jar-hint-wrap {
@@ -492,9 +500,9 @@
         .wish-modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(6, 4, 15, 0.82);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: rgba(6, 4, 15, 0.85);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             z-index: 100;
             display: flex;
             align-items: center;
@@ -508,6 +516,8 @@
         .wish-modal-overlay.active {
             opacity: 1;
             visibility: visible;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .wish-card {
@@ -934,9 +944,9 @@
         .journal-modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(6, 4, 15, 0.85);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: rgba(6, 4, 15, 0.88);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             z-index: 120;
             display: flex;
             align-items: center;
@@ -950,6 +960,8 @@
         .journal-modal-overlay.active {
             opacity: 1;
             visibility: visible;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .journal-sheet {
@@ -1039,6 +1051,20 @@
 
         .journal-item-thumb:active {
             transform: scale(0.95);
+        }
+
+        .journal-item-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 230, 128, 0.28), rgba(255, 158, 187, 0.28));
+            border: 1px solid rgba(255, 220, 150, 0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+            box-shadow: 0 0 12px rgba(255, 230, 128, 0.35);
         }
 
         .journal-item-content {
@@ -1157,9 +1183,9 @@
         .music-modal-overlay {
             position: fixed;
             inset: 0;
-            background: rgba(6, 4, 15, 0.85);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: rgba(6, 4, 15, 0.88);
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
             z-index: 120;
             display: flex;
             align-items: center;
@@ -1173,6 +1199,8 @@
         .music-modal-overlay.active {
             opacity: 1;
             visibility: visible;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .music-sheet {
@@ -1486,32 +1514,71 @@
             opacity: 1;
         }
 
-        /* Responsive điều chỉnh cho màn hình điện thoại rất nhỏ */
-        @media (max-width: 440px) {
+        /* ================= TỐI ƯU THANH ĐIỀU HƯỚNG TRÊN ĐIỆN THOẠI (CHỐNG TRÀN 100%) ================= */
+        @media (max-width: 600px) {
             .top-navbar {
-                padding: 4px 6px;
-                gap: 4px;
+                padding: 5px 8px;
+                gap: 5px;
                 margin-bottom: 14px;
+                max-width: 100%;
             }
             .back-link {
-                padding: 5px 8px;
-                font-size: 11px;
+                padding: 5px 9px;
+                font-size: 11.5px;
+                gap: 3px;
+                flex-shrink: 0;
+            }
+            .nav-right-actions {
                 gap: 4px;
+                flex-shrink: 0;
+            }
+            .journal-nav-btn {
+                padding: 5px 8px;
+                font-size: 11.5px;
+                gap: 3px;
+                flex-shrink: 0;
+            }
+            .journal-nav-btn .count-badge {
+                font-size: 9.5px;
+                padding: 0 4px;
+            }
+            /* Ẩn chữ 'Bật nhạc' trên điện thoại để capsule âm nhạc gọn gàng chỉ còn icon 🎵 | 🎶, tích hợp hoàn hảo bên trong thanh */
+            .music-btn-text, #music-btn-text {
+                display: none !important;
+            }
+            .music-unified-capsule {
+                flex-shrink: 0;
+            }
+            .music-capsule-toggle {
+                padding: 5px 8px;
+                font-size: 11.5px;
+                gap: 0;
+            }
+            .music-capsule-divider {
+                height: 14px;
+            }
+            .music-capsule-menu {
+                padding: 5px 8px;
+                font-size: 11.5px;
+            }
+        }
+
+        /* Cho màn hình điện thoại nhỏ hơn (dưới 380px) */
+        @media (max-width: 380px) {
+            .top-navbar {
+                padding: 4px 6px;
+                gap: 3px;
+            }
+            .back-link .nav-text {
+                display: none; /* Chỉ hiện mũi tên ← */
+            }
+            .nav-book-btn .nav-text {
+                display: none; /* Chỉ hiện icon 📖 */
             }
             .journal-nav-btn {
                 padding: 5px 7px;
-                font-size: 11px;
-                gap: 3px;
             }
-            .music-capsule-toggle {
-                padding: 5px 7px;
-                font-size: 11px;
-                gap: 4px;
-            }
-            .music-capsule-menu {
-                padding: 5px 6px;
-                font-size: 11px;
-            }
+        }
             .cards-grid {
                 grid-template-columns: 1fr;
                 gap: 10px;
@@ -1539,5 +1606,26 @@
             }
             .user-wish-send-btn {
                 width: 100%;
+            }
+        }
+
+        /* ================= TỐI ƯU HÓA GPU & CHỐNG GIẬT CHO ĐIỆN THOẠI 90HZ / 120HZ ================= */
+        @media (max-width: 768px) {
+            .top-navbar {
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                background: rgba(18, 12, 34, 0.9);
+            }
+            .user-wish-box {
+                backdrop-filter: blur(6px);
+                -webkit-backdrop-filter: blur(6px);
+                background: rgba(24, 16, 42, 0.85);
+            }
+            .jar-body {
+                backdrop-filter: blur(2px);
+                -webkit-backdrop-filter: blur(2px);
+            }
+            .aurora-circle-1, .aurora-circle-2 {
+                opacity: 0.8;
             }
         }

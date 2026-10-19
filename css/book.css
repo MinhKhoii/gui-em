@@ -1702,7 +1702,8 @@ html, body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    margin: auto 0;
   }
   .letter-salutation {
     font-family: 'Dancing Script', cursive;
@@ -1713,8 +1714,8 @@ html, body {
   }
   .letter-paragraphs {
     font-family: 'Dancing Script', cursive;
-    font-size: clamp(14.5px, 1.7vw, 17px);
-    line-height: 1.62;
+    font-size: clamp(14px, 1.6vw, 16.5px);
+    line-height: 1.56;
     color: #422533;
     margin: 0;
   }

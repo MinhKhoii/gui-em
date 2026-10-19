@@ -3,6 +3,8 @@
 
             const STORAGE_KEY = 'starlight_wishes_collection';
 
+            const STORAGE_VERSION_KEY = 'starlight_memories_v7_user_custom';
+
             /* ---------- 1. DANH SÁCH LỜI CHÚC ẤM ÁP TRONG LỌ  ---------- */
             const WISHES = [
                 "Mong em mỗi sáng thức dậy đều thấy lòng bình yên, mỗi tối đi ngủ đều mỉm cười thanh thản ✨",
@@ -16,24 +18,38 @@
             ];
             let currentWishIdx = 0;
 
-            /* ---------- 2. QUẢN LÝ LƯU TRỮ LOCALSTORAGE CHO ĐIỀU ƯỚC & ẢNH ---------- */
+            /* ---------- 2. QUẢN LÝ LƯU TRỮ CHO SỔ SAO (XÓA BỎ CÁC KỶ NIỆM MẪU, GIỮ ĐIỀU ƯỚC CỦA EM) ---------- */
             function getSavedWishes() {
                 try {
-                    const data = localStorage.getItem(STORAGE_KEY);
-                    if (!data) {
-                        // Thêm 1 điều ước khởi tạo ấm áp làm kỷ niệm ban đầu
-                        const starter = [
-                            {
-                                id: 1,
-                                text: "Mong em luôn an yên, mỉm cười nhiều hơn và luôn có những giấc mơ thật đẹp ✨",
-                                date: "Món quà từ những vì sao",
-                                photo: ""
-                            }
-                        ];
-                        localStorage.setItem(STORAGE_KEY, JSON.stringify(starter));
-                        return starter;
+                    const isInitialized = localStorage.getItem(STORAGE_VERSION_KEY);
+                    const rawData = localStorage.getItem(STORAGE_KEY);
+                    let list = [];
+
+                    if (rawData) {
+                        try {
+                            list = JSON.parse(rawData) || [];
+                        } catch (e) {
+                            list = [];
+                        }
                     }
-                    return JSON.parse(data) || [];
+
+                    // Tẩy sạch toàn bộ các kỷ niệm mẫu cũ (mem_1..mem_5) khỏi Sổ Sao
+                    const originalLength = list.length;
+                    list = list.filter(item => {
+                        if (!item || !item.id) return false;
+                        const idStr = String(item.id);
+                        if (idStr.startsWith('mem_') || idStr === '1') return false;
+                        return true;
+                    });
+
+                    // Nếu có kỷ niệm mẫu bị xóa hoặc chưa chuyển sang version 7 thì cập nhật lại storage
+                    if (isInitialized !== 'true' || list.length !== originalLength) {
+                        list.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+                        localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+                        localStorage.setItem(STORAGE_VERSION_KEY, 'true');
+                    }
+
+                    return list;
                 } catch (e) {
                     return [];
                 }
@@ -52,15 +68,19 @@
                 const list = getSavedWishes();
                 const now = new Date();
                 const timeStr = `${now.getDate()}/${now.getMonth() + 1} lúc ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+                const timestamp = Date.now();
                 
                 const newWish = {
-                    id: Date.now(),
+                    id: 'local_' + timestamp,
                     text: text,
                     date: timeStr,
-                    photo: photoBase64
+                    photo: photoBase64 || '',
+                    timestamp: timestamp
                 };
                 list.unshift(newWish);
                 saveWishes(list);
+                renderJournalList();
+                updateJournalCounter();
                 return newWish;
             }
 
@@ -69,6 +89,7 @@
                 list = list.filter(item => item.id !== id);
                 saveWishes(list);
                 renderJournalList();
+                updateJournalCounter();
             }
 
             function updateJournalCounter() {
@@ -77,7 +98,7 @@
                 if (countBadge) countBadge.textContent = list.length;
             }
 
-            /* ---------- 3. XỬ LÝ ẢNH & COMPRESS SIÊU NHẸ (KHÔNG LÀM TRÀN LOCALSTORAGE) ---------- */
+            /* ---------- 3. XỬ LÝ ĐÍNH KÈM ẢNH & NÉN SIÊU NHẸ (CHO PHÉP TẢI ẢNH LÊN) ---------- */
             let currentAttachedPhotoBase64 = '';
 
             const wishPhotoInput = document.getElementById('wish-photo-input');
@@ -87,7 +108,7 @@
             const photoRemoveBtn = document.getElementById('photo-remove-btn');
             const photoAttachLabel = document.getElementById('photo-attach-label');
 
-            function compressImage(file, maxDimension = 500, quality = 0.8) {
+            function compressImage(file, maxDimension = 600, quality = 0.82) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader();
                     reader.onload = function (e) {
@@ -119,39 +140,43 @@
                 });
             }
 
-            wishPhotoInput.addEventListener('change', async function () {
-                const file = this.files && this.files[0];
-                if (!file) return;
+            if (wishPhotoInput) {
+                wishPhotoInput.addEventListener('change', async function () {
+                    const file = this.files && this.files[0];
+                    if (!file) return;
 
-                showToast("⏳ Đang xử lý ảnh kỷ niệm...");
-                try {
-                    const compressed = await compressImage(file, 500, 0.82);
-                    currentAttachedPhotoBase64 = compressed;
-                    photoPreviewImg.src = compressed;
-                    photoChipName.textContent = file.name || "Ảnh kỷ niệm";
-                    photoPreviewChip.style.display = 'inline-flex';
-                    photoAttachLabel.textContent = "Đổi ảnh khác";
-                    showToast("📷 Đã đính kèm ảnh thành công!");
-                } catch (err) {
-                    showToast("⚠️ Không thể tải ảnh này, em thử lại nhé!");
-                }
-            });
+                    showToast("⏳ Đang xử lý ảnh kỷ niệm...");
+                    try {
+                        const compressed = await compressImage(file, 600, 0.82);
+                        currentAttachedPhotoBase64 = compressed;
+                        if (photoPreviewImg) photoPreviewImg.src = compressed;
+                        if (photoChipName) photoChipName.textContent = file.name || "Ảnh kỷ niệm";
+                        if (photoPreviewChip) photoPreviewChip.style.display = 'inline-flex';
+                        if (photoAttachLabel) photoAttachLabel.textContent = "Đổi ảnh khác";
+                        showToast("📷 Đã đính kèm ảnh thành công!");
+                    } catch (err) {
+                        showToast("⚠️ Không thể tải ảnh này, em thử lại nhé!");
+                    }
+                });
+            }
 
             function clearAttachedPhoto() {
                 currentAttachedPhotoBase64 = '';
-                wishPhotoInput.value = '';
-                photoPreviewChip.style.display = 'none';
-                photoPreviewImg.src = '';
-                photoAttachLabel.textContent = "Đính kèm ảnh";
+                if (wishPhotoInput) wishPhotoInput.value = '';
+                if (photoPreviewChip) photoPreviewChip.style.display = 'none';
+                if (photoPreviewImg) photoPreviewImg.src = '';
+                if (photoAttachLabel) photoAttachLabel.textContent = "Đính kèm ảnh";
             }
 
-            photoRemoveBtn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                clearAttachedPhoto();
-                showToast("Đã gỡ ảnh đính kèm");
-            });
+            if (photoRemoveBtn) {
+                photoRemoveBtn.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    clearAttachedPhoto();
+                    showToast("Đã gỡ ảnh đính kèm");
+                });
+            }
 
-            /* ---------- 4. RENDER SỔ NGUYỆN ƯỚC & LIGHTBOX PHÓNG TO ---------- */
+            /* ---------- 4. RENDER SỔ NGUYỆN ƯỚC ÁNH SAO & LIGHTBOX ---------- */
             const journalModal = document.getElementById('journal-modal');
             const openJournalNavBtn = document.getElementById('open-journal-nav-btn');
             const closeJournalBtn = document.getElementById('close-journal-btn');
@@ -168,7 +193,7 @@
                     journalList.innerHTML = `
                         <div class="journal-empty-note">
                             <span class="journal-empty-icon">🌟</span>
-                            <p>Sổ sao hiện đang trống.<br>Hãy viết một điều ước và thả lên dải ngân hà để lưu giữ nhé!</p>
+                            <p>Sổ sao hiện đang trống.<br>Hãy viết một điều ước, đính kèm bức ảnh xinh xắn và thả lên dải ngân hà để lưu giữ nhé!</p>
                         </div>
                     `;
                     return;
@@ -178,16 +203,18 @@
                     const row = document.createElement('div');
                     row.className = 'journal-item';
 
-                    let photoHtml = '';
+                    let mediaHtml = '';
                     if (item.photo) {
-                        photoHtml = `<img class="journal-item-thumb" src="${item.photo}" alt="Ảnh kỷ niệm" title="Chạm để phóng to ảnh">`;
+                        mediaHtml = `<img class="journal-item-thumb" src="${item.photo}" alt="Ảnh kỷ niệm" title="Chạm để phóng to ảnh">`;
+                    } else {
+                        mediaHtml = `<div class="journal-item-badge">✨</div>`;
                     }
 
                     row.innerHTML = `
-                        ${photoHtml}
+                        ${mediaHtml}
                         <div class="journal-item-content">
                             <p class="journal-item-text">${escapeHtml(item.text)}</p>
-                            <span class="journal-item-date">✨ ${escapeHtml(item.date)}</span>
+                            <span class="journal-item-date">⭐ ${escapeHtml(item.date)}</span>
                         </div>
                         <button type="button" class="journal-del-btn" title="Xóa điều ước này">✕</button>
                     `;
@@ -202,12 +229,14 @@
                     });
 
                     // Sự kiện phóng to ảnh
-                    if (item.photo) {
+                    if (item.photo && lightboxImg && lightboxModal) {
                         const thumb = row.querySelector('.journal-item-thumb');
-                        thumb.addEventListener('click', function () {
-                            lightboxImg.src = item.photo;
-                            lightboxModal.classList.add('active');
-                        });
+                        if (thumb) {
+                            thumb.addEventListener('click', function () {
+                                lightboxImg.src = item.photo;
+                                lightboxModal.classList.add('active');
+                            });
+                        }
                     }
 
                     journalList.appendChild(row);
@@ -241,9 +270,11 @@
                 if (e.target === journalModal) closeJournal();
             });
 
-            lightboxModal.addEventListener('click', function () {
-                lightboxModal.classList.remove('active');
-            });
+            if (lightboxModal) {
+                lightboxModal.addEventListener('click', function () {
+                    lightboxModal.classList.remove('active');
+                });
+            }
 
             /* ---------- 5. HIỆU ỨNG CANVAS VŨ TRỤ & PHÁO HOA CHẠM TAY ---------- */
             const canvas = document.getElementById('sky-canvas');
@@ -252,7 +283,7 @@
             let height = canvas.height = window.innerHeight;
 
             const isMobile = window.innerWidth < 768;
-            const starCount = isMobile ? 40 : 85;
+            const starCount = isMobile ? 26 : 65;
             const stars = [];
             const particles = [];
             const shootingStars = [];
@@ -261,7 +292,7 @@
                 stars.push({
                     x: Math.random() * width,
                     y: Math.random() * height,
-                    r: Math.random() * 1.5 + 0.4,
+                    r: Math.random() * 1.4 + 0.4,
                     alpha: Math.random() * 0.8 + 0.2,
                     speed: Math.random() * 0.02 + 0.005,
                     color: ['#ffffff', '#ffd1dc', '#bfe8ff', '#ffe680'][Math.floor(Math.random() * 4)]
@@ -274,19 +305,26 @@
             }
             window.addEventListener('resize', resizeCanvas, { passive: true });
 
-            function createBurst(x, y, count = 18, colorTheme = null) {
+            function createBurst(x, y, count = 16, colorTheme = null) {
+                // Giới hạn số lượng hạt trên mobile để chống giật lag
+                const actualCount = isMobile ? Math.min(count, 8) : count;
+                const maxParticles = isMobile ? 32 : 75;
+                if (particles.length > maxParticles) {
+                    particles.splice(0, particles.length - maxParticles);
+                }
+
                 const colors = colorTheme || ['#ff79a9', '#ffb6dc', '#ffe680', '#42f5ee', '#b3faff', '#ffffff'];
-                for (let i = 0; i < count; i++) {
+                for (let i = 0; i < actualCount; i++) {
                     const angle = Math.random() * Math.PI * 2;
-                    const speed = Math.random() * 3.5 + 1;
+                    const speed = Math.random() * (isMobile ? 2.5 : 3.5) + 0.8;
                     particles.push({
                         x: x,
                         y: y,
                         vx: Math.cos(angle) * speed,
                         vy: Math.sin(angle) * speed,
-                        size: Math.random() * 3 + 1.2,
+                        size: Math.random() * 2.5 + 1,
                         alpha: 1,
-                        decay: Math.random() * 0.025 + 0.015,
+                        decay: Math.random() * 0.03 + 0.02,
                         color: colors[Math.floor(Math.random() * colors.length)],
                         gravity: 0.04
                     });
@@ -306,7 +344,24 @@
                 });
             }
 
-            function animateLoop() {
+            // KHÓA NHỊP 60FPS CHUẨN: CHỐNG GIẬT LAG TRÊN MÀN HÌNH 90HZ / 120HZ / 144HZ
+            let lastFrameTime = performance.now();
+            const targetFPS = 60;
+            const frameDuration = 1000 / targetFPS; // 16.66ms
+
+            function animateLoop(currentTime) {
+                requestAnimationFrame(animateLoop);
+
+                if (!currentTime) currentTime = performance.now();
+                const elapsed = currentTime - lastFrameTime;
+
+                // Nếu màn hình 120Hz/90Hz, bỏ qua frame dư để giữ đúng 60fps mượt như nhung, không nóng máy
+                if (elapsed < frameDuration) return;
+                lastFrameTime = currentTime - (elapsed % frameDuration);
+
+                // Dừng vẽ khi ẩn tab để tiết kiệm tối đa pin
+                if (document.hidden) return;
+
                 ctx.clearRect(0, 0, width, height);
 
                 // Vẽ sao lấp lánh
@@ -322,6 +377,7 @@
                 }
 
                 // Vẽ sao băng ước nguyện
+                const maxTail = isMobile ? 8 : 14;
                 for (let i = shootingStars.length - 1; i >= 0; i--) {
                     const ss = shootingStars[i];
                     ss.progress += ss.speed;
@@ -329,30 +385,34 @@
                     const curY = ss.y + (ss.targetY - ss.y) * ss.progress;
 
                     ss.tail.push({ x: curX, y: curY, alpha: 1 });
-                    if (ss.tail.length > 14) ss.tail.shift();
+                    if (ss.tail.length > maxTail) ss.tail.shift();
 
                     for (let j = 0; j < ss.tail.length; j++) {
                         const t = ss.tail[j];
-                        t.alpha -= 0.06;
+                        t.alpha -= 0.07;
                         ctx.strokeStyle = `rgba(255, 230, 140, ${Math.max(0, t.alpha)})`;
-                        ctx.lineWidth = j * 0.4 + 1;
+                        ctx.lineWidth = j * 0.35 + 1;
                         ctx.beginPath();
-                        ctx.arc(t.x, t.y, j * 0.3 + 1, 0, Math.PI * 2);
+                        ctx.arc(t.x, t.y, j * 0.25 + 1, 0, Math.PI * 2);
                         ctx.fillStyle = `rgba(255, 180, 220, ${Math.max(0, t.alpha)})`;
                         ctx.fill();
                     }
 
-                    ctx.fillStyle = '#ffffff';
+                    // Tối ưu: Dùng vòng hào quang 2 lớp thay vì ctx.shadowBlur (tránh giật GPU trên 120Hz)
+                    ctx.globalAlpha = 0.45;
+                    ctx.fillStyle = '#ffe680';
+                    ctx.beginPath();
+                    ctx.arc(curX, curY, 7.5, 0, Math.PI * 2);
+                    ctx.fill();
+
                     ctx.globalAlpha = 1;
-                    ctx.shadowBlur = 15;
-                    ctx.shadowColor = '#ffe680';
+                    ctx.fillStyle = '#ffffff';
                     ctx.beginPath();
                     ctx.arc(curX, curY, 3.5, 0, Math.PI * 2);
                     ctx.fill();
-                    ctx.shadowBlur = 0;
 
                     if (ss.progress >= 1) {
-                        createBurst(ss.targetX, ss.targetY, 35, ['#ffe680', '#ff9ebb', '#42f5ee', '#ffffff']);
+                        createBurst(ss.targetX, ss.targetY, isMobile ? 16 : 28, ['#ffe680', '#ff9ebb', '#42f5ee', '#ffffff']);
                         shootingStars.splice(i, 1);
                     }
                 }
@@ -378,13 +438,25 @@
                 }
 
                 ctx.globalAlpha = 1;
-                requestAnimationFrame(animateLoop);
             }
             requestAnimationFrame(animateLoop);
 
+            // BẮT CHẠM THÔNG MINH: CHỈ NỔ PHÁO HOA KHI CHẠM NHẸ (TAP), KHÔNG NỔ KHI VUỐT CUỘN TRANG
+            let touchStartX = 0, touchStartY = 0, touchStartTime = 0;
             document.addEventListener('pointerdown', function (e) {
-                if (e.target.closest('button, input, a, .flip-card, .journal-sheet, .wish-card')) return;
-                createBurst(e.clientX, e.clientY, 12);
+                touchStartX = e.clientX;
+                touchStartY = e.clientY;
+                touchStartTime = Date.now();
+            }, { passive: true });
+
+            document.addEventListener('pointerup', function (e) {
+                if (e.target.closest('button, input, a, .flip-card, .journal-sheet, .wish-card, .journal-item, .music-sheet')) return;
+                const dist = Math.hypot(e.clientX - touchStartX, e.clientY - touchStartY);
+                const dur = Date.now() - touchStartTime;
+                // Nếu khoảng cách di chuyển nhỏ hơn 12px và chạm dưới 320ms -> là 1 cú chạm nhẹ (tap)
+                if (dist < 12 && dur < 320) {
+                    createBurst(e.clientX, e.clientY, isMobile ? 8 : 14);
+                }
             }, { passive: true });
 
             /* ---------- 6. MỞ HỘP ĐIỀU ƯỚC TRONG LỌ & LƯU VÀO SỔ ---------- */
@@ -452,8 +524,9 @@
                 }
 
                 const wishContent = text || "Một khoảnh khắc dịu dàng được gửi lên dải ngân hà ✨";
+                const hasPhoto = !!currentAttachedPhotoBase64;
 
-                // Lưu vào LocalStorage
+                // Lưu vào LocalStorage kèm ảnh (nếu có)
                 addWishToStorage(wishContent, currentAttachedPhotoBase64);
 
                 // Hiệu ứng phóng sao băng
@@ -464,7 +537,7 @@
                 clearAttachedPhoto();
                 userWishInput.blur();
 
-                showToast("✨ Điều ước & ảnh đã được gửi lên ngân hà và lưu vào sổ sao!");
+                showToast(hasPhoto ? "✨ Điều ước & ảnh kỷ niệm đã bay lên dải ngân hà và lưu vào Sổ Sao!" : "✨ Điều ước của em đã bay lên dải ngân hà và lưu vào Sổ Sao!");
 
                 // Bung pháo hoa chúc mừng
                 const rect = wishForm.getBoundingClientRect();
@@ -768,7 +841,6 @@
             }
             document.addEventListener('click', autoStartMusicOnce, { once: true });
             document.addEventListener('touchstart', autoStartMusicOnce, { once: true });
-
             updateJournalCounter();
 
         })();

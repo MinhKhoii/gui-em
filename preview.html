@@ -33,20 +33,20 @@
     <!-- Thanh trên cùng: Nút quay lại, Sổ nguyện ước & Nút phát nhạc -->
     <nav class="top-navbar" aria-label="Thanh điều hướng">
         <a class="back-link" href="index.html" title="Trở lại trang chính">
-            <span>←</span> Trang chính
+            <span>←</span> <span class="nav-text">Trang chính</span>
         </a>
         <div class="nav-right-actions">
-            <a href="book.html" class="journal-nav-btn" style="text-decoration:none;" title="Mở Cuốn Sách Kỷ Niệm">
-                <span>📖 Sách</span>
+            <a href="book.html" class="journal-nav-btn nav-book-btn" style="text-decoration:none;" title="Mở Cuốn Sách Kỷ Niệm">
+                <span>📖</span> <span class="nav-text">Sách</span>
             </a>
-            <button type="button" class="journal-nav-btn" id="open-journal-nav-btn" title="Mở Sổ Nguyện Ước Ánh Sao">
-                <span>✨ Sổ Sao</span>
+            <button type="button" class="journal-nav-btn nav-star-btn" id="open-journal-nav-btn" title="Mở Sổ Nguyện Ước Ánh Sao">
+                <span>✨</span> <span class="nav-text">Sổ Sao</span>
                 <span class="count-badge" id="nav-star-count">0</span>
             </button>
             <div class="music-unified-capsule" id="music-unified-capsule">
                 <button type="button" class="music-capsule-toggle" id="music-btn" title="Bật/Tắt phát nhạc">
                     <span class="disc-icon">🎵</span>
-                    <span id="music-btn-text">Bật nhạc</span>
+                    <span id="music-btn-text" class="music-btn-text">Bật nhạc</span>
                 </button>
                 <div class="music-capsule-divider" aria-hidden="true"></div>
                 <button type="button" class="music-capsule-menu" id="open-music-modal-btn"
@@ -123,7 +123,7 @@
         </div>
     </div>
 
-    <!-- KHU VỰC: EM TỰ VIẾT ĐIỀU ƯỚC + ĐÍNH KÈM ẢNH KỶ NIỆM + LƯU LẠI -->
+    <!-- KHU VỰC: EM TỰ VIẾT ĐIỀU ƯỚC + ĐÍNH KÈM ẢNH KỶ NIỆM + LƯU LẠI VÀO SỔ SAO -->
     <section class="user-wish-box" aria-label="Gửi điều ước">
         <h2 class="user-wish-title">
             <span>🌠</span> Thả Một Ngôi Sao Ước Nguyện <span>✨</span>
