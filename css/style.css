@@ -439,12 +439,8 @@ body {
                 z-index: 3;
                 pointer-events: none;
                 opacity: 0;
-                background: #000207 url('../img/woman-scene-desktop.webp');
-                background-repeat: no-repeat;
-                background-size: auto 85%;
-                background-position: calc(50% + 30.5vw) 50%;
-                transition: opacity 1.7s ease-in-out, transform 5s ease-out, background-position 5s ease-out, background-size 5s ease-out;
-                transform: scale(1.00);
+                background: transparent;
+                transition: opacity 1.7s ease-in-out;
             }
 
             #woman-scene::before {
@@ -453,16 +449,13 @@ body {
                 inset: 0;
                 pointer-events: none;
                 opacity: 0;
-                background: radial-gradient(ellipse 68vw 76vh at 90% 50%, rgba(255,72,76,.38) 0%, rgba(255,64,70,.29) 12%, rgba(245,48,60,.21) 26%, rgba(225,36,50,.14) 44%, rgba(205,22,38,.08) 62%, rgba(185,12,28,0) 100%);
+                background: radial-gradient(ellipse 42vw 52vh at 82% 64%, rgba(255,70,80,.30) 0%, rgba(245,48,60,.18) 22%, rgba(225,36,50,.08) 46%, rgba(185,12,28,0) 75%);
                 transition: opacity 1.9s ease-in-out;
                 mix-blend-mode: screen;
             }
 
             #woman-scene.hien-thi {
-                opacity: .97;
-                transform: scale(1.03);
-                background-size: auto 88%;
-                background-position: calc(50% + 29.7vw) 50%;
+                opacity: 1;
             }
 
             #woman-scene.hien-thi::before {
@@ -2089,9 +2082,31 @@ body {
                 }
             }
 
-            /* Hình toàn thân chỉ dành cho nhánh điện thoại. */
+            /* Hình cô gái toàn thân thanh thoát cho máy tính (trên mobile/tablet sẽ được media query tối ưu riêng) */
             #woman-complete-mobile {
-                display: none;
+                display: block;
+                position: absolute;
+                box-sizing: border-box;
+                right: clamp(24px, 6vw, 90px);
+                bottom: 0;
+                height: clamp(360px, 68vh, 580px);
+                width: auto;
+                max-width: 40vw;
+                object-fit: contain;
+                object-position: right bottom;
+                opacity: 0;
+                transform: translateY(18px) scale(.96);
+                transform-origin: right bottom;
+                transition: opacity 2s ease-in-out, transform 2.2s cubic-bezier(.22, 1, .36, 1);
+                pointer-events: none;
+                filter: drop-shadow(0 0 16px rgba(255, 80, 100, 0.28)) drop-shadow(0 0 4px rgba(255, 255, 255, 0.18));
+            }
+
+            #woman-scene.hien-thi #woman-complete-mobile {
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                transform: translateY(0) scale(1);
             }
 
             /* Chỉ cảnh cỏ 4 lá: morph mắt vuông -> khe ngang -> >< từ file mẫu.
