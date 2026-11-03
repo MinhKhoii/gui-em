@@ -2493,17 +2493,25 @@ h1, h2, h3, h4 {
 
     .letter-wax-seal,
     .story-stationery-card .letter-wax-seal {
-        width: 48px !important;
-        height: 48px !important;
+        width: 50px !important;
+        height: 50px !important;
         font-size: 1.3rem !important;
-        top: -18px !important;
-        right: 16px !important;
+        top: -25px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        z-index: 10 !important;
     }
 
     .story-header-title {
-        font-size: 1.25rem !important;
-        line-height: 1.4 !important;
+        font-size: 1.2rem !important;
+        line-height: 1.45 !important;
+        margin-top: 16px !important;
         margin-bottom: 20px !important;
+    }
+
+    .letter-salutation {
+        margin-top: 14px !important;
     }
 
     .two-fingers-heading {
@@ -3203,20 +3211,23 @@ h1, h2, h3, h4 {
     height: 64px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #B72A38 0%, #7A1420 100%);
-    box-shadow: 0 6px 18px rgba(122, 20, 32, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 22px rgba(122, 20, 32, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.7rem;
     position: absolute;
-    top: -26px;
-    right: 40px;
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
 }
 
 .letter-salutation {
     font-family: var(--font-hand);
     font-size: clamp(1.8rem, 3.2vw, 2.3rem);
     color: #142B3B;
+    margin-top: 16px;
     margin-bottom: 24px;
 }
 
@@ -3450,14 +3461,16 @@ h1, h2, h3, h4 {
     height: 64px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #B72A38 0%, #7A1420 100%);
-    box-shadow: 0 6px 18px rgba(122, 20, 32, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 8px 22px rgba(122, 20, 32, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 1.7rem;
     position: absolute;
-    top: -26px;
-    right: 40px;
+    top: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
 }
 
 .story-header-title {
@@ -3467,6 +3480,7 @@ h1, h2, h3, h4 {
     color: #142B3B;
     text-align: center;
     line-height: 1.45;
+    margin-top: 18px;
     margin-bottom: 30px;
     padding-bottom: 20px;
     border-bottom: 1.5px solid rgba(216, 188, 138, 0.35);
