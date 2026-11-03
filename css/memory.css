@@ -3585,13 +3585,21 @@ h1, h2, h3, h4 {
 
 .two-fingers-heading {
     font-family: var(--font-serif);
-    font-size: clamp(1.28rem, 2.5vw, 1.7rem);
+    font-size: clamp(1.3rem, 2.6vw, 1.75rem);
     font-weight: 700;
     color: #142B3B;
-    line-height: 1.45;
-    margin-bottom: 24px;
+    line-height: 1.4;
+    margin-bottom: 12px;
     text-wrap: balance;
     word-break: normal; overflow-wrap: break-word;
+}
+
+.two-fingers-lead-intro {
+    font-size: clamp(1.02rem, 1.8vw, 1.14rem);
+    line-height: 1.8;
+    color: #384C5A;
+    font-style: italic;
+    margin-bottom: 24px;
 }
 
 .two-fingers-definitions {
