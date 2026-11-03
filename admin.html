@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Quản Trị Kỷ Niệm · Cảm Ơn Em 🔒</title>
+    <link rel="icon" type="image/x-icon" href="./favicon.ico">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap"
+        rel="stylesheet">
+
+    <!-- CSS chung & CSS riêng cho Admin -->
+    <link rel="stylesheet" href="./css/memory.css?v=3.7">
+    <style>
+        body {
+            background: #0d1e2a;
+            color: #F8F3E9;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .admin-container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: #142B3B;
+            border-radius: 20px;
+            border: 1px solid rgba(216, 188, 138, 0.35);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+            overflow: hidden;
+        }
+
+        .admin-header {
+            padding: 24px 32px;
+            border-bottom: 1px solid rgba(216, 188, 138, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .admin-title {
+            font-family: var(--font-serif);
+            font-size: 1.5rem;
+            color: var(--champagne-gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-top-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .admin-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 16px 32px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-tab-btn {
+            background: transparent;
+            border: 1px solid rgba(216, 188, 138, 0.25);
+            color: rgba(248, 243, 233, 0.8);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 0.88rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .admin-tab-btn:hover {
+            color: #fff;
+            border-color: var(--champagne-gold);
+        }
+
+        .admin-tab-btn.active {
+            background: var(--champagne-gold);
+            color: var(--deep-sea);
+            font-weight: 600;
+            border-color: var(--champagne-gold);
+        }
+
+        .admin-body {
+            padding: 32px;
+        }
+
+        .tab-pane {
+            display: none;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        .card-box {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-box h3 {
+            font-family: var(--font-serif);
+            color: var(--champagne-gold);
+            font-size: 1.25rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-box p {
+            color: rgba(248, 243, 233, 0.88);
+            font-size: 0.92rem;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        /* TỐI ƯU ĐỘ TƯƠNG PHẢN CỰC KỲ RÕ RÀNG CHO GIAO DIỆN ADMIN */
+        .form-label,
+        .admin-body .form-label,
+        .card-box .form-label,
+        .admin-modal-card .form-label,
+        label {
+            color: #FAF5EB !important;
+            font-size: 0.98rem !important;
+            font-weight: 600 !important;
+            margin-bottom: 8px !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            letter-spacing: 0.3px;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+        }
+
+        .form-label::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 14px;
+            background: var(--champagne-gold);
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        .form-help {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.83rem;
+            color: #A9C8D1 !important;
+        }
+
+        .admin-body .form-input,
+        .admin-body .form-textarea,
+        .admin-body .form-select,
+        .admin-modal-card .form-input,
+        .admin-modal-card .form-textarea,
+        .admin-modal-card .form-select {
+            background: #ffffff !important;
+            color: #142B3B !important;
+            border: 1.5px solid rgba(216, 188, 138, 0.5) !important;
+            border-radius: 10px;
+            font-size: 0.96rem;
+            font-weight: 500;
+            padding: 12px 16px;
+            width: 100%;
+            outline: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+            transition: var(--transition);
+        }
+
+        .admin-body .form-input:focus,
+        .admin-body .form-textarea:focus,
+        .admin-body .form-select:focus,
+        .admin-modal-card .form-input:focus,
+        .admin-modal-card .form-textarea:focus,
+        .admin-modal-card .form-select:focus {
+            border-color: #E8A17B !important;
+            box-shadow: 0 0 0 3px rgba(232, 161, 123, 0.35) !important;
+        }
+
+        .admin-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-grid-2 {
+                grid-template-columns: 1fr;
+            }
+
+            .admin-header {
+                padding: 18px 20px;
+            }
+
+            .admin-tabs {
+                padding: 12px 20px;
+            }
+
+            .admin-body {
+                padding: 20px;
+            }
+        }
+
+        .admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 14px;
+            font-size: 0.9rem;
+        }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 12px 14px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .admin-table th {
+            color: var(--champagne-gold);
+            font-weight: 600;
+        }
+
+        .admin-table img {
+            width: 50px;
+            height: 40px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .login-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0d1e2a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            padding: 20px;
+        }
+
+        .login-card {
+            max-width: 420px;
+            width: 100%;
+            background: #142B3B;
+            border: 1px solid var(--border-gold);
+            border-radius: 20px;
+            padding: 36px 30px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        /* MODAL POPUPS DÀNH CHO ADMIN */
+        .admin-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(5, 15, 24, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .admin-modal-card {
+            max-width: 620px;
+            width: 100%;
+            background: #142B3B;
+            border: 1.5px solid var(--border-gold);
+            border-radius: 20px;
+            padding: 30px 34px;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.7);
+            color: #F8F3E9;
+            animation: modalFadeIn 0.3s ease-out;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .admin-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            border-bottom: 1px solid rgba(216, 188, 138, 0.25);
+            padding-bottom: 14px;
+        }
+
+        .admin-modal-header h3 {
+            font-family: var(--font-serif);
+            color: var(--champagne-gold);
+            font-size: 1.35rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-close-modal {
+            background: transparent;
+            border: none;
+            color: rgba(248, 243, 233, 0.75);
+            font-size: 1.5rem;
+            cursor: pointer;
+            line-height: 1;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: var(--transition);
+        }
+
+        .btn-close-modal:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* TOAST THÔNG BÁO XỊN */
+        .admin-toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #142B3B, #1e3d54);
+            color: #FAF5EB;
+            border: 1.5px solid var(--champagne-gold);
+            padding: 16px 26px;
+            border-radius: 14px;
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 100000;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.35s cubic-bezier(0.25, 0.8, 0.25, 1);
+            pointer-events: none;
+        }
+
+        .admin-toast.show {
+            transform: translateY(0);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- LỚP KHÓA XÁC THỰC ADMIN -->
+    <div class="login-overlay" id="admin-login-overlay">
+        <div class="login-card">
+            <div style="font-size: 3rem; margin-bottom: 16px;">🔒</div>
+            <h2 style="font-family: var(--font-serif); color: var(--champagne-gold); margin-bottom: 10px;">
+                Quản Trị Kỷ Niệm
+            </h2>
+            <p style="font-size: 0.88rem; color: rgba(248, 243, 233, 0.7); margin-bottom: 24px;">
+                Vui lòng nhập mật mã quản trị để chỉnh sửa nội dung và quản lý ảnh (Mặc định: 123456).
+            </p>
+            <form id="admin-login-form">
+                <input type="password" id="admin-pass-input" class="form-input" placeholder="Nhập mật mã..."
+                    style="margin-bottom: 16px; text-align: center; font-size: 1.1rem; letter-spacing: 2px;" required />
+                <button type="submit" class="btn-primary" style="width: 100%; padding: 12px;">Đăng Nhập Quản Trị</button>
+                <div style="margin-top: 14px;">
+                    <a href="index.html" style="color: var(--champagne-gold); font-size: 0.85rem; text-decoration: none;">
+                        ← Trở về website chính
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- KHUNG QUẢN TRỊ CHÍNH -->
+    <div class="admin-container" id="admin-main-panel" style="display: none;">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-title">
+                <span>⚙️</span> Trung Tâm Quản Trị Kỷ Niệm
+            </div>
+            <div class="admin-top-actions">
+                <a href="index.html" target="_blank" class="btn-secondary" style="text-decoration: none;">
+                    👁️ Xem Website
+                </a>
+                <button type="button" class="btn-primary" onclick="saveAllAdminChanges()">
+                    💾 Lưu Tất Cả Thay Đổi
+                </button>
+                <button type="button" class="btn-secondary" onclick="logoutAdmin()" title="Đăng xuất">
+                    🚪 Thoát
+                </button>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="admin-tabs">
+            <button type="button" class="admin-tab-btn active" data-tab="tab-content">1. Nội Dung Trang Chủ</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-map">2. Bản Đồ Vũng Tàu (Leaflet)</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-gallery">3. Thư Viện Ảnh (Gallery)</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-little">4. Điều Nhỏ Bé</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-timeline">5. Dòng Thời Gian</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-letter">6. Bức Thư Gửi Em</button>
+            <button type="button" class="admin-tab-btn" data-tab="tab-backup">7. Sao Lưu & Supabase</button>
+        </nav>
+
+        <!-- Tab Bodies -->
+        <div class="admin-body">
+            <!-- TAB 1: NỘI DUNG CHUNG & HERO -->
+            <section class="tab-pane active" id="tab-content">
+                <div class="card-box">
+                    <h3>Giao diện Trang Chủ & Màn hình mở đầu</h3>
+                    <div class="form-group">
+                        <label class="form-label">Tiêu đề chính (Hero Title):</label>
+                        <input type="text" id="adm-hero-title" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dòng phụ đề (Hero Subtitle):</label>
+                        <input type="text" id="adm-hero-subtitle" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Câu trích dẫn (Hero Quote):</label>
+                        <textarea id="adm-hero-quote" class="form-textarea"></textarea>
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <h3>Ngày Gặp Nhau</h3>
+                    <div class="form-group">
+                        <label class="form-label">Tiêu đề ngày:</label>
+                        <input type="text" id="adm-meet-date" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đoạn văn tâm sự 1:</label>
+                        <textarea id="adm-meet-p1" class="form-textarea"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đoạn văn tâm sự 2:</label>
+                        <textarea id="adm-meet-p2" class="form-textarea"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Câu trích dẫn đắt giá:</label>
+                        <textarea id="adm-meet-p3" class="form-textarea"></textarea>
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <h3>Nhạc nền & Mật mã quản trị</h3>
+                    <div class="admin-grid-2">
+                        <div class="form-group">
+                            <label class="form-label">Tên bài hát hiển thị:</label>
+                            <input type="text" id="adm-music-title" class="form-input" />
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Đường dẫn file MP3:</label>
+                            <input type="text" id="adm-music-url" class="form-input" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Đổi mật mã quản trị (Passkey):</label>
+                        <input type="text" id="adm-passkey" class="form-input" placeholder="Mặc định: 123456" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: BẢN ĐỒ VŨNG TÀU (LEAFLET) -->
+            <section class="tab-pane" id="tab-map">
+                <div class="card-box">
+                    <h3>
+                        <span>📍 Các địa điểm trên bản đồ Vũng Tàu</span>
+                        <button type="button" class="btn-primary" onclick="openAddMapStopModal()">
+                            ➕ Thêm địa điểm mới
+                        </button>
+                    </h3>
+                    <p style="font-size: 0.85rem; color: rgba(248, 243, 233, 0.7); margin-bottom: 14px;">
+                        Tất cả địa điểm sẽ xuất hiện trực tiếp trên bản đồ Leaflet OpenStreetMap và trong cuốn sổ tay du lịch.
+                    </p>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ảnh</th>
+                                <th>Tên địa điểm</th>
+                                <th>Tọa độ (Lat, Lng)</th>
+                                <th>Danh mục</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adm-map-table-body">
+                            <!-- Render bằng JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 3: THƯ VIỆN ẢNH (GALLERY) -->
+            <section class="tab-pane" id="tab-gallery">
+                <div class="card-box">
+                    <h3>
+                        <span>🖼️ Danh sách khoảnh khắc kỷ niệm</span>
+                        <button type="button" class="btn-primary" onclick="openAdminAddPhotoModal()">
+                            ➕ Tải thêm ảnh mới
+                        </button>
+                    </h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ảnh</th>
+                                <th>Tiêu đề</th>
+                                <th>Album / Nhóm</th>
+                                <th>Thời gian</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adm-gallery-table-body">
+                            <!-- Render bằng JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 4: ĐIỀU NHỎ BÉ -->
+            <section class="tab-pane" id="tab-little">
+                <div class="card-box">
+                    <h3>
+                        <span>🌿 Những điều nhỏ bé tôi vẫn nhớ</span>
+                        <button type="button" class="btn-primary" onclick="openAdminAddLittleModal()">
+                            ➕ Thêm ghi chú
+                        </button>
+                    </h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Nội dung</th>
+                                <th>Thẻ</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adm-little-table-body">
+                            <!-- Render bằng JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 5: DÒNG THỜI GIAN -->
+            <section class="tab-pane" id="tab-timeline">
+                <div class="card-box">
+                    <h3>
+                        <span>📅 Dòng thời gian kỷ niệm</span>
+                        <button type="button" class="btn-primary" onclick="openAdminAddTimelineModal()">
+                            ➕ Thêm cột mốc
+                        </button>
+                    </h3>
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th>Ảnh</th>
+                                <th>Mốc thời gian</th>
+                                <th>Tiêu đề</th>
+                                <th>Trạng thái</th>
+                                <th>Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="adm-timeline-table-body">
+                            <!-- Render bằng JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TAB 6: BỨC THƯ GỬI EM -->
+            <section class="tab-pane" id="tab-letter">
+                <div class="card-box">
+                    <h3>💌 Lời tâm sự gửi riêng em</h3>
+                    <div class="form-group">
+                        <label class="form-label">Lời chào mở đầu:</label>
+                        <input type="text" id="adm-letter-greeting" class="form-input" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nội dung bức thư (Mỗi đoạn cách nhau một dòng trống):</label>
+                        <textarea id="adm-letter-body" class="form-textarea" style="min-height: 220px;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chữ ký kết thư:</label>
+                        <input type="text" id="adm-letter-signature" class="form-input" />
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 7: SAO LƯU & SUPABASE SYNC -->
+            <section class="tab-pane" id="tab-backup">
+                <div class="card-box">
+                    <h3>📥 Xuất & Nhập file JSON Sao Lưu</h3>
+                    <p style="font-size: 0.88rem; color: rgba(248, 243, 233, 0.75); margin-bottom: 16px;">
+                        Tải toàn bộ nội dung, địa điểm bản đồ, mốc thời gian và ảnh về máy dưới dạng 1 file JSON duy nhất để lưu giữ vĩnh viễn hoặc chuyển sang máy khác.
+                    </p>
+                    <div style="display: flex; gap: 14px; flex-wrap: wrap;">
+                        <button type="button" class="btn-primary" onclick="MemoryStore.exportJsonFile()">
+                            📥 Tải file JSON sao lưu (.json)
+                        </button>
+                        <button type="button" class="btn-secondary" onclick="document.getElementById('import-json-input').click()">
+                            📤 Phục hồi từ file JSON
+                        </button>
+                        <input type="file" id="import-json-input" accept=".json" style="display: none;" onchange="handleImportJson(this)" />
+                    </div>
+                </div>
+
+                <div class="card-box">
+                    <h3>☁️ Kết Nối Cloud Database (Supabase)</h3>
+                    <p style="font-size: 0.88rem; color: rgba(248, 243, 233, 0.75); margin-bottom: 16px;">
+                        Khi bạn kết nối Supabase, mọi chỉnh sửa và ảnh sẽ được tự động đồng bộ lên đám mây, giúp người nhận mở trên điện thoại hay bất cứ đâu cũng xem được trọn vẹn dữ liệu mới nhất.
+                    </p>
+                    <div class="form-group">
+                        <label class="form-label">Supabase Project URL:</label>
+                        <input type="text" id="adm-supabase-url" class="form-input" placeholder="https://xyzcompany.supabase.co" />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Supabase Anon Key:</label>
+                        <input type="password" id="adm-supabase-key" class="form-input" placeholder="eyJhbGciOi..." />
+                    </div>
+                    <button type="button" class="btn-primary" onclick="saveSupabaseConfig()">
+                        🔗 Lưu & Kiểm tra kết nối Supabase
+                    </button>
+                </div>
+
+                <div class="card-box" style="border-color: rgba(232, 161, 123, 0.4);">
+                    <h3 style="color: var(--sunset-peach);">⚠️ Khôi phục dữ liệu ban đầu</h3>
+                    <p style="font-size: 0.85rem; color: rgba(248, 243, 233, 0.7); margin-bottom: 14px;">
+                        Đưa toàn bộ nội dung, ảnh mẫu và bản đồ về trạng thái mặc định ban đầu.
+                    </p>
+                    <button type="button" class="btn-secondary" style="color: var(--sunset-peach);" onclick="handleResetAllData()">
+                        🔄 Khôi phục mặc định
+                    </button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM ĐỊA ĐIỂM BẢN ĐỒ VŨNG TÀU -->
+    <div class="admin-modal" id="modal-map-stop" style="display: none;">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3>📍 Thêm Địa Điểm Mới Vào Bản Đồ</h3>
+                <button type="button" class="btn-close-modal" onclick="closeAdminModal('modal-map-stop')">✕</button>
+            </div>
+            <form id="form-map-stop" onsubmit="handleSaveMapStop(event)">
+                <div class="form-group">
+                    <label class="form-label">Tên địa điểm:</label>
+                    <input type="text" id="map-stop-name" class="form-input" placeholder="Ví dụ: Mũi Nghinh Phong, Hải Đăng Vũng Tàu..." required />
+                </div>
+                <div class="admin-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Vĩ độ (Latitude):</label>
+                        <input type="number" step="any" id="map-stop-lat" class="form-input" value="10.334" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Kinh độ (Longitude):</label>
+                        <input type="number" step="any" id="map-stop-lng" class="form-input" value="107.075" required />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Danh mục địa điểm:</label>
+                    <select id="map-stop-category" class="form-select">
+                        <option value="Cảnh đẹp biển">🌊 Cảnh đẹp biển</option>
+                        <option value="Điểm tham quan">🏛️ Điểm tham quan / Check-in</option>
+                        <option value="Ẩm thực & Quán cafe">☕ Ẩm thực & Quán cafe</option>
+                        <option value="Cung đường kỷ niệm">🛵 Cung đường kỷ niệm</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tải ảnh kỷ niệm (Tùy chọn):</label>
+                    <input type="file" id="map-stop-file" class="form-input" accept="image/*" onchange="previewUploadImage(this, 'map-stop-preview', 'map-stop-photo-data')" />
+                    <input type="hidden" id="map-stop-photo-data" />
+                    <div style="margin-top: 10px; display: flex; align-items: center; gap: 12px;">
+                        <img id="map-stop-preview" src="" style="width: 80px; height: 60px; object-fit: cover; border-radius: 8px; display: none;" />
+                        <span class="form-help">(Chọn ảnh từ máy tính hoặc điện thoại, hệ thống sẽ tự nén mượt mà)</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Cảm nhận / Kỷ niệm tại đây:</label>
+                    <textarea id="map-stop-desc" class="form-textarea" placeholder="Những câu chuyện, nụ cười hoặc cảm xúc tại nơi này..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn-secondary" onclick="closeAdminModal('modal-map-stop')">Hủy bỏ</button>
+                    <button type="submit" class="btn-primary">💾 Lưu Địa Điểm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL TẢI ẢNH MỚI VÀO GALLERY -->
+    <div class="admin-modal" id="modal-gallery" style="display: none;">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3>🖼️ Tải Thêm Khoảnh Khắc Kỷ Niệm</h3>
+                <button type="button" class="btn-close-modal" onclick="closeAdminModal('modal-gallery')">✕</button>
+            </div>
+            <form id="form-gallery" onsubmit="handleSaveGalleryPhoto(event)">
+                <div class="form-group">
+                    <label class="form-label">Chọn hình ảnh kỷ niệm:</label>
+                    <input type="file" id="gal-file" class="form-input" accept="image/*" required onchange="previewUploadImage(this, 'gal-preview', 'gal-photo-data')" />
+                    <input type="hidden" id="gal-photo-data" />
+                    <div style="margin-top: 12px; text-align: center;">
+                        <img id="gal-preview" src="" style="max-height: 200px; max-width: 100%; border-radius: 12px; display: none; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.3);" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tiêu đề ảnh:</label>
+                    <input type="text" id="gal-title" class="form-input" placeholder="Ví dụ: Hoàng hôn Bãi Sau, Nụ cười ngày gặp..." required />
+                </div>
+                <div class="admin-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Thuộc Album / Nhóm:</label>
+                        <select id="gal-album" class="form-select">
+                            <option value="first-day">Ngày đầu tiên gặp nhau</option>
+                            <option value="roads">Những cung đường ở Vũng Tàu</option>
+                            <option value="spots">Những địa điểm chúng ta đã đi qua</option>
+                            <option value="food">Những món ăn chúng ta đã cùng thưởng thức</option>
+                            <option value="happy">Những khoảnh khắc vui vẻ</option>
+                            <option value="cherish">Những bức ảnh tôi muốn giữ lại thật lâu</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Thời gian chụp:</label>
+                        <input type="text" id="gal-date" class="form-input" value="Lần đầu gặp" placeholder="Ví dụ: Buổi tối đi dạo..." />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Dòng cảm xúc / Chú thích ảnh:</label>
+                    <textarea id="gal-caption" class="form-textarea" placeholder="Một vài dòng cảm xúc hoặc câu chuyện nhỏ về khoảnh khắc này..."></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn-secondary" onclick="closeAdminModal('modal-gallery')">Hủy bỏ</button>
+                    <button type="submit" class="btn-primary">💾 Thêm Vào Thư Viện</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM ĐIỀU NHỎ BÉ -->
+    <div class="admin-modal" id="modal-little" style="display: none;">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3>🌿 Thêm Điều Nhỏ Bé Tôi Vẫn Nhớ</h3>
+                <button type="button" class="btn-close-modal" onclick="closeAdminModal('modal-little')">✕</button>
+            </div>
+            <form id="form-little" onsubmit="handleSaveLittleThing(event)">
+                <div class="admin-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Biểu tượng Icon:</label>
+                        <input type="text" id="lt-icon" class="form-input" value="✨" placeholder="Ví dụ: ☕, 🌊, 📸, 🌅, 🍦" required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Thẻ danh mục:</label>
+                        <input type="text" id="lt-date" class="form-input" value="Kỷ niệm đẹp" placeholder="Ví dụ: Kỷ niệm đẹp, Vũng Tàu..." />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nội dung điều nhỏ bé:</label>
+                    <textarea id="lt-text" class="form-textarea" placeholder="Ví dụ: Nụ cười khi em nói về bộ phim yêu thích, hay ngắm hoàng hôn buông trên mặt biển..." required></textarea>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn-secondary" onclick="closeAdminModal('modal-little')">Hủy bỏ</button>
+                    <button type="submit" class="btn-primary">💾 Lưu Ghi Chú</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL THÊM CỘT MỐC DÒNG THỜI GIAN -->
+    <div class="admin-modal" id="modal-timeline" style="display: none;">
+        <div class="admin-modal-card">
+            <div class="admin-modal-header">
+                <h3>📅 Thêm Cột Mốc Dòng Thời Gian</h3>
+                <button type="button" class="btn-close-modal" onclick="closeAdminModal('modal-timeline')">✕</button>
+            </div>
+            <form id="form-timeline" onsubmit="handleSaveTimeline(event)">
+                <div class="admin-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Thời gian / Mốc:</label>
+                        <input type="text" id="tl-date" class="form-input" placeholder="Ví dụ: Một buổi tối, 19:00..." required />
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trạng thái:</label>
+                        <select id="tl-status" class="form-select">
+                            <option value="completed">✅ Kỷ niệm đẹp</option>
+                            <option value="pending">⚠️ Cần bổ sung thêm ảnh</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tiêu đề cột mốc:</label>
+                    <input type="text" id="tl-title" class="form-input" placeholder="Ví dụ: Gặp gỡ & Bắt đầu chuyến đi" required />
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nội dung chi tiết:</label>
+                    <textarea id="tl-desc" class="form-textarea" placeholder="Kể lại khoảnh khắc hoặc chi tiết đáng nhớ trong mốc này..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ảnh đính kèm (Tùy chọn):</label>
+                    <input type="file" id="tl-file" class="form-input" accept="image/*" onchange="previewUploadImage(this, 'tl-preview', 'tl-photo-data')" />
+                    <input type="hidden" id="tl-photo-data" />
+                    <div style="margin-top: 10px;">
+                        <img id="tl-preview" src="" style="max-height: 120px; border-radius: 8px; display: none;" />
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 20px;">
+                    <button type="button" class="btn-secondary" onclick="closeAdminModal('modal-timeline')">Hủy bỏ</button>
+                    <button type="submit" class="btn-primary">💾 Lưu Cột Mốc</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST THÔNG BÁO HOÀN TẤT -->
+    <div id="admin-toast" class="admin-toast">
+        <span style="font-size: 1.3rem;">✨</span>
+        <span id="admin-toast-text">Đã lưu thay đổi thành công!</span>
+    </div>
+
+    <!-- Nạp Supabase SDK, DataStore và Script Admin -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./js/data-store.js?v=2.0"></script>
+    <script>
+        // Authentication check
+        document.addEventListener('DOMContentLoaded', () => {
+            const overlay = document.getElementById('admin-login-overlay');
+            const panel = document.getElementById('admin-main-panel');
+            const isAuth = sessionStorage.getItem('admin_authenticated');
+
+            if (isAuth === 'true') {
+                overlay.style.display = 'none';
+                panel.style.display = 'block';
+                loadAdminData();
+            } else {
+                overlay.style.display = 'flex';
+                panel.style.display = 'none';
+            }
+
+            document.getElementById('admin-login-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                const pass = document.getElementById('admin-pass-input').value;
+                const config = MemoryStore.getAllData().siteConfig;
+                const correctPass = config.adminPasskey || '123456';
+
+                if (pass === correctPass) {
+                    sessionStorage.setItem('admin_authenticated', 'true');
+                    overlay.style.display = 'none';
+                    panel.style.display = 'block';
+                    loadAdminData();
+                } else {
+                    alert('Mật mã không đúng. Vui lòng thử lại!');
+                }
+            });
+
+            initAdminTabs();
+        });
+
+        function logoutAdmin() {
+            sessionStorage.removeItem('admin_authenticated');
+            window.location.href = 'index.html';
+        }
+
+        function initAdminTabs() {
+            const tabBtns = document.querySelectorAll('.admin-tab-btn');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    tabBtns.forEach(b => b.classList.remove('active'));
+                    tabPanes.forEach(p => p.classList.remove('active'));
+
+                    btn.classList.add('active');
+                    const targetId = btn.dataset.tab;
+                    const targetPane = document.getElementById(targetId);
+                    if (targetPane) targetPane.classList.add('active');
+                });
+            });
+        }
+
+        function loadAdminData() {
+            const data = MemoryStore.getAllData();
+
+            // Tab 1
+            document.getElementById('adm-hero-title').value = data.siteConfig.heroTitle || '';
+            document.getElementById('adm-hero-subtitle').value = data.siteConfig.heroSubtitle || '';
+            document.getElementById('adm-hero-quote').value = data.siteConfig.heroQuote || '';
+            document.getElementById('adm-music-title').value = data.siteConfig.bgMusicTitle || '';
+            document.getElementById('adm-music-url').value = data.siteConfig.bgMusicUrl || '';
+            document.getElementById('adm-passkey').value = data.siteConfig.adminPasskey || '123456';
+
+            document.getElementById('adm-meet-date').value = data.meetingData.dateText || '';
+            document.getElementById('adm-meet-p1').value = data.meetingData.paragraphs?.[0] || '';
+            document.getElementById('adm-meet-p2').value = data.meetingData.paragraphs?.[1] || '';
+            document.getElementById('adm-meet-p3').value = data.meetingData.paragraphs?.[2] || '';
+
+            // Tab 6 Letter
+            document.getElementById('adm-letter-greeting').value = data.letterData.greeting || 'Gửi em,';
+            document.getElementById('adm-letter-body').value = data.letterData.paragraphs?.join('\n\n') || '';
+            document.getElementById('adm-letter-signature').value = data.letterData.signature || '';
+
+            // Tab 7 Supabase
+            const supa = MemoryStore.getSupabaseConfig();
+            if (supa) {
+                document.getElementById('adm-supabase-url').value = supa.url || '';
+                document.getElementById('adm-supabase-key').value = supa.anonKey || '';
+            }
+
+            renderAdminTables();
+        }
+
+        function renderAdminTables() {
+            const data = MemoryStore.getAllData();
+
+            // Map table
+            const mapTbody = document.getElementById('adm-map-table-body');
+            mapTbody.innerHTML = data.vungtauStops.map(s => `
+                <tr>
+                    <td><img src="${s.photo || 'img/img1.jpg'}" /></td>
+                    <td><strong>${s.name}</strong></td>
+                    <td>${s.lat}, ${s.lng}</td>
+                    <td>${s.category || ''}</td>
+                    <td>
+                        <button type="button" class="card-action-icon-btn" onclick="deleteMapStop('${s.id}')">🗑️ Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Gallery table
+            const galTbody = document.getElementById('adm-gallery-table-body');
+            galTbody.innerHTML = data.galleryItems.map(g => `
+                <tr>
+                    <td><img src="${g.photo}" /></td>
+                    <td>${g.title}</td>
+                    <td>${g.albumName || g.albumId}</td>
+                    <td>${g.date || ''}</td>
+                    <td>
+                        <button type="button" class="card-action-icon-btn" onclick="deleteGalleryItem('${g.id}')">🗑️ Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Little things table
+            const ltTbody = document.getElementById('adm-little-table-body');
+            ltTbody.innerHTML = data.littleThings.map(l => `
+                <tr>
+                    <td>${l.icon}</td>
+                    <td>${l.text}</td>
+                    <td>${l.date}</td>
+                    <td>
+                        <button type="button" class="card-action-icon-btn" onclick="deleteLittleThing('${l.id}')">🗑️ Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Timeline table
+            const tlTbody = document.getElementById('adm-timeline-table-body');
+            tlTbody.innerHTML = data.timelineItems.map(t => `
+                <tr>
+                    <td>${t.photo ? `<img src="${t.photo}" />` : '-'}</td>
+                    <td>${t.date}</td>
+                    <td><strong>${t.title}</strong></td>
+                    <td>${t.status === 'pending' ? '⚠️ Cần bổ sung' : '✅ Hoàn thành'}</td>
+                    <td>
+                        <button type="button" class="card-action-icon-btn" onclick="deleteTimelineItem('${t.id}')">🗑️ Xóa</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function saveAllAdminChanges() {
+            const data = MemoryStore.getAllData();
+
+            // Cập nhật Site Config
+            data.siteConfig.heroTitle = document.getElementById('adm-hero-title').value.trim();
+            data.siteConfig.heroSubtitle = document.getElementById('adm-hero-subtitle').value.trim();
+            data.siteConfig.heroQuote = document.getElementById('adm-hero-quote').value.trim();
+            data.siteConfig.bgMusicTitle = document.getElementById('adm-music-title').value.trim();
+            data.siteConfig.bgMusicUrl = document.getElementById('adm-music-url').value.trim();
+            data.siteConfig.adminPasskey = document.getElementById('adm-passkey').value.trim() || '123456';
+            MemoryStore.set(STORAGE_KEYS.SITE_CONFIG, data.siteConfig);
+
+            // Cập nhật Meeting Data
+            data.meetingData.dateText = document.getElementById('adm-meet-date').value.trim();
+            data.meetingData.paragraphs = [
+                document.getElementById('adm-meet-p1').value.trim(),
+                document.getElementById('adm-meet-p2').value.trim(),
+                document.getElementById('adm-meet-p3').value.trim()
+            ];
+            MemoryStore.set(STORAGE_KEYS.MEETING_DATA, data.meetingData);
+
+            // Cập nhật Letter Data
+            data.letterData.greeting = document.getElementById('adm-letter-greeting').value.trim();
+            const rawBody = document.getElementById('adm-letter-body').value.trim();
+            data.letterData.paragraphs = rawBody.split('\n\n').filter(p => p.trim() !== '');
+            data.letterData.signature = document.getElementById('adm-letter-signature').value.trim();
+            MemoryStore.set(STORAGE_KEYS.LETTER_DATA, data.letterData);
+
+            showToast('✅ Đã lưu toàn bộ thay đổi thành công!');
+        }
+
+        // --- CÁC HÀM QUẢN LÝ MODAL & TẢI ẢNH CHO ADMIN ---
+        function showToast(message) {
+            const toast = document.getElementById('admin-toast');
+            const text = document.getElementById('admin-toast-text');
+            if (toast && text) {
+                text.textContent = message;
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 3500);
+            }
+        }
+
+        function closeAdminModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) modal.style.display = 'none';
+        }
+
+        async function previewUploadImage(input, previewId, hiddenDataId) {
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                try {
+                    const compressedBase64 = await MemoryStore.compressImage(file, 1200, 0.82);
+                    const previewImg = document.getElementById(previewId);
+                    const hiddenInput = document.getElementById(hiddenDataId);
+                    if (previewImg) {
+                        previewImg.src = compressedBase64;
+                        previewImg.style.display = 'block';
+                    }
+                    if (hiddenInput) {
+                        hiddenInput.value = compressedBase64;
+                    }
+                } catch (err) {
+                    console.error('Lỗi khi nén ảnh:', err);
+                }
+            }
+        }
+
+        // 1. Map Stop Modal Handlers
+        function openAddMapStopModal() {
+            document.getElementById('form-map-stop').reset();
+            document.getElementById('map-stop-preview').style.display = 'none';
+            document.getElementById('map-stop-photo-data').value = '';
+            document.getElementById('modal-map-stop').style.display = 'flex';
+        }
+
+        function handleSaveMapStop(event) {
+            event.preventDefault();
+            const name = document.getElementById('map-stop-name').value.trim();
+            const lat = parseFloat(document.getElementById('map-stop-lat').value);
+            const lng = parseFloat(document.getElementById('map-stop-lng').value);
+            const category = document.getElementById('map-stop-category').value;
+            const photo = document.getElementById('map-stop-photo-data').value || 'img/img1.jpg';
+            const desc = document.getElementById('map-stop-desc').value.trim();
+
+            const stops = MemoryStore.getAllData().vungtauStops;
+            stops.push({
+                id: 'stop-' + Date.now(),
+                name,
+                lat,
+                lng,
+                category,
+                photo,
+                description: desc
+            });
+            MemoryStore.set(STORAGE_KEYS.VUNGTAU_STOPS, stops);
+            closeAdminModal('modal-map-stop');
+            renderAdminTables();
+            showToast('📍 Đã thêm địa điểm mới vào Bản đồ Vũng Tàu!');
+        }
+
+        // 2. Gallery Modal Handlers
+        function openAdminAddPhotoModal() {
+            document.getElementById('form-gallery').reset();
+            document.getElementById('gal-preview').style.display = 'none';
+            document.getElementById('gal-photo-data').value = '';
+            document.getElementById('modal-gallery').style.display = 'flex';
+        }
+
+        function handleSaveGalleryPhoto(event) {
+            event.preventDefault();
+            const photo = document.getElementById('gal-photo-data').value;
+            if (!photo) {
+                alert('Vui lòng chọn một file ảnh!');
+                return;
+            }
+            const title = document.getElementById('gal-title').value.trim();
+            const albumId = document.getElementById('gal-album').value;
+            const albumSelect = document.getElementById('gal-album');
+            const albumName = albumSelect.options[albumSelect.selectedIndex].text;
+            const date = document.getElementById('gal-date').value.trim();
+            const caption = document.getElementById('gal-caption').value.trim();
+
+            const items = MemoryStore.getAllData().galleryItems;
+            items.unshift({
+                id: 'gal-' + Date.now(),
+                photo,
+                title,
+                albumId,
+                albumName,
+                date,
+                caption
+            });
+            MemoryStore.set(STORAGE_KEYS.GALLERY_ITEMS, items);
+            closeAdminModal('modal-gallery');
+            renderAdminTables();
+            showToast('🖼️ Đã thêm khoảnh khắc mới vào Thư viện kỷ niệm!');
+        }
+
+        // 3. Little Things Modal Handlers
+        function openAdminAddLittleModal() {
+            document.getElementById('form-little').reset();
+            document.getElementById('modal-little').style.display = 'flex';
+        }
+
+        function handleSaveLittleThing(event) {
+            event.preventDefault();
+            const icon = document.getElementById('lt-icon').value.trim() || '✨';
+            const date = document.getElementById('lt-date').value.trim() || 'Kỷ niệm';
+            const text = document.getElementById('lt-text').value.trim();
+
+            const list = MemoryStore.getAllData().littleThings;
+            list.push({
+                id: 'little-' + Date.now(),
+                icon,
+                text,
+                date
+            });
+            MemoryStore.set(STORAGE_KEYS.LITTLE_THINGS, list);
+            closeAdminModal('modal-little');
+            renderAdminTables();
+            showToast('🌿 Đã thêm mẩu ghi chú kỷ niệm mới!');
+        }
+
+        // 4. Timeline Modal Handlers
+        function openAdminAddTimelineModal() {
+            document.getElementById('form-timeline').reset();
+            document.getElementById('tl-preview').style.display = 'none';
+            document.getElementById('tl-photo-data').value = '';
+            document.getElementById('modal-timeline').style.display = 'flex';
+        }
+
+        function handleSaveTimeline(event) {
+            event.preventDefault();
+            const date = document.getElementById('tl-date').value.trim();
+            const status = document.getElementById('tl-status').value;
+            const title = document.getElementById('tl-title').value.trim();
+            const desc = document.getElementById('tl-desc').value.trim();
+            const photo = document.getElementById('tl-photo-data').value || '';
+
+            const list = MemoryStore.getAllData().timelineItems;
+            list.push({
+                id: 'tl-' + Date.now(),
+                date,
+                title,
+                description: desc,
+                status,
+                photo
+            });
+            MemoryStore.set(STORAGE_KEYS.TIMELINE_ITEMS, list);
+            closeAdminModal('modal-timeline');
+            renderAdminTables();
+            showToast('📅 Đã thêm mốc thời gian kỷ niệm mới!');
+        }
+
+        function deleteMapStop(id) {
+            if (!confirm('Xóa địa điểm này khỏi bản đồ Vũng Tàu?')) return;
+            let stops = MemoryStore.getAllData().vungtauStops;
+            stops = stops.filter(s => s.id !== id);
+            MemoryStore.set(STORAGE_KEYS.VUNGTAU_STOPS, stops);
+            renderAdminTables();
+        }
+
+        function deleteGalleryItem(id) {
+            if (!confirm('Xóa ảnh này khỏi thư viện?')) return;
+            let items = MemoryStore.getAllData().galleryItems;
+            items = items.filter(g => g.id !== id);
+            MemoryStore.set(STORAGE_KEYS.GALLERY_ITEMS, items);
+            renderAdminTables();
+        }
+
+        function deleteLittleThing(id) {
+            if (!confirm('Xóa mẩu ghi chú này?')) return;
+            let list = MemoryStore.getAllData().littleThings;
+            list = list.filter(l => l.id !== id);
+            MemoryStore.set(STORAGE_KEYS.LITTLE_THINGS, list);
+            renderAdminTables();
+        }
+
+        function deleteTimelineItem(id) {
+            if (!confirm('Xóa cột mốc này?')) return;
+            let list = MemoryStore.getAllData().timelineItems;
+            list = list.filter(t => t.id !== id);
+            MemoryStore.set(STORAGE_KEYS.TIMELINE_ITEMS, list);
+            renderAdminTables();
+        }
+
+        function handleImportJson(input) {
+            if (input.files && input.files[0]) {
+                MemoryStore.importJsonFile(input.files[0], (success, err) => {
+                    if (success) {
+                        alert('✅ Đã phục hồi dữ liệu từ file backup thành công!');
+                        location.reload();
+                    } else {
+                        alert('❌ Không thể phục hồi: ' + err);
+                    }
+                });
+            }
+        }
+
+        function saveSupabaseConfig() {
+            const url = document.getElementById('adm-supabase-url').value.trim();
+            const key = document.getElementById('adm-supabase-key').value.trim();
+            MemoryStore.setSupabaseConfig(url, key);
+            alert('✅ Đã lưu cấu hình Supabase! Hệ thống sẽ tự động đồng bộ khi có kết nối.');
+        }
+
+        function handleResetAllData() {
+            if (confirm('Bạn có chắc muốn khôi phục lại dữ liệu mặc định ban đầu?')) {
+                MemoryStore.resetToDefault();
+                alert('Đã khôi phục dữ liệu ban đầu!');
+                location.reload();
+            }
+        }
+    </script>
+</body>
+
+</html>
+

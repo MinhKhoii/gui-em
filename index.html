@@ -3,978 +3,445 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Món quà nhỏ – gửi em 💌</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cảm Ơn Em, Vì Tất Cả ❤️</title>
+    <meta name="description"
+        content="Cảm ơn em vì tất cả ❤️">
     <link rel="icon" type="image/x-icon" href="./favicon.ico">
 
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Playfair Display, Cormorant Garamond, Be Vietnam Pro, Dancing Script -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Dancing+Script:wght@600;700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Dancing+Script:wght@600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&display=swap"
         rel="stylesheet">
 
-    <!-- CSS chính của dự án -->
-    <link rel="stylesheet" href="./css/style.css?v=6">
+    <!-- CSS riêng cho Website Kỷ Niệm -->
+    <link rel="stylesheet" href="./css/memory.css?v=3.7">
 </head>
 
-<body>
-    <!-- NEN DONG VU TRU LUNG LINH CHO NHUNG TRANG DAU -->
-    <div id="initial-cosmic-bg" aria-hidden="true">
-        <div class="cosmic-nebula nebula-1"></div>
-        <div class="cosmic-nebula nebula-2"></div>
-        <div class="cosmic-stars-layer"></div>
-        <div class="cosmic-meteor-field">
-            <span class="c-meteor cm-1"></span>
-            <span class="c-meteor cm-2"></span>
-            <span class="c-meteor cm-3"></span>
-        </div>
-    </div>
+<body class="script-body">
+    <!-- ===================================================================
+         1. MÀN HÌNH MỞ ĐẦU (THE ENVELOPE OPENING GATE)
+         =================================================================== -->
+    <div class="opening-gate" id="opening-gate">
+        <canvas class="opening-canvas" id="opening-gate-canvas"></canvas>
+        <div class="opening-sun-glow"></div>
 
-    <!-- Ba bộ trang trí lời chúc; chỉ hiện khi câu tương ứng xuất hiện. -->
-    <div id="tiny-wish-decor" aria-hidden="true">
-        <div class="tiny-decor-mode tiny-decor-want" id="decor-want">
-            <svg class="tiny-wish-constellation a" viewBox="0 0 300 255">
-                <path
-                    d="M10 152L48 105 85 129 126 50 176 75 226 26 288 70 M48 105 50 209 139 187 176 75 270 214 288 70" />
-                <circle cx="10" cy="152" r="3" />
-                <circle cx="48" cy="105" r="4" />
-                <circle cx="85" cy="129" r="2.5" />
-                <circle cx="126" cy="50" r="3.5" />
-                <circle cx="176" cy="75" r="3" />
-                <circle cx="226" cy="26" r="3.5" />
-                <circle cx="288" cy="70" r="4" />
-                <circle cx="50" cy="209" r="2.5" />
-                <circle cx="139" cy="187" r="3" />
-                <circle cx="270" cy="214" r="3" />
-            </svg>
-            <svg class="tiny-wish-constellation b" viewBox="0 0 300 255">
-                <path
-                    d="M10 152L48 105 85 129 126 50 176 75 226 26 288 70 M48 105 50 209 139 187 176 75 270 214 288 70" />
-                <circle cx="10" cy="152" r="3" />
-                <circle cx="48" cy="105" r="4" />
-                <circle cx="85" cy="129" r="2.5" />
-                <circle cx="126" cy="50" r="3.5" />
-                <circle cx="176" cy="75" r="3" />
-                <circle cx="226" cy="26" r="3.5" />
-                <circle cx="288" cy="70" r="4" />
-                <circle cx="50" cy="209" r="2.5" />
-                <circle cx="139" cy="187" r="3" />
-                <circle cx="270" cy="214" r="3" />
-            </svg>
-            <div class="tiny-wish-orbit"></div>
-            <div class="tiny-wish-orbit second"></div>
-            <!-- Mỗi điều ước như một viên pha lê: hoa văn, vòng quỹ đạo và cực quang đều độc lập với đôi mắt Kai. -->
-            <div class="tiny-want-aurora"></div>
-            <svg class="tiny-want-ribbons" viewBox="0 0 800 250" preserveAspectRatio="none" aria-hidden="true">
-                <path class="r1" d="M0 148 C145 224 242 232 390 138 S602 165 800 45" />
-                <path class="r2" d="M0 190 C151 102 245 198 403 159 S651 196 800 113" />
-                <path class="r3" d="M5 111 C145 160 265 174 405 148 S600 110 795 170" />
-            </svg>
-            <div class="tiny-want-oracle" aria-hidden="true">
-                <svg class="oracle-main" viewBox="0 0 220 220">
-                    <defs>
-                        <radialGradient id="tinyOracleGlass" cx="41%" cy="27%" r="77%">
-                            <stop offset="0" stop-color="#e0ffff" stop-opacity=".79" />
-                            <stop offset=".25" stop-color="#65d5ff" stop-opacity=".49" />
-                            <stop offset=".73" stop-color="#3261bf" stop-opacity=".48" />
-                            <stop offset="1" stop-color="#6b60cd" stop-opacity=".18" />
-                        </radialGradient>
-                        <radialGradient id="tinyOracleLight" cx="40%" cy="35%" r="68%">
-                            <stop offset="0" stop-color="#fff" />
-                            <stop offset=".25" stop-color="#efffff" />
-                            <stop offset=".67" stop-color="#9aecff" />
-                            <stop offset="1" stop-color="#78b4ff" stop-opacity=".15" />
-                        </radialGradient>
-                    </defs>
-                    <circle cx="110" cy="110" r="79" class="oracle-outer" stroke-dasharray="1 8" />
-                    <ellipse class="oracle-orbit-one" cx="110" cy="110" rx="94" ry="35"
-                        transform="rotate(-19 110 110)" />
-                    <ellipse class="oracle-orbit-two" cx="110" cy="110" rx="87" ry="42"
-                        transform="rotate(45 110 110)" />
-                    <path class="oracle-glass"
-                        d="M110 49 L137 78 L163 110 L137 143 L110 171 L83 143 L57 110 L83 78 Z" />
-                    <path d="M110 70 Q122 100 150 110 Q122 120 110 150 Q98 120 70 110 Q98 100 110 70 Z"
-                        class="oracle-light" />
-                    <path d="M92 76 L110 58 L126 76" stroke="rgba(255,255,255,.45)" stroke-width="2"
-                        stroke-linecap="round" fill="none" />
-                    <circle class="oracle-orbital-spark" cx="194" cy="108" r="3" />
-                    <circle class="oracle-orbital-spark" cx="39" cy="91" r="2.5" />
-                    <circle class="oracle-orbital-spark" cx="113" cy="31" r="2" />
-                </svg>
+        <div class="opening-content">
+            <p class="opening-lead">
+                <span class="phrase-wrap">Có những người xuất hiện</span> <span class="phrase-wrap">trong cuộc sống của chúng ta rất tự nhiên.</span>
+            </p>
+
+            <p class="opening-sublead">
+                <span class="phrase-wrap">Có những cuộc gặp gỡ tưởng chừng bình thường,</span><br class="desktop-break">
+                <span class="phrase-wrap">nhưng lại để lại những cảm xúc mà ta muốn lưu giữ thật lâu.</span>
+            </p>
+
+            <h1 class="opening-title">
+                <span class="phrase-wrap">CẢM ƠN EM,</span> <span class="phrase-wrap highlight">VÌ TẤT CẢ ❤️</span>
+            </h1>
+
+            <p class="opening-quote">
+                Một vài dòng tôi muốn gửi đến em...
+            </p>
+
+            <!-- Nút mở lời nhắn dạng phong bì tinh tế -->
+            <button type="button" class="opening-gift-btn" id="open-gift-gate-btn" aria-label="Mở lời nhắn">
+                <div class="envelope-icon-box">
+                    <span>💌</span>
+                </div>
+                <span class="opening-btn-text">
+                    MỞ LỜI NHẮN ✦
+                </span>
+            </button>
+
+            <div class="opening-audio-hint">
+                Chạm để mở phong bì và bắt đầu
             </div>
-            <span class="tiny-want-mini a"></span>
-            <span class="tiny-want-mini b"></span>
-            <span class="tiny-want-mini c"></span>
         </div>
-        <div class="tiny-decor-mode tiny-decor-health" id="decor-health">
-            <div class="tiny-health-heart">
-                <svg viewBox="0 0 100 100">
-                    <path d="M50 87 C38 76 12 57 12 35 C12 12 40 11 50 32 C60 11 88 12 88 35 C88 57 62 76 50 87 Z" />
-                </svg>
-            </div>
-            <svg class="tiny-health-ecg" viewBox="0 0 560 105" preserveAspectRatio="none">
-                <path
-                    d="M0 55 H110 L125 48 143 55 164 55 177 28 194 92 209 11 228 55 H270 L286 49 304 55 H380 L390 37 410 69 424 54 H560" />
-            </svg>
-            <i class="tiny-health-speck" style="--hx:4%;--hy:24%;--hs:2.1px;--hd:3.3s;--hdelay:-0.00s"></i>
-            <i class="tiny-health-speck" style="--hx:10%;--hy:30%;--hs:3.0px;--hd:3.9s;--hdelay:-0.41s"></i>
-            <i class="tiny-health-speck" style="--hx:17%;--hy:58%;--hs:3.9px;--hd:4.5s;--hdelay:-0.82s"></i>
-            <i class="tiny-health-speck" style="--hx:21%;--hy:70%;--hs:4.8px;--hd:5.1s;--hdelay:-1.23s"></i>
-            <i class="tiny-health-speck" style="--hx:32%;--hy:85%;--hs:2.1px;--hd:5.7s;--hdelay:-1.64s"></i>
-            <i class="tiny-health-speck" style="--hx:81%;--hy:17%;--hs:3.0px;--hd:3.3s;--hdelay:-2.05s"></i>
-            <i class="tiny-health-speck" style="--hx:86%;--hy:22%;--hs:3.9px;--hd:3.9s;--hdelay:-2.46s"></i>
-            <i class="tiny-health-speck" style="--hx:92%;--hy:51%;--hs:4.8px;--hd:4.5s;--hdelay:-2.87s"></i>
-            <i class="tiny-health-speck" style="--hx:74%;--hy:75%;--hs:2.1px;--hd:5.1s;--hdelay:-3.28s"></i>
-            <i class="tiny-health-speck" style="--hx:61%;--hy:81%;--hs:3.0px;--hd:5.7s;--hdelay:-3.69s"></i>
-            <i class="tiny-health-speck" style="--hx:6%;--hy:50%;--hs:3.9px;--hd:3.3s;--hdelay:-4.10s"></i>
-            <i class="tiny-health-speck" style="--hx:14%;--hy:79%;--hs:4.8px;--hd:3.9s;--hdelay:-4.51s"></i>
-            <i class="tiny-health-speck" style="--hx:88%;--hy:63%;--hs:2.1px;--hd:4.5s;--hdelay:-4.92s"></i>
-            <i class="tiny-health-speck" style="--hx:95%;--hy:85%;--hs:3.0px;--hd:5.1s;--hdelay:-5.33s"></i>
-            <i class="tiny-health-speck" style="--hx:83%;--hy:39%;--hs:3.9px;--hd:5.7s;--hdelay:-5.74s"></i>
-        </div>
-        <div class="tiny-decor-mode tiny-decor-beauty" id="decor-beauty">
-            <div class="tiny-beauty-garland"></div>
-            <span class="tiny-beauty-petal"
-                style="--px:3%;--ps:12px;--pc:#ffb9da;--drift:-26px;--pd:8.5s;--delay:-0.0s">❀</span>
-            <span class="tiny-beauty-petal"
-                style="--px:8%;--ps:16px;--pc:#ffd4ed;--drift:-7px;--pd:9.8s;--delay:-0.9s">✿</span>
-            <span class="tiny-beauty-petal"
-                style="--px:15%;--ps:20px;--pc:#e6c7ff;--drift:12px;--pd:11.1s;--delay:-1.9s">❁</span>
-            <span class="tiny-beauty-petal"
-                style="--px:23%;--ps:24px;--pc:#c8e4ff;--drift:31px;--pd:12.4s;--delay:-2.8s">❀</span>
-            <span class="tiny-beauty-petal"
-                style="--px:83%;--ps:28px;--pc:#ffb9da;--drift:-15px;--pd:13.7s;--delay:-3.7s">✿</span>
-            <span class="tiny-beauty-petal"
-                style="--px:92%;--ps:12px;--pc:#ffd4ed;--drift:4px;--pd:15.0s;--delay:-4.7s">❁</span>
-            <span class="tiny-beauty-petal"
-                style="--px:96%;--ps:16px;--pc:#e6c7ff;--drift:23px;--pd:8.5s;--delay:-5.6s">❀</span>
-            <span class="tiny-beauty-petal"
-                style="--px:72%;--ps:20px;--pc:#c8e4ff;--drift:-23px;--pd:9.8s;--delay:-6.5s">✿</span>
-            <span class="tiny-beauty-petal"
-                style="--px:12%;--ps:24px;--pc:#ffb9da;--drift:-4px;--pd:11.1s;--delay:-7.4s">❁</span>
-            <span class="tiny-beauty-petal"
-                style="--px:87%;--ps:28px;--pc:#ffd4ed;--drift:15px;--pd:12.4s;--delay:-8.4s">❀</span>
-            <span class="tiny-beauty-petal"
-                style="--px:4%;--ps:12px;--pc:#e6c7ff;--drift:34px;--pd:13.7s;--delay:-9.3s">✿</span>
-            <span class="tiny-beauty-petal"
-                style="--px:97%;--ps:16px;--pc:#c8e4ff;--drift:-12px;--pd:15.0s;--delay:-10.2s">❁</span>
-            <span class="tiny-beauty-petal"
-                style="--px:18%;--ps:20px;--pc:#ffb9da;--drift:7px;--pd:8.5s;--delay:-11.2s">❀</span>
-            <span class="tiny-beauty-petal"
-                style="--px:78%;--ps:24px;--pc:#ffd4ed;--drift:26px;--pd:9.8s;--delay:-12.1s">✿</span>
-            <span class="tiny-beauty-petal"
-                style="--px:45%;--ps:28px;--pc:#e6c7ff;--drift:-20px;--pd:11.1s;--delay:-13.0s">❁</span>
-            <span class="tiny-beauty-petal"
-                style="--px:62%;--ps:12px;--pc:#c8e4ff;--drift:-1px;--pd:12.4s;--delay:-14.0s">❀</span>
-            <span class="tiny-beauty-petal"
-                style="--px:6%;--ps:16px;--pc:#ffb9da;--drift:18px;--pd:13.7s;--delay:-14.9s">✿</span>
-            <span class="tiny-beauty-petal"
-                style="--px:89%;--ps:20px;--pc:#ffd4ed;--drift:37px;--pd:15.0s;--delay:-15.8s">❁</span>
-            <span class="tiny-beauty-glint" style="--gx:6%;--gy:29%;--gs:17px;--gd:2.3s;--gdelay:-0.00s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:15%;--gy:56%;--gs:23px;--gd:2.9s;--gdelay:-0.33s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:26%;--gy:80%;--gs:29px;--gd:3.5s;--gdelay:-0.66s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:74%;--gy:36%;--gs:35px;--gd:4.1s;--gdelay:-0.99s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:89%;--gy:19%;--gs:17px;--gd:2.3s;--gdelay:-1.32s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:95%;--gy:70%;--gs:23px;--gd:2.9s;--gdelay:-1.65s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:57%;--gy:84%;--gs:29px;--gd:3.5s;--gdelay:-1.98s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:36%;--gy:16%;--gs:35px;--gd:4.1s;--gdelay:-2.31s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:5%;--gy:80%;--gs:17px;--gd:2.3s;--gdelay:-2.64s">✧</span>
-            <span class="tiny-beauty-glint" style="--gx:83%;--gy:91%;--gs:23px;--gd:2.9s;--gdelay:-2.97s">✧</span>
-        </div>
-    </div>
-    <div id="tiny-sky" aria-hidden="true"></div>
-    <div id="pink-overlay"></div>
-    <div id="vang-overlay"></div>
-    <div id="xanh-overlay"></div>
-    <svg id="co-hoa" xmlns="http://www.w3.org/2000/svg"></svg>
-    <img id="anh-hai-nguoi" alt="Hai cô gái áo dài" src="img/anh-hai-nguoi.png">
-    <canvas id="natureCanvas"></canvas>
-    <canvas id="laCanvas"></canvas>
-    <!-- Âm thanh nhúng sẵn trong thư mục audio/ -->
-    <audio id="tiny-soundtrack" preload="auto" autoplay playsinline loop src="audio/soundtrack.mp3"></audio>
-    <div id="music-wait-hint" aria-live="polite">đợi chút xíu đii</div>
-    <div id="tiny-lyric-zone" aria-live="off" aria-hidden="true">
-        <div class="lyric-line" id="tiny-lyric-top"></div>
-        <div class="lyric-line" id="tiny-lyric-bottom"></div>
     </div>
 
-    <div id="text-1" class="text-layer hien-thi">
-        Này, cô gái ơi!
-    </div>
-    <div id="text-2" class="text-layer">
-        Anh là Kai nè!
-    </div>
+    <!-- NHẠC NỀN PIANO NHẸ NHÀNG (Mặc định không tự phát, phát sau khi người đọc nhấn nút) -->
+    <audio id="bg-music-player" preload="auto" loop playsinline src="audio/soundtrack.mp3"></audio>
 
-    <div id="text-3" class="text-layer">
-        Hôm nay anh nhận một nhiệm vụ đặc biệt từ Khoi...
-    </div>
-
-    <div id="text-4" class="text-layer">
-        Ơ kìa, em xinh quá! Anh quên mất định nói gì rồi...
-    </div>
-
-    <div id="text-5" class="text-layer">
-        <span class="chu-20-10">À mà, đến </span>
-        <span class="chu-20-10">20/10 rồi nhỉ!</span>
-    </div>
-
-    <div id="text-6" class="text-layer">nên là anh muốn</div>
-
-    <div id="text-7" class="text-layer">
-        Chúc em luôn khỏe mạnh, bình an và tràn đầy năng lượng
-    </div>
-
-    <div id="text-8" class="text-layer">
-        Chúc em luôn xinh đẹp, tự tin và rạng rỡ theo cách riêng
-    </div>
-
-    <div id="text-9" class="text-layer">
-        và chúc em luôn giữ<br>nụ cười trên môi
-    </div>
-
-    <div id="text-10" class="text-layer">
-        anh tặng em ngọn <span class="clover-word">cỏ 4 lá</span>
-        này
-    </div>
-
-    <div id="text-11" class="text-layer">nè cầm lấy đi</div>
-    <div id="text-12" class="text-layer">
-        Chúc em gặp thật nhiều điều <span class="luck-green-words">may mắn</span>,<br>được yêu thương và luôn gặp những
-        điều dịu dàng
-    </div>
-    <div id="text-13" class="text-layer">
-        em buồn <span class="question-blue-words">ít thôi nhé?</span>
-    </div>
-    <div id="lower-stars" aria-hidden="true"></div>
-    <div id="woman-scene" aria-hidden="true">
-        <img id="woman-complete-mobile" alt="" src="img/woman-complete-mobile.png"
-            draggable="false" />
-    </div>
-    <!-- 3 tầng sao từ Uiverse: chỉ hiện kể từ cảnh chúc sức khỏe -->
-    <div id="uiverse-starfield" aria-hidden="true">
-        <div id="stars"></div>
-        <div id="stars2"></div>
-        <div id="stars3"></div>
-    </div>
-    <div id="sao-vu-tru" aria-hidden="true"></div>
-    <div id="vien-vu-tru" aria-hidden="true"></div>
-    <!-- Hai cảnh cuối do SVG/CSS dựng để trình duyệt chạy độc lập, không cần mạng -->
-    <div id="wish-backdrop" aria-hidden="true"></div>
-    <div id="beauty-stage" class="wish-stage" aria-hidden="true">
-        <div class="ring"></div>
-        <div class="wish-floral left">
-            <svg viewBox="0 0 330 740" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-                <g>
-                    "
-                    <path class="wish-branch" style="--delay:0.16s;--tint:#eab9fa"
-                        d="M 42 736 Q 55 573 118 442 Q 149 380 125 277" stroke-width="2.3" />
-                    <g class="wish-bloom" style="--delay:0.95s;--tint:#eab9fa" transform="translate(125 277)">
-                        <g class="petals">
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(0)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(72)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(144)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(216)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(288)" />
-                            <circle r="6" fill="#ffe3a5" stroke="none" />
-                            <circle r="2" fill="#fffaf0" stroke="none" />
-                        </g>
-                    </g>
-                    <path class="wish-branch" style="--delay:0.33s;--tint:#9bdfcb"
-                        d="M 80 740 Q 76 625 118 550 Q 172 478 212 418" stroke-width="1.8" />
-                    <g class="wish-bloom" style="--delay:1.13s;--tint:#9bdfcb" transform="translate(212 418)">
-                        <g class="petals">
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(0)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(72)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(144)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(216)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(288)" />
-                            <circle r="6" fill="#ffe3a5" stroke="none" />
-                            <circle r="2" fill="#fffaf0" stroke="none" />
-                        </g>
-                    </g>
-                    <path class="wish-branch" style="--delay:0.50s;--tint:#f4c6cd"
-                        d="M 155 736 Q 174 615 210 534 Q 246 470 252 327" stroke-width="2.1" />
-                    <g class="wish-bloom" style="--delay:1.31s;--tint:#f4c6cd" transform="translate(252 327)">
-                        <g class="petals">
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(0)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(72)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(144)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(216)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(288)" />
-                            <circle r="6" fill="#ffe3a5" stroke="none" />
-                            <circle r="2" fill="#fffaf0" stroke="none" />
-                        </g>
-                    </g>
-                    <path class="wish-branch" style="--delay:0.67s;--tint:#d0c3ff"
-                        d="M 15 739 Q 25 680 64 635 Q 109 586 178 585" stroke-width="1.6" />
-                    <g class="wish-bloom" style="--delay:1.49s;--tint:#d0c3ff" transform="translate(178 585)">
-                        <g class="petals">
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(0)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(72)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(144)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(216)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(288)" />
-                            <circle r="6" fill="#ffe3a5" stroke="none" />
-                            <circle r="2" fill="#fffaf0" stroke="none" />
-                        </g>
-                    </g>
-                    <path class="wish-leaf" style="--delay:0.75s"
-                        d="M 71 620 q 14.8 -33.0 33.0 -19.8 q -8.2 28.4 -33.0 19.8" transform="rotate(-36 71 620)" />
-                    <path class="wish-leaf" style="--delay:0.87s"
-                        d="M 87 570 q 11.7 -26.0 26.0 -15.6 q -6.5 22.4 -26.0 15.6" transform="rotate(28 87 570)" />
-                    <path class="wish-leaf" style="--delay:0.99s"
-                        d="M 142 504 q 15.3 -34.0 34.0 -20.4 q -8.5 29.2 -34.0 20.4" transform="rotate(-32 142 504)" />
-                    <path class="wish-leaf" style="--delay:1.11s"
-                        d="M 190 462 q 12.2 -27.0 27.0 -16.2 q -6.8 23.2 -27.0 16.2" transform="rotate(40 190 462)" />
-                    <path class="wish-leaf" style="--delay:1.23s"
-                        d="M 200 556 q 15.8 -35.0 35.0 -21.0 q -8.8 30.1 -35.0 21.0" transform="rotate(-32 200 556)" />
-                    <path class="wish-leaf" style="--delay:1.35s"
-                        d="M 231 494 q 13.5 -30.0 30.0 -18.0 q -7.5 25.8 -30.0 18.0" transform="rotate(44 231 494)" />
-                    <path class="wish-leaf" style="--delay:1.47s"
-                        d="M 238 404 q 11.2 -25.0 25.0 -15.0 q -6.2 21.5 -25.0 15.0" transform="rotate(-40 238 404)" />
-                    <path class="wish-leaf" style="--delay:1.59s"
-                        d="M 65 687 q 9.5 -21.0 21.0 -12.6 q -5.2 18.1 -21.0 12.6" transform="rotate(30 65 687)" />
-                    <path class="wish-leaf" style="--delay:1.71s"
-                        d="M 172 645 q 10.8 -24.0 24.0 -14.4 q -6.0 20.6 -24.0 14.4" transform="rotate(-38 172 645)" />
-                </g>
-            </svg>
+    <!-- FLOATING AUDIO WIDGET (Điều khiển nhạc ở góc màn hình) -->
+    <div class="floating-audio-widget" id="floating-audio-widget" title="Điều khiển nhạc nền">
+        <div class="audio-disc-icon" id="audio-play-toggle-btn" role="button" aria-label="Bật hoặc tắt nhạc">
+            <span>🎵</span>
         </div>
-        <div class="wish-floral right">
-            <svg viewBox="0 0 330 740" preserveAspectRatio="xMidYMax meet" aria-hidden="true">
-                <g transform="translate(330 0) scale(-1 1)">
-                    "
-                    <path class="wish-branch" style="--delay:0.16s;--tint:#eab9fa"
-                        d="M 42 736 Q 55 573 118 442 Q 149 380 125 277" stroke-width="2.3" />
-                    <g class="wish-bloom" style="--delay:0.95s;--tint:#eab9fa" transform="translate(125 277)">
-                        <g class="petals">
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(0)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(72)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(144)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(216)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(288)" />
-                            <circle r="6" fill="#ffe3a5" stroke="none" />
-                            <circle r="2" fill="#fffaf0" stroke="none" />
-                        </g>
-                    </g>
-                    <path class="wish-branch" style="--delay:0.33s;--tint:#9bdfcb"
-                        d="M 80 740 Q 76 625 118 550 Q 172 478 212 418" stroke-width="1.8" />
-                    <g class="wish-bloom" style="--delay:1.13s;--tint:#9bdfcb" transform="translate(212 418)">
-                        <g class="petals">
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(0)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(72)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(144)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(216)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(288)" />
-                            <circle r="6" fill="#ffe3a5" stroke="none" />
-                            <circle r="2" fill="#fffaf0" stroke="none" />
-                        </g>
-                    </g>
-                    <path class="wish-branch" style="--delay:0.50s;--tint:#f4c6cd"
-                        d="M 155 736 Q 174 615 210 534 Q 246 470 252 327" stroke-width="2.1" />
-                    <g class="wish-bloom" style="--delay:1.31s;--tint:#f4c6cd" transform="translate(252 327)">
-                        <g class="petals">
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(0)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(72)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(144)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(216)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(288)" />
-                            <circle r="6" fill="#ffe3a5" stroke="none" />
-                            <circle r="2" fill="#fffaf0" stroke="none" />
-                        </g>
-                    </g>
-                    <path class="wish-branch" style="--delay:0.67s;--tint:#d0c3ff"
-                        d="M 15 739 Q 25 680 64 635 Q 109 586 178 585" stroke-width="1.6" />
-                    <g class="wish-bloom" style="--delay:1.49s;--tint:#d0c3ff" transform="translate(178 585)">
-                        <g class="petals">
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(0)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(72)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(144)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(216)" />
-                            <ellipse cx="0" cy="-16" rx="9" ry="15" transform="rotate(288)" />
-                            <circle r="6" fill="#ffe3a5" stroke="none" />
-                            <circle r="2" fill="#fffaf0" stroke="none" />
-                        </g>
-                    </g>
-                    <path class="wish-leaf" style="--delay:0.75s"
-                        d="M 71 620 q 14.8 -33.0 33.0 -19.8 q -8.2 28.4 -33.0 19.8" transform="rotate(-36 71 620)" />
-                    <path class="wish-leaf" style="--delay:0.87s"
-                        d="M 87 570 q 11.7 -26.0 26.0 -15.6 q -6.5 22.4 -26.0 15.6" transform="rotate(28 87 570)" />
-                    <path class="wish-leaf" style="--delay:0.99s"
-                        d="M 142 504 q 15.3 -34.0 34.0 -20.4 q -8.5 29.2 -34.0 20.4" transform="rotate(-32 142 504)" />
-                    <path class="wish-leaf" style="--delay:1.11s"
-                        d="M 190 462 q 12.2 -27.0 27.0 -16.2 q -6.8 23.2 -27.0 16.2" transform="rotate(40 190 462)" />
-                    <path class="wish-leaf" style="--delay:1.23s"
-                        d="M 200 556 q 15.8 -35.0 35.0 -21.0 q -8.8 30.1 -35.0 21.0" transform="rotate(-32 200 556)" />
-                    <path class="wish-leaf" style="--delay:1.35s"
-                        d="M 231 494 q 13.5 -30.0 30.0 -18.0 q -7.5 25.8 -30.0 18.0" transform="rotate(44 231 494)" />
-                    <path class="wish-leaf" style="--delay:1.47s"
-                        d="M 238 404 q 11.2 -25.0 25.0 -15.0 q -6.2 21.5 -25.0 15.0" transform="rotate(-40 238 404)" />
-                    <path class="wish-leaf" style="--delay:1.59s"
-                        d="M 65 687 q 9.5 -21.0 21.0 -12.6 q -5.2 18.1 -21.0 12.6" transform="rotate(30 65 687)" />
-                    <path class="wish-leaf" style="--delay:1.71s"
-                        d="M 172 645 q 10.8 -24.0 24.0 -14.4 q -6.0 20.6 -24.0 14.4" transform="rotate(-38 172 645)" />
-                </g>
-            </svg>
-        </div>
-        <div class="butterfly-wrap left">
-            <svg class="wish-butterfly" viewBox="0 0 120 100" aria-hidden="true">
-                <g class="wing-pair">
-                    <path d="M59 48 C12 -12 -6 38 44 61 C0 63 30 104 59 57" fill="rgba(238,189,242,.24)"
-                        stroke="#f5cef3" stroke-width="2" />
-                    <path d="M61 48 C108 -12 126 38 76 61 C120 63 90 104 61 57" fill="rgba(179,217,255,.22)"
-                        stroke="#b5d9fc" stroke-width="2" />
-                </g>
-                <path d="M59 35 Q60 66 60 78" stroke="#fff3df" stroke-width="3" stroke-linecap="round" />
-                <path d="M59 38 Q51 25 43 22 M61 38 Q69 25 77 22" fill="none" stroke="#fff3df" stroke-width="1.5" />
-            </svg>
-        </div>
-        <div class="butterfly-wrap right">
-            <svg class="wish-butterfly" viewBox="0 0 120 100" aria-hidden="true">
-                <g class="wing-pair">
-                    <path d="M59 48 C12 -12 -6 38 44 61 C0 63 30 104 59 57" fill="rgba(238,189,242,.24)"
-                        stroke="#f5cef3" stroke-width="2" />
-                    <path d="M61 48 C108 -12 126 38 76 61 C120 63 90 104 61 57" fill="rgba(179,217,255,.22)"
-                        stroke="#b5d9fc" stroke-width="2" />
-                </g>
-                <path d="M59 35 Q60 66 60 78" stroke="#fff3df" stroke-width="3" stroke-linecap="round" />
-                <path d="M59 38 Q51 25 43 22 M61 38 Q69 25 77 22" fill="none" stroke="#fff3df" stroke-width="1.5" />
-            </svg>
-        </div>
-        <span class="wish-twinkle" style="--x:8%;--y:20%;--delay:0.00s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:19%;--y:32%;--delay:0.31s;--size:13px">✦</span>
-        <span class="wish-twinkle" style="--x:91%;--y:20%;--delay:0.62s;--size:18px">✦</span>
-        <span class="wish-twinkle" style="--x:78%;--y:31%;--delay:0.93s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:12%;--y:76%;--delay:1.24s;--size:13px">✦</span>
-        <span class="wish-twinkle" style="--x:88%;--y:77%;--delay:1.55s;--size:18px">✦</span>
-        <span class="wish-twinkle" style="--x:33%;--y:63%;--delay:1.86s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:68%;--y:66%;--delay:2.17s;--size:13px">✦</span>
-        <span class="wish-twinkle" style="--x:40%;--y:18%;--delay:2.48s;--size:18px">✦</span>
-        <span class="wish-twinkle" style="--x:61%;--y:24%;--delay:2.79s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:94%;--y:46%;--delay:3.10s;--size:13px">✦</span>
-        <span class="wish-twinkle" style="--x:7%;--y:46%;--delay:3.41s;--size:18px">✦</span>
-        <span class="wish-twinkle" style="--x:29%;--y:82%;--delay:3.72s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:73%;--y:84%;--delay:4.03s;--size:13px">✦</span>
-    </div>
-    <div id="smile-stage" class="wish-stage" aria-hidden="true">
-        <div class="warm-halo"></div>
-        <!-- Hoa chuyển động dựa trên kết cấu của septiandwica/kado (Md Usman Ansari) -->
-        <iframe id="kado-flower-frame" title="Hoa đang nở" aria-hidden="true" tabindex="-1" sandbox=""
-            loading="lazy"></iframe>
-        <!-- Đĩa vinyl chỉ dành cho bố cục laptop, không chạm tới nhạc MP3 và video Waguri. -->
-        <div class="tiny-vinyl-scene" aria-hidden="true">
-            <svg class="vinyl-record" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="tinyVinylLabel" x1="0" y1="0" x2="1" y2="1">
-                        <stop offset="0" stop-color="#efb2cc" />
-                        <stop offset=".52" stop-color="#d7a6d7" />
-                        <stop offset="1" stop-color="#f9d7a3" />
-                    </linearGradient>
-                </defs>
-                <circle class="disc-edge" cx="100" cy="100" r="95" />
-                <circle class="disc-shine" cx="100" cy="100" r="79" />
-                <circle class="groove" cx="100" cy="100" r="82" />
-                <circle class="groove" cx="100" cy="100" r="74" />
-                <circle class="groove" cx="100" cy="100" r="66" />
-                <circle class="groove" cx="100" cy="100" r="58" />
-                <circle class="groove" cx="100" cy="100" r="50" />
-                <circle class="groove" cx="100" cy="100" r="43" />
-                <circle class="label-disc" cx="100" cy="100" r="35" />
-                <path class="label-heart"
-                    d="M 100 111 C 89 103 82 97 82 89 C 82 81 93 79 100 89 C 107 79 118 81 118 89 C 118 97 111 103 100 111 Z" />
-                <circle class="spindle" cx="100" cy="100" r="3" />
-            </svg>
-            <svg class="vinyl-needle" viewBox="0 0 100 100" fill="none" aria-hidden="true">
-                <circle cx="86" cy="14" r="8" fill="#ffe4cf" fill-opacity=".9" />
-                <path d="M 86 14 L 54 45 L 37 67" stroke="#ffe0bf" stroke-width="4.4" stroke-linecap="round" />
-                <path d="M 35 63 L 30 73 L 44 79 L 48 68 Z" fill="#eeb4d4" stroke="#fff0d5" stroke-width="1.8" />
-            </svg>
-            <span class="vinyl-note"
-                style="--nx:5%;--ny:14%;--nsize:26px;--ncolor:#ffe8bd;--ndur:4.1s;--ndelay:-1.3s;--dx:-34px;--dy:-86px">♪</span>
-            <span class="vinyl-note"
-                style="--nx:82%;--ny:36%;--nsize:29px;--ncolor:#ffcfe3;--ndur:4.9s;--ndelay:-3.1s;--dx:42px;--dy:-114px">♫</span>
-            <span class="vinyl-note"
-                style="--nx:39%;--ny:2%;--nsize:20px;--ncolor:#fff1db;--ndur:5.1s;--ndelay:-.4s;--dx:-20px;--dy:-96px">♬</span>
-            <span class="vinyl-note"
-                style="--nx:85%;--ny:76%;--nsize:23px;--ncolor:#edd5ff;--ndur:4.4s;--ndelay:-2.4s;--dx:51px;--dy:-105px">♪</span>
-            <span class="vinyl-note"
-                style="--nx:-9%;--ny:62%;--nsize:19px;--ncolor:#f6d4ff;--ndur:5.6s;--ndelay:-4.0s;--dx:-43px;--dy:-100px">♫</span>
-        </div>
-        <div class="waguri-aura"></div>
-        <img id="waguri-smile-video" class="waguri-figure" alt="Nụ cười của bạn" src="img/img-friend-smile.png">
-        <span class="waguri-glimmer" style="--sx:69%;--sy:36%;--ss:24px;--sd:2.3s;--so:-.7s">✧</span>
-        <span class="waguri-glimmer" style="--sx:87%;--sy:31%;--ss:16px;--sd:2.7s;--so:-1.4s">✦</span>
-        <span class="waguri-glimmer" style="--sx:62%;--sy:73%;--ss:19px;--sd:3.1s;--so:-1.1s">✧</span>
-        <svg class="smile-ornament left" viewBox="0 0 300 410" aria-hidden="true">
-            <path class="trail" pathLength="1"
-                d="M 0 393 C 63 328, 103 322, 113 247 S 187 188 243 159 C 275 135 265 104 288 78" />
-            <path class="orn-heart"
-                d="M 148 308 C 108 265 85 289 111 316 L 147 345 L 180 319 C 210 288 183 268 148 308 Z" />
-            <path class="orn-heart"
-                d="M 248 172 C 220 137 202 154 216 177 L 247 207 L 274 179 C 293 155 265 143 248 172 Z" />
-            <path class="orn-star" d="M 94 206 l 8 -22 9 22 21 8 -21 9 -9 21 -8 -21 -21 -9 Z" />
-            <path class="orn-star" d="M 214 99 l 5 -14 5 14 14 6 -14 5 -5 14 -5 -14 -14 -5 Z" />
-        </svg>
-        <svg class="smile-ornament right" viewBox="0 0 300 410" aria-hidden="true">
-            <path class="trail" pathLength="1"
-                d="M 0 393 C 63 328, 103 322, 113 247 S 187 188 243 159 C 275 135 265 104 288 78" />
-            <path class="orn-heart"
-                d="M 148 308 C 108 265 85 289 111 316 L 147 345 L 180 319 C 210 288 183 268 148 308 Z" />
-            <path class="orn-heart"
-                d="M 248 172 C 220 137 202 154 216 177 L 247 207 L 274 179 C 293 155 265 143 248 172 Z" />
-            <path class="orn-star" d="M 94 206 l 8 -22 9 22 21 8 -21 9 -9 21 -8 -21 -21 -9 Z" />
-            <path class="orn-star" d="M 214 99 l 5 -14 5 14 14 6 -14 5 -5 14 -5 -14 -14 -5 Z" />
-        </svg>
-        <span class="float-heart" style="--x:14%;--y:27%;--delay:0.1s;--size:22px">♥</span>
-        <span class="float-heart" style="--x:84%;--y:26%;--delay:0.5s;--size:20px">♥</span>
-        <span class="float-heart" style="--x:21%;--y:69%;--delay:0.8s;--size:16px">♥</span>
-        <span class="float-heart" style="--x:78%;--y:75%;--delay:1.3s;--size:27px">♥</span>
-        <span class="float-heart" style="--x:8%;--y:56%;--delay:1.7s;--size:14px">♥</span>
-        <span class="float-heart" style="--x:91%;--y:54%;--delay:2.2s;--size:14px">♥</span>
-        <span class="float-heart" style="--x:29%;--y:19%;--delay:2.5s;--size:12px">♥</span>
-        <span class="float-heart" style="--x:69%;--y:22%;--delay:2.9s;--size:16px">♥</span>
-        <span class="wish-twinkle" style="--x:8%;--y:20%;--delay:0.00s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:19%;--y:32%;--delay:0.31s;--size:13px">✦</span>
-        <span class="wish-twinkle" style="--x:91%;--y:20%;--delay:0.62s;--size:18px">✦</span>
-        <span class="wish-twinkle" style="--x:78%;--y:31%;--delay:0.93s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:12%;--y:76%;--delay:1.24s;--size:13px">✦</span>
-        <span class="wish-twinkle" style="--x:88%;--y:77%;--delay:1.55s;--size:18px">✦</span>
-        <span class="wish-twinkle" style="--x:33%;--y:63%;--delay:1.86s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:68%;--y:66%;--delay:2.17s;--size:13px">✦</span>
-        <span class="wish-twinkle" style="--x:40%;--y:18%;--delay:2.48s;--size:18px">✦</span>
-        <span class="wish-twinkle" style="--x:61%;--y:24%;--delay:2.79s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:94%;--y:46%;--delay:3.10s;--size:13px">✦</span>
-        <span class="wish-twinkle" style="--x:7%;--y:46%;--delay:3.41s;--size:18px">✦</span>
-        <span class="wish-twinkle" style="--x:29%;--y:82%;--delay:3.72s;--size:8px">✦</span>
-        <span class="wish-twinkle" style="--x:73%;--y:84%;--delay:4.03s;--size:13px">✦</span>
-    </div>
-    <!-- Nền đen mờ dần lên, chỉ được bật ở cảnh cỏ bốn lá -->
-    <div id="clover-blackout" aria-hidden="true"></div>
-    <div id="clover-stage" class="wish-stage" aria-hidden="true">
-        <div class="clover-ambient" aria-hidden="true"></div>
-        <div class="clover-particle-field" id="clover-particle-field" aria-hidden="true"></div>
-        <!-- Giữ nguyên đường nét cỏ, thân cong, bốn lá và cách đung đưa của file mẫu bạn gửi. -->
-        <div id="clover-sample-garden" class="clover-sample-garden">
-            <div class="clover-sample-glow"></div>
-            <svg viewBox="0 0 240 400" role="img" aria-label="Ngọn cỏ bốn lá màu xanh phát sáng">
-                <defs>
-                    <radialGradient id="clover-sample-leaf-gradient" cx=".5" cy=".85" r=".95">
-                        <stop offset="0" stop-color="#1fcf5a" />
-                        <stop offset=".6" stop-color="#4fee86" />
-                        <stop offset="1" stop-color="#a8ffc6" />
-                    </radialGradient>
-                    <g id="clover-sample-leaf-symbol">
-                        <path
-                            d="M0 0 C -6 -8 -22 -14 -22 -28 C -22 -38 -8 -42 0 -32 C 8 -42 22 -38 22 -28 C 22 -14 6 -8 0 0 Z"
-                            fill="url(#clover-sample-leaf-gradient)" stroke="#c9ffdc" stroke-width="1.2" />
-                        <path d="M0 -3 L0 -30" stroke="rgba(0,90,40,.5)" stroke-width="1.1" />
-                    </g>
-                </defs>
-                <g class="clover-sample-sway">
-                    <g class="clover-sample-plant">
-                        <path d="M121 90 C 158 168, 80 228, 116 298 C 142 348, 106 378, 126 396" fill="none"
-                            stroke="#33d96f" stroke-width="7" stroke-linecap="round" />
-                        <path d="M121 90 C 158 168, 80 228, 116 298 C 142 348, 106 378, 126 396" fill="none"
-                            stroke="#b7ffd0" stroke-width="1.8" stroke-linecap="round" opacity=".7" />
-                        <g id="clover-sample-bloom" transform="translate(121 84) rotate(-8) scale(1.9)">
-                            <g transform="rotate(45)">
-                                <g class="clover-sample-leaf" style="animation-delay:0s">
-                                    <use href="#clover-sample-leaf-symbol" />
-                                </g>
-                            </g>
-                            <g transform="rotate(135)">
-                                <g class="clover-sample-leaf" style="animation-delay:-.7s">
-                                    <use href="#clover-sample-leaf-symbol" />
-                                </g>
-                            </g>
-                            <g transform="rotate(225)">
-                                <g class="clover-sample-leaf" style="animation-delay:-1.4s">
-                                    <use href="#clover-sample-leaf-symbol" />
-                                </g>
-                            </g>
-                            <g transform="rotate(315)">
-                                <g class="clover-sample-leaf" style="animation-delay:-2.1s">
-                                    <use href="#clover-sample-leaf-symbol" />
-                                </g>
-                            </g>
-                            <circle r="3.4" fill="#eaffd8" />
-                        </g>
-                    </g>
-                </g>
-            </svg>
-        </div>
-    </div>
-    <div id="luck-stage" class="wish-stage" aria-hidden="true">
-        <div class="luck-ambient"></div>
-        <div class="luck-bg-field" id="luck-bg-field" aria-hidden="true"></div>
-        <div class="luck-top-rays" aria-hidden="true"></div>
-        <div class="luck-fall-field" id="luck-fall-field" aria-hidden="true"></div>
-    </div>
-    <div id="khung-mat">
-        <div class="truc-x">
-            <div class="con-mat"></div>
-            <svg class="mat-cong" viewBox="0 0 160 70" aria-hidden="true">
-                <path d="M 18 39 Q 80 59 142 39" />
-            </svg>
-            <div class="ma-hong">////</div>
-        </div>
-        <div id="moi-robot">
-            <svg viewBox="0 0 60 44" width="60" height="44">
-                <g transform="rotate(270 30 22)">
-                    <g class="mom">
-                        <!-- miệng mèo ω -->
-                        <path d="M 7 10 C 7 26 25 28 30 14 C 35 28 53 26 53 10" fill="none" stroke="aqua"
-                            stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"
-                            style="filter: drop-shadow(0 0 6px aqua);" />
-                    </g>
-                </g>
-            </svg>
-        </div>
-        <div class="truc-x">
-            <div class="con-mat"></div>
-            <svg class="mat-cong" viewBox="0 0 160 70" aria-hidden="true">
-                <path d="M 18 39 Q 80 59 142 39" />
-            </svg>
-            <div class="ma-hong">////</div>
-        </div>
-        <div id="tiny-intro-nudge" role="status" aria-live="polite" aria-label="sang đi">
-            <span>sang đi nè~</span>
-            <svg class="tiny-nudge-arrow" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path d="M4 12H19M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"
-                    stroke-linejoin="round" />
-            </svg>
-        </div>
-        <svg id="tiny-happy-smile" viewBox="0 0 112 68" aria-hidden="true">
-            <path d="M 17 18 Q 56 65 95 18" />
-            <path d="M 12 18 L 7 14 M 100 18 L 105 14" stroke-width="3.5" />
-        </svg>
-    </div>
-    <div id="luck-front-field" class="luck-front-field" aria-hidden="true"></div>
-    <div id="question-stage" class="question-stage" aria-hidden="true">
-        <div class="question-space-haze"></div>
-        <div class="question-blue-rays"></div>
-        <div class="question-blue-glow"></div>
-    </div>
-    <div id="tiny-question-entry-v13" aria-hidden="true">
-        <div class="v13-light-sweep"></div>
-        <span class="v13-twinkle">✦</span>
-        <span class="v13-twinkle">✧</span>
-        <span class="v13-twinkle">✦</span>
-    </div>
-    <!-- Scene after "Liệu cậu có thể?": animated fuel-button and departing aircraft. -->
-    <section id="share-flight-scene" aria-hidden="true" aria-label="Lời chúc và ảnh kỷ niệm">
-        <div id="legacy-share-elements" aria-hidden="true">
-
-            <header class="share-flight-heading">
-                <h2 class="share-heading-crossfade">
-                    <span class="share-heading-original">
-                        Chào em<br>
-                        <span class="share-soft">Chúc em luôn mạnh khỏe nha</span>
-                    </span>
-                    <span class="share-heading-thanks" aria-hidden="true">cảm ơn em nhiều</span>
-                </h2>
-            </header>
-            <!-- Đôi mắt THẬT của Kai ở cảnh trước sẽ được chuyển vào đây, không tạo cặp mắt mới. -->
-            <div id="share-tiny" class="share-tiny" aria-hidden="true"></div>
-            <div id="share-flight-device" class="share-flight-device">
-                <div class="share-flight-ground"></div>
-                <button type="button" id="share-fuel-button" class="share-fuel-button"
-                    aria-label="Đồng ý, sao chép liên kết và tiếp nhiên liệu cho máy bay">
-                    <span id="share-fuel-liquid" class="share-fuel-liquid"></span>
-                    <span class="share-fuel-sheen"></span>
-                    <span class="share-fuel-meter" id="share-fuel-meter">80%</span>
-                    <span class="share-fuel-words">
-                        <strong>Đồng ý</strong>
-                    </span>
-                </button>
-                <div class="share-fuel-nozzle" aria-hidden="true"></div>
-                <svg class="share-fuel-hose" viewBox="0 0 450 115" preserveAspectRatio="none" aria-hidden="true">
-                    <path class="share-hose-dark" d="M 0 22 C 90 24 70 90 182 83 S 353 86 450 39" />
-                    <path class="share-hose-outline" d="M 0 22 C 90 24 70 90 182 83 S 353 86 450 39" />
-                    <path id="share-hose-flow-path" class="share-hose-flow"
-                        d="M 0 22 C 90 24 70 90 182 83 S 353 86 450 39" />
-                    <g id="share-flow-droplets" opacity="0">
-                        <circle r="6" fill="#fff2ae" />
-                        <circle r="4.5" fill="#ffe3a0" />
-                        <circle r="5" fill="#fff9d5" />
-                    </g>
-                </svg>
-                <div id="share-aircraft-stand" class="share-aircraft-stand" role="img"
-                    aria-label="Máy bay tự động cất cánh sau khi tiếp nhiên liệu">
-                    <svg id="share-aircraft" class="share-aircraft" viewBox="0 0 340 200" aria-hidden="true">
-                        <defs>
-                            <linearGradient id="share-metal" x1="0" y1="0" x2=".8" y2="1">
-                                <stop offset="0" stop-color="#f6fdff" />
-                                <stop offset=".5" stop-color="#9bd6f2" />
-                                <stop offset="1" stop-color="#568ea8" />
-                            </linearGradient>
-                            <linearGradient id="share-wing" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0" stop-color="#ffffff" />
-                                <stop offset="1" stop-color="#78bcd6" />
-                            </linearGradient>
-                        </defs>
-                        <!-- back wing, horizontal stabilizer, tail -->
-                        <path d="M102 116 L60 63 104 71 157 116Z" fill="#6da4c6" stroke="#c7eeff" stroke-width="3" />
-                        <path d="M58 122 L25 98 28 57 66 102Z" fill="#8bd8ea" stroke="#e8ffff" stroke-width="4" />
-                        <path d="M52 113 L10 127 11 137 84 132Z" fill="#9dc7e5" stroke="#e5f8ff" stroke-width="3" />
-                        <!-- fuselage with nose pointed right -->
-                        <path
-                            d="M45 112 C101 92 201 95 269 111 Q313 111 314 128 Q314 145 270 149 C177 158 94 143 45 130Z"
-                            fill="url(#share-metal)" stroke="#e4f9ff" stroke-width="4" />
-                        <path d="M68 127 Q161 153 283 137" fill="none" stroke="#4ab4db" stroke-width="7" opacity=".7" />
-                        <path d="M152 103 L204 48 246 43 227 105Z" fill="url(#share-wing)" stroke="#e6faff"
-                            stroke-width="4" />
-                        <path d="M163 143 L209 179 245 175 217 145Z" fill="#73afc8" stroke="#dff6ff" stroke-width="3" />
-                        <!-- canopy -->
-                        <path d="M228 109 Q236 86 264 96 Q280 101 284 113Z" fill="#204e75" stroke="#d5f5ff"
-                            stroke-width="4" />
-                        <path d="M248 97 Q256 95 269 103" fill="none" stroke="#a6edff" stroke-width="3" />
-                        <circle cx="160" cy="133" r="8" fill="#ffd68b" stroke="#fff7cc" stroke-width="2"
-                            class="share-fuel-port" />
-                        <!-- landing gear -->
-                        <path d="M116 146 L105 169 M253 143 L269 165" fill="none" stroke="#aac1d5" stroke-width="5" />
-                        <circle cx="105" cy="170" r="13" fill="#172d45" stroke="#b3d5e7" stroke-width="4" />
-                        <circle cx="269" cy="168" r="13" fill="#172d45" stroke="#b3d5e7" stroke-width="4" />
-                        <circle cx="105" cy="170" r="4" fill="#88a8bb" />
-                        <circle cx="269" cy="168" r="4" fill="#88a8bb" />
-                        <!-- propeller at nose -->
-                        <g class="share-propeller">
-                            <rect x="316" y="81" width="8" height="86" rx="4" fill="#e9ffff" stroke="#8abbd2"
-                                stroke-width="2" />
-                            <circle cx="320" cy="124" r="9" fill="#ffd28e" stroke="#fff0bd" stroke-width="3" />
-                        </g>
-                    </svg>
+        <div class="audio-info">
+            <span class="audio-title-text" id="audio-title-display">Bản tình ca hoàng hôn</span>
+            <div class="audio-controls-row">
+                <input type="range" class="audio-volume-slider" id="audio-volume-slider" min="0" max="100" value="50"
+                    title="Âm lượng" />
+                <div class="audio-bars">
+                    <span class="audio-bar"></span>
+                    <span class="audio-bar"></span>
+                    <span class="audio-bar"></span>
                 </div>
             </div>
-            <p id="share-flight-status" class="share-flight-status" aria-live="polite"></p>
-            <a id="share-copy-manual" href="https://20-10-vuive.kazvndc-edu.workers.dev/" target="_blank"
-                rel="noopener noreferrer">https://20-10-vuive.kazvndc-edu.workers.dev/</a>
         </div>
+    </div>
 
-        <div id="final-photo-card" aria-label="Ảnh kỷ niệm dành tặng em" title="Chạm vào để mở cuốn sách kỷ niệm ✨">
-            <p class="final-photo-kicker">DÀNH RIÊNG CHO EM</p>
-            <h2>Mong những điều đẹp đẽ<br>luôn tìm đến em ✨</h2>
-            <p class="final-photo-note">Một chút dịu dàng gửi đến cô gái<br>đặc biệt</p>
+    <!-- THANH ĐIỀU HƯỚNG TINH TẾ (NAVBAR) -->
+    <nav class="site-navbar" id="site-navbar">
+        <a href="#hero" class="nav-brand">
+            <span>Cảm Ơn Em</span>
+            <span class="heart">❤️</span>
+        </a>
 
-            <div id="photo-preview-wrap">
-                <img id="photo-preview" src="./img/img1.jpg" alt="Khoảnh khắc xinh đẹp của em" />
-                <span id="photo-placeholder" style="display:none;">Ảnh của em sẽ xuất hiện ở đây 💗</span>
-            </div>
-            <p class="final-photo-footer">Chúc em có một ngày 20/10 thật vui vẻ và đáng nhớ</p>
-        </div>
+        <button class="nav-toggle-btn" id="nav-toggle-btn" aria-label="Menu" type="button">☰</button>
 
-        <!-- THANH ĐIỀU HƯỚNG GỌN GÀNG ĐẶT DƯỚI ĐÁY MÀN HÌNH - KHÔNG CHE KHUNG ẢNH -->
-        <nav class="final-scene-compact-dock" id="final-scene-compact-dock" aria-label="Điều hướng kỷ niệm">
-            <a href="book.html" class="compact-dock-pill book-dock-pill" id="final-card-book-invitation"
-                aria-label="Mở Cuốn Sách Kỷ Niệm 3D">
-                <span class="dock-emoji">📖</span>
-                <span class="dock-label">Sách Kỷ Niệm</span>
-            </a>
-            <div class="compact-dock-separator" aria-hidden="true"></div>
-            <a href="preview.html" class="compact-dock-pill station-dock-pill" id="final-card-station-invitation"
-                aria-label="Ghé thăm Trạm Nguyện Ước Ánh Sao">
-                <span class="dock-emoji">🌠</span>
-                <span class="dock-label">Trạm Nguyện Ước</span>
-            </a>
-        </nav>
-        <aside id="photo-editor" aria-label="Bảng chỉnh ảnh dành cho người tạo trang">
-            <h3>Chèn ảnh vào trang</h3>
-            <p class="photo-editor-hint">Bảng này chỉ mở bằng phím tắt Ctrl + Shift + E. Sau khi chọn ảnh, hãy xuất HTML
-                để lưu ảnh vào bản gửi đi.</p>
-            <label for="photo-editor-file">Chọn ảnh từ máy tính</label>
-            <input id="photo-editor-file" type="file" accept="image/*">
-            <label for="photo-editor-url">Hoặc dán đường dẫn ảnh trên web</label>
-            <input id="photo-editor-url" type="url" placeholder="https://.../anh.jpg">
-            <div class="photo-editor-actions">
-                <button type="button" id="photo-editor-use-url">Dùng ảnh từ web</button>
-                <button type="button" id="photo-editor-export">Xuất HTML có ảnh</button>
-                <button type="button" id="photo-editor-close">Đóng</button>
-            </div>
-        </aside>
-    </section>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#hero" class="nav-link active">Mở Đầu</a></li>
+            <li><a href="#special-day" class="nav-link">Lần Đầu Gặp Nhau</a></li>
+            <li><a href="#vungtau-trip" class="nav-link">Kỷ Niệm Vũng Tàu</a></li>
+            <li><a href="#the-story" class="nav-link">Tâm Sự Gửi Em</a></li>
+            <li><a href="#farewell-night" class="nav-link">Lời Kết</a></li>
+        </ul>
+    </nav>
 
-    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position:absolute;pointer-events:none">
-        <defs>
-            <clipPath id="tiny-cute-squircle" clipPathUnits="objectBoundingBox">
-                <path
-                    d="M .30 .018 C .42 -.035 .58 -.035 .70 .018 C .90 -.002 1.002 .105 .982 .30 C 1.037 .42 1.037 .58 .982 .70 C 1.002 .895 .90 1.002 .70 .982 C .58 1.037 .42 1.037 .30 .982 C .105 1.002 -.002 .895 .018 .70 C -.037 .58 -.037 .42 .018 .30 C -.002 .105 .105 -.002 .30 .018 Z" />
-            </clipPath>
-        </defs>
-    </svg>
-    <section id="tiny-reality-scene" aria-hidden="true" aria-label="Lời nhờ mới của Kai">
-        <div class="reality-haze" aria-hidden="true"></div>
-        <div class="reality-portal" aria-hidden="true"></div>
-        <div id="reality-spark-field" class="reality-spark-field" aria-hidden="true"></div>
-        <span class="reality-heart-float one" aria-hidden="true">♥</span>
-        <span class="reality-heart-float two" aria-hidden="true">✧</span>
-        <span class="reality-heart-float three" aria-hidden="true">♡</span>
-        <div class="reality-face">
-            <div id="tiny-reality-eye-host" aria-hidden="true"></div>
-        </div>
-        <h2 class="reality-message">
-            và giúp tớ <span class="reality-pink">bước ra ngoài đời thực</span>
-            được chứ?
-        </h2>
-        <div id="reality-book-invitation" class="final-card-book-invitation reality-book-btn" role="button" tabindex="0">
-            <span class="invitation-icon">📖</span>
-            <span class="invitation-text">Mở cuốn sách kỷ niệm 3D</span>
-            <span class="invitation-sparkle">✨</span>
-        </div>
-        <div class="reality-moon-walk" aria-hidden="true">
-            <svg class="moon-landscape" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300"
-                preserveAspectRatio="xMidYMax slice">
-                <defs>
-                    <linearGradient id="tinyMoonSoil" x1=".16" x2=".75" y1=".03" y2="1">
-                        <stop offset="0" stop-color="#eff7fa" />
-                        <stop offset=".28" stop-color="#c9d4df" />
-                        <stop offset=".7" stop-color="#788da5" />
-                        <stop offset="1" stop-color="#2b3b5d" />
-                    </linearGradient>
-                    <linearGradient id="tinyMoonRim" x1="0" x2="0" y1="0" y2="1">
-                        <stop stop-color="#f4ffff" />
-                        <stop offset="1" stop-color="#78c7e7" stop-opacity=".35" />
-                    </linearGradient>
-                    <linearGradient id="tinyRoverMetal" x1="0" x2="1" y1="0" y2="1">
-                        <stop stop-color="#f2b481" />
-                        <stop offset=".55" stop-color="#b66d40" />
-                        <stop offset="1" stop-color="#75432e" />
-                    </linearGradient>
-                    <linearGradient id="tinyRobotMoonGlow" x1=".5" x2=".5" y1="0" y2="1">
-                        <stop stop-color="#a6dcfa" stop-opacity=".23" />
-                        <stop offset="1" stop-color="#7287b7" stop-opacity="0" />
-                    </linearGradient>
-                    <radialGradient id="tinyCraterShade">
-                        <stop offset="0" stop-color="#405770" stop-opacity=".52" />
-                        <stop offset="1" stop-color="#536b83" stop-opacity="0" />
-                    </radialGradient>
-                    <clipPath id="tinyMoonSoilClip">
-                        <path d="M-80 292 Q600 56 1280 292 L1280 450 -80 450Z" />
-                    </clipPath>
-                </defs>
-                <!-- Không gian bên trên và bóng phản chiếu cực mờ lên bề mặt mặt trăng -->
-                <path d="M-80 292 Q600 56 1280 292 L1280 455 -80 455Z" fill="url(#tinyMoonSoil)" />
-                <g clip-path="url(#tinyMoonSoilClip)" opacity=".83">
-                    <ellipse cx="268" cy="249" rx="79" ry="18" fill="url(#tinyCraterShade)" />
-                    <path d="M209 245 Q268 215 327 245 Q262 256 209 245Z" fill="#edf4f5" opacity=".28" />
-                    <ellipse cx="435" cy="270" rx="48" ry="14" fill="url(#tinyCraterShade)" />
-                    <ellipse cx="835" cy="261" rx="74" ry="16" fill="url(#tinyCraterShade)" />
-                    <path d="M784 255 Q834 236 898 259" fill="none" stroke="#ecf3fb" stroke-opacity=".33"
-                        stroke-width="5" />
-                    <ellipse cx="1039" cy="278" rx="53" ry="13" fill="url(#tinyCraterShade)" />
-                    <path d="M320 304 Q380 279 425 304 M680 294 Q730 270 785 300" stroke="#eef4fb" stroke-opacity=".13"
-                        stroke-width="4" fill="none" />
-                    <g fill="#d9e4f2" opacity=".39">
-                        <circle cx="355" cy="281" r="3" />
-                        <circle cx="586" cy="246" r="2.5" />
-                        <circle cx="743" cy="280" r="3" />
-                        <circle cx="946" cy="291" r="2" />
-                    </g>
-                </g>
-                <path d="M-80 292 Q600 56 1280 292" fill="none" stroke="#091627" stroke-opacity=".32"
-                    stroke-width="15" />
-                <path d="M-80 292 Q600 56 1280 292" fill="none" stroke="url(#tinyMoonRim)" stroke-width="5"
-                    stroke-linecap="round" />
-                <path d="M-80 278 Q600 55 1280 278" fill="none" stroke="#e4f8ff" stroke-opacity=".12"
-                    stroke-width="2" />
-                <!-- Trước khi JavaScript bắt đầu, xe vẫn có vị trí mặc định hợp lý trên đường cong. -->
-                <g id="tiny-moon-rover" class="moon-rover" transform="translate(600 174) scale(.76)">
-                    <g class="moon-rover-bob" stroke-linejoin="round" stroke-linecap="round">
-                        <!-- Dây anten, cánh tay và các khớp cơ học của xe thám hiểm pixel-art -->
-                        <path d="M-75 -117V-164 M-75 -148H-94" fill="none" stroke="#221d1d" stroke-width="8" />
-                        <path d="M-75 -117V-164 M-75 -148H-94" fill="none" stroke="#e9a36e" stroke-width="4" />
-                        <circle cx="-75" cy="-164" r="8" fill="#efbb82" stroke="#2c1a17" stroke-width="3" />
-                        <circle cx="-75" cy="-164" r="2.4" fill="#fff5bd" />
-                        <path d="M-76 -76H-107V-104" stroke="#201919" stroke-width="11" fill="none" />
-                        <path d="M-76 -76H-107V-104" stroke="#c9814f" stroke-width="6" fill="none" />
-                        <circle cx="-107" cy="-104" r="6" fill="#dc9566" stroke="#35201c" stroke-width="2.5" />
-                        <!-- Đầu robot -->
-                        <path d="M-34 -144H20V-153H46V-137H59V-94H-35Z" fill="url(#tinyRoverMetal)" stroke="#291d1a"
-                            stroke-width="4" />
-                        <path d="M-15 -145V-155H25" fill="none" stroke="#ffe3a5" stroke-opacity=".55"
-                            stroke-width="4" />
-                        <path d="M7 -132H35V-107H7Z" fill="#f4f7eb" stroke="#36251d" stroke-width="3" />
-                        <rect x="16" y="-126" width="12" height="12" fill="#1b2125" />
-                        <rect x="19" y="-126" width="4" height="4" fill="#fff" />
-                        <rect x="44" y="-130" width="14" height="20" fill="#f1f9ea" stroke="#36251d" stroke-width="3" />
-                        <path d="M-28 -100H54" stroke="#422820" stroke-width="3" />
-                        <!-- Thân xe: tấm kim loại, đinh tán và hốc thông gió -->
-                        <path d="M-66 -102H65V-91H82V-43H68V-32H-78V-48H-89V-87H-66Z" fill="url(#tinyRoverMetal)"
-                            stroke="#2e2421" stroke-width="4" />
-                        <path d="M-72 -87H73M-61 -58H70" fill="none" stroke="#ffd1a0" stroke-opacity=".22"
-                            stroke-width="3" />
-                        <rect x="15" y="-87" width="43" height="10" rx="1.5" fill="#1c2733" stroke="#f2c192"
-                            stroke-width="2" />
-                        <rect x="18" y="-84" width="26" height="3" rx="1" fill="#a7e7f2" class="moon-rover-light" />
-                        <circle cx="-62" cy="-83" r="4.2" fill="#302c2c" stroke="#eac394" stroke-width="1.7" />
-                        <circle cx="65" cy="-52" r="4.2" fill="#302c2c" stroke="#eac394" stroke-width="1.7" />
-                        <g fill="#463021">
-                            <rect x="-34" y="-95" width="4" height="5" />
-                            <rect x="54" y="-97" width="5" height="4" />
-                            <rect x="-13" y="-50" width="6" height="3" />
-                            <rect x="36" y="-64" width="4" height="4" />
-                        </g>
-                        <!-- Cánh tay điều khiển vươn ra -->
-                        <circle cx="-42" cy="-70" r="13" fill="#3f2822" stroke="#e8ad72" stroke-width="4" />
-                        <circle cx="-42" cy="-70" r="6" fill="#d0aa79" />
-                        <path d="M-31 -67L20 -50L31 -61" fill="none" stroke="#31231e" stroke-width="10" />
-                        <path d="M-31 -67L20 -50L31 -61" fill="none" stroke="#d59966" stroke-width="5" />
-                        <path d="M26 -57L35 -51L48 -58M35 -51L43 -43L52 -48" fill="none" stroke="#2d2423"
-                            stroke-width="5" />
-                        <path d="M26 -57L35 -51L48 -58M35 -51L43 -43L52 -48" fill="none" stroke="#f2bc7b"
-                            stroke-width="2.2" />
-                        <!-- Băng bánh xích: viền đen, dãy bánh đồng quay, nét sọc dịch chuyển -->
-                        <rect x="-98" y="-45" width="189" height="42" rx="21" fill="#24272b" stroke="#a47e68"
-                            stroke-width="4" />
-                        <rect x="-91" y="-40" width="175" height="32" rx="16" fill="#111b22" stroke="#4c5050"
-                            stroke-width="2" />
-                        <rect x="-93" y="-42" width="179" height="35" rx="18" fill="none" stroke="#dc9360"
-                            stroke-width="4.8" stroke-dasharray="14 8" class="moon-rover-tread" />
-                        <g fill="#d98e55" stroke="#342824" stroke-width="3">
-                            <circle cx="-76" cy="-24" r="14" />
-                            <circle cx="-40" cy="-24" r="13" />
-                            <circle cx="-4" cy="-24" r="13" />
-                            <circle cx="32" cy="-24" r="13" />
-                            <circle cx="69" cy="-24" r="14" />
-                        </g>
-                        <g fill="none" stroke="#73452e" stroke-width="2.4">
-                            <g class="moon-rover-wheel">
-                                <circle cx="-76" cy="-24" r="8" />
-                                <path d="M-84 -24H-68M-76 -32V-16" />
-                            </g>
-                            <g class="moon-rover-wheel">
-                                <circle cx="-40" cy="-24" r="7" />
-                                <path d="M-47 -24H-33M-40 -31V-17" />
-                            </g>
-                            <g class="moon-rover-wheel">
-                                <circle cx="-4" cy="-24" r="7" />
-                                <path d="M-11 -24H3M-4 -31V-17" />
-                            </g>
-                            <g class="moon-rover-wheel">
-                                <circle cx="32" cy="-24" r="7" />
-                                <path d="M25 -24H39M32 -31V-17" />
-                            </g>
-                            <g class="moon-rover-wheel">
-                                <circle cx="69" cy="-24" r="8" />
-                                <path d="M61 -24H77M69 -32V-16" />
-                            </g>
-                        </g>
-                        <rect x="-87" y="-9" width="166" height="5" rx="2" fill="#2c2b2b" />
-                    </g>
-                </g>
-                <!-- Vệt sao nhỏ, chỉ trang trí trên nền trống. -->
-                <g fill="#c8f4ff" opacity=".62">
-                    <path class="moon-rover-star" d="M106 62L109 69L116 72L109 75L106 82L103 75L96 72L103 69Z" />
-                    <path class="moon-rover-star"
-                        d="M1024 106L1027 112L1033 115L1027 118L1024 124L1021 118L1015 115L1021 112Z" />
-                </g>
+    <!-- ===================================================================
+         HERO SECTION – CẢM ƠN EM, VÌ TẤT CẢ
+         =================================================================== -->
+    <header class="hero-section" id="hero">
+        <div class="hero-sunset-backdrop"></div>
+        <div class="hero-sun-glow"></div>
+        <canvas class="hero-canvas" id="hero-ambient-canvas"></canvas>
+
+        <!-- Sóng biển chuyển động nhẹ nhàng -->
+        <div class="hero-ocean-waves" aria-hidden="true">
+            <svg viewBox="0 0 1440 180" preserveAspectRatio="none">
+                <path class="wave-layer wave-layer-3" fill="rgba(216, 188, 138, 0.18)"
+                    d="M0,64L60,80C120,96,240,128,360,133.3C480,139,600,117,720,101.3C840,85,960,75,1080,85.3C1200,96,1320,128,1380,144L1440,160L1440,180L0,180Z">
+                </path>
+                <path class="wave-layer wave-layer-2" fill="rgba(232, 161, 123, 0.25)"
+                    d="M0,96L60,106.7C120,117,240,139,360,138.7C480,139,600,117,720,112C840,107,960,117,1080,128C1200,139,1320,149,1380,154.7L1440,160L1440,180L0,180Z">
+                </path>
+                <path class="wave-layer" fill="#F8F3E9"
+                    d="M0,128L60,128C120,128,240,128,360,133.3C480,139,600,149,720,144C840,139,960,117,1080,117.3C1200,117,1320,139,1380,149.3L1440,160L1440,180L0,180Z">
+                </path>
             </svg>
         </div>
+
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>✨</span> Một kỷ niệm đáng nhớ
+            </div>
+
+            <h1 class="hero-title">
+                <span class="phrase-wrap">CẢM ƠN EM,</span> <span class="phrase-wrap highlight">VÌ TẤT CẢ ❤️</span>
+            </h1>
+
+            <p class="hero-subtitle">
+                <span class="phrase-wrap">Một kỷ niệm mà có lẽ</span> <span class="phrase-wrap">tôi sẽ luôn nhớ.</span>
+            </p>
+
+            <p class="hero-quote">
+                <span class="phrase-wrap">Có những cuộc gặp gỡ tưởng chừng rất bình thường,</span><br class="desktop-break">
+                <span class="phrase-wrap">nhưng lại để lại những cảm xúc mà ta muốn lưu giữ thật lâu.</span>
+            </p>
+
+            <a href="#special-day" class="hero-cta-btn">
+                <span>Bắt đầu đọc</span>
+                <span class="arrow-down">↓</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- ===================================================================
+         2. NGÀY ĐẦU TIÊN GẶP NHAU
+         =================================================================== -->
+    <section class="section-container chapter-section" id="special-day">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag">Khởi Đầu · Lần Đầu Gặp Nhau</span>
+            <h2 class="section-title">
+                <span class="phrase-wrap">TỪ MỘT CUỘC GẶP</span> <span class="phrase-wrap highlight-sunset">TÌNH CỜ</span>
+            </h2>
+            <div class="section-divider-line"></div>
+        </div>
+
+        <div class="memoir-card-centered reveal-on-scroll">
+            <div class="memoir-text-block">
+                <p class="memoir-p">
+                    Hôm ấy, chúng ta gặp nhau trong một buổi tụ tập cùng mọi người. Giữa không khí náo nhiệt của bàn nhậu, những câu chuyện nối tiếp nhau, chúng ta cũng chỉ đơn giản là hai người mới quen, đôi ba câu chào hỏi rồi cùng hòa vào cuộc vui.
+                </p>
+
+                <p class="memoir-p">
+                    Khi ấy, có lẽ chẳng ai trong chúng ta nghĩ rằng một cuộc gặp gỡ bình thường như vậy lại có thể mở đầu cho nhiều câu chuyện và những kỷ niệm đáng nhớ về sau.
+                </p>
+
+                <p class="memoir-p">
+                    Thậm chí, sau buổi gặp hôm ấy, tôi cũng chưa từng nghĩ mình sẽ chủ động nhắn tin hay tìm cách làm quen với em.
+                </p>
+
+                <p class="memoir-p">
+                    Nhưng đôi khi, những điều đáng nhớ nhất lại bắt đầu từ những khoảnh khắc mà ta chẳng hề có sự chuẩn bị trước.
+                </p>
+
+                <div class="memoir-quote-highlight">
+                    <p>
+                        “Có những cuộc gặp gỡ tưởng chừng chỉ thoáng qua, nhưng lại vô tình mở ra một câu chuyện mà sau này ta luôn muốn nhớ về.”
+                    </p>
+                </div>
+            </div>
+        </div>
     </section>
 
+    <!-- ===================================================================
+         3. CHUYẾN ĐI VŨNG TÀU – CẢM ƠN EM VÌ CHUYẾN ĐI ẤY
+         =================================================================== -->
+    <section class="section-container chapter-section" id="vungtau-trip">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag">Kỷ Niệm Vũng Tàu · Mấy Ngày Sau</span>
+            <h2 class="section-title">
+                <span class="phrase-wrap">CẢM ƠN EM VÌ</span> <span class="phrase-wrap">CHUYẾN ĐI ẤY</span>
+            </h2>
+            <div class="section-divider-line"></div>
+        </div>
 
-    <!-- ================= FLIPBOOK JAVASCRIPT LOGIC ================= -->
+        <div class="trip-scenic-container reveal-on-scroll">
+            <!-- Header nghệ thuật tông màu biển Vũng Tàu nhẹ nhàng -->
+            <div class="trip-header-art">
+                <div class="trip-coastal-badge">🌊 Một Buổi Tối Lộng Gió Bên Bờ Biển</div>
+            </div>
 
-    <script src="./js/script.js?v=5"></script>
+            <div class="trip-content-card">
+                <div class="trip-layout-grid">
+                    <!-- Khung ảnh Polaroid lưu giữ bức ảnh 2 ngón tay duy nhất chụp tối hôm đó -->
+                    <div class="keepsake-photo-card" onclick="openPhotoZoom('img/ki_niem.jpg', 'Một lời chào, và cũng là một lời tạm biệt ✌️')" title="Chạm để xem ảnh lớn">
+                        <div class="keepsake-photo-pin"></div>
+                        <div class="keepsake-photo-wrapper">
+                            <img src="img/ki_niem.jpg" alt="Kỷ niệm 2 ngón tay Vũng Tàu" class="keepsake-photo-img" />
+                            <div class="photo-zoom-hint">🔍 Chạm để phóng to</div>
+                        </div>
+                        <div class="keepsake-photo-caption">
+                            <span class="phrase-wrap">Một lời chào,</span> <span class="phrase-wrap">và cũng là một lời tạm biệt</span>
+                        </div>
+                    </div>
+
+                    <!-- Lời tâm sự chân thành về chuyến đi lượn và ly nước tối hôm đó -->
+                    <div class="trip-words-block">
+                        <p class="trip-lead-text">
+                            Cảm ơn em vì mấy ngày sau đó đã rủ tôi đi Vũng Tàu.
+                        </p>
+
+                        <p class="memoir-p">
+                            Cảm ơn vì đã cho tôi một buổi tối thật dễ chịu – được cùng em lượn xe qua những con đường biển lộng gió, ngắm phố xá về đêm và ghé ngồi uống một ly nước dù chỉ trong một lúc ngắn ngủi.
+                        </p>
+
+                        <p class="memoir-p">
+                            Có thể với em, đó chỉ đơn giản là một buổi đi lượn lòng vòng cho vui.
+                        </p>
+
+                        <p class="memoir-p highlight-p">
+                            Nhưng với tôi, khoảng thời gian ngắn ngủi ấy lại trở thành một kỷ niệm rất đỗi bình yên và đáng nhớ.
+                        </p>
+
+                        <div class="memoir-quote-highlight">
+                            <p>
+                                “Không phải vì chúng ta đã đi được bao xa hay ở lại bao lâu, mà bởi vì khoảng thời gian ngắn ngủi ấy được cùng em đi dạo và ngồi lại bên nhau đã là một kỷ niệm rất đáng trân trọng.”
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="two-fingers-story-divider"></div>
+
+                <!-- KHỐI TÂM SỰ Ý NGHĨA BỨC ẢNH HAI NGÓN TAY -->
+                <div class="two-fingers-reflection-block">
+                    <div class="two-fingers-quote-badge">✌️ Ý nghĩa của hai ngón tay hôm ấy</div>
+
+                    <h3 class="two-fingers-heading">
+                        Hai ngón tay — một lời chào, cũng là một lời tạm biệt.
+                    </h3>
+
+                    <div class="two-fingers-definitions">
+                        <div class="two-fingers-def-item">
+                            <span class="def-term">✦ Hello</span>
+                            <span class="def-desc">Khi ta vừa mới gặp nhau.</span>
+                        </div>
+                        <div class="two-fingers-def-item">
+                            <span class="def-term">✦ Peace</span>
+                            <span class="def-desc">Mong bình yên sẽ luôn ở bên nhau.</span>
+                        </div>
+                        <div class="two-fingers-def-item">
+                            <span class="def-term">✦ Victory</span>
+                            <span class="def-desc">Chúc cho những ngày phía trước của mỗi người đều tốt đẹp.</span>
+                        </div>
+                        <div class="two-fingers-def-item">
+                            <span class="def-term">✦ See you</span>
+                            <span class="def-desc">Hẹn một ngày nào đó, nếu còn duyên, chúng ta lại gặp.</span>
+                        </div>
+                    </div>
+
+                    <div class="two-fingers-prose">
+                        <p>
+                            Nhưng đôi khi, hai ngón tay ấy cũng chẳng cần nói gì cả. Chỉ đơn giản là một cái giơ tay lên… để chào một người vừa đến, và cũng để tạm biệt một người sắp rời đi.
+                        </p>
+                        <p>
+                            Có những lời chào bắt đầu một câu chuyện. Có những lời chào lại là dấu chấm hết cho một câu chuyện rất đẹp.
+                        </p>
+                    </div>
+
+                    <div class="two-fingers-core-box">
+                        <p class="core-lead">Và nếu tôi giơ hai ngón tay về phía em, thì hãy hiểu rằng:</p>
+                        <p class="core-statement">
+                            “Đó vừa là lời chào vì tôi đã từng rất vui khi gặp em,<br class="desktop-break">
+                            vừa là lời tạm biệt vì có lẽ chúng ta phải đi về hai phía khác nhau.”
+                        </p>
+                    </div>
+
+                    <div class="two-fingers-signoff">
+                        ✌️ Chào nhé. Và cũng… tạm biệt nhé.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         4. TÂM SỰ GỬI EM: TỪ MỘT NGƯỜI MỚI QUEN ĐẾN NHỮNG CUỘC TRÒ CHUYỆN MỖI NGÀY
+         =================================================================== -->
+    <section class="section-container story-chapter-section" id="the-story">
+        <div class="section-header reveal-on-scroll">
+            <span class="section-tag" style="background: rgba(255, 255, 255, 0.14); color: #FFE8C5; border: 1.5px solid rgba(216, 188, 138, 0.6); font-weight: 700; text-shadow: 0 1px 4px rgba(0,0,0,0.5);">
+                Tâm Sự Gửi Em
+            </span>
+            <h2 class="section-title text-light">
+                <span class="phrase-wrap">TỪ MỘT NGƯỜI MỚI QUEN</span><br class="desktop-break">
+                <span class="phrase-wrap highlight">ĐẾN NHỮNG CUỘC TRÒ CHUYỆN MỖI NGÀY</span>
+            </h2>
+            <div class="section-divider-line"></div>
+        </div>
+
+        <div class="story-card-wrapper reveal-on-scroll">
+            <div class="story-stationery-card">
+                <div class="letter-wax-seal" title="Dấu sáp kỷ niệm">
+                    <span>💌</span>
+                </div>
+
+                <div class="story-header-title">
+                    Gửi em, người đã cùng tôi tạo nên những ngày thật đặc biệt
+                </div>
+
+                <p class="story-paragraph">
+                    Thật lòng mà nói, ban đầu tôi cũng chẳng có ý định sẽ nhắn tin hay chủ động hỏi han em nhiều đến vậy.
+                </p>
+
+                <p class="story-paragraph">
+                    Chỉ là các chị cứ liên tục kể về em, rồi còn tìm hiểu, hỏi han đủ thứ thông tin về em khiến tôi cũng dần tò mò hơn về cô gái ấy.
+                </p>
+
+                <p class="story-paragraph">
+                    Rồi đến khi em chủ động rủ tôi đi chơi, tôi lại ngập ngừng, chẳng biết phải trả lời thế nào. Không phải vì tôi không muốn đi, mà bởi trong lòng vẫn có một nỗi băn khoăn mà tôi chưa biết phải nói ra sao.
+                </p>
+
+                <!-- Khối tâm tư về nỗi băn khoăn trở về Bắc -->
+                <div class="story-concern-box">
+                    <p class="story-paragraph" style="color: #2D231A; font-weight: 450;">
+                        Ngay từ những ngày đầu gặp em, tôi đã nghĩ đến chuyện có thể mình sẽ phải trở về Bắc bất cứ lúc nào. Tôi sợ rằng khi hai đứa chỉ vừa mới quen nhau, mọi thứ còn chưa kịp bắt đầu rõ ràng, thì sự xa cách lại khiến em buồn hoặc tổn thương.
+                    </p>
+                    <p class="story-paragraph" style="color: #2D231A; font-weight: 500; font-style: italic;">
+                        Tôi không muốn vì những cảm xúc nhất thời của mình mà khiến em phải đặt hy vọng vào một điều chưa chắc chắn.
+                    </p>
+                </div>
+
+                <p class="story-paragraph">
+                    Thế rồi chẳng hiểu bằng cách nào, từ hai người mới chỉ quen biết nhau, chúng ta lại dần trở thành hai người ngày nào cũng trò chuyện, hỏi han và chia sẻ với nhau đủ thứ chuyện.
+                </p>
+
+                <p class="story-paragraph">
+                    Có những câu chuyện tưởng chừng chẳng có gì quan trọng, nhưng lại trở thành thói quen lúc nào không hay. Một ngày không nói chuyện dường như cũng thấy thiếu đi điều gì đó.
+                </p>
+
+                <!-- Khối cuộc trò chuyện tối hôm ấy -->
+                <div class="story-night-chat-box">
+                    <p class="story-paragraph" style="color: #142B3B; font-weight: 450;">
+                        Và rồi, tối hôm ấy, chúng ta đã có một cuộc trò chuyện thật khác. Không còn chỉ là những câu chuyện thường ngày, những lời hỏi han vu vơ, mà là lúc cả hai có thể thoải mái chia sẻ những suy nghĩ, những tâm tư và cả những điều vốn chẳng dễ dàng nói ra.
+                    </p>
+                </div>
+
+                <p class="story-paragraph">
+                    Tôi không biết sau này mọi chuyện sẽ đi về đâu. Nhưng có lẽ, đó cũng là lần cuối cùng chúng ta còn có thể nhắn tin, hỏi han và kể cho nhau nghe những chuyện thường ngày như trước.
+                </p>
+
+                <p class="story-paragraph" style="font-weight: 500;">
+                    Nếu đúng là như vậy, tôi vẫn muốn cảm ơn em.
+                </p>
+
+                <p class="story-paragraph">
+                    Cảm ơn vì đã đến, vì đã chủ động, vì đã dành thời gian và vì đã khiến những ngày bình thường của tôi trở nên đặc biệt hơn.
+                </p>
+
+                <!-- Câu đắt giá nhất của website -->
+                <div class="story-golden-climax">
+                    “Có những mối quan hệ chưa kịp gọi tên, nhưng những điều đã trải qua cùng nhau vẫn luôn xứng đáng được trân trọng.”
+                </div>
+
+                <div class="story-sign-off">
+                    <span class="story-date-tag">Kỷ niệm chân thành</span>
+                    <span>Cảm ơn em vì tất cả ❤️</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ===================================================================
+         5. MÀN HÌNH KẾT THÚC – CẢM ƠN EM ❤️ VÌ TẤT CẢ
+         =================================================================== -->
+    <section class="farewell-night-section" id="farewell-night">
+        <canvas class="night-stars-canvas" id="night-stars-canvas"></canvas>
+        <div class="night-glow-radial"></div>
+
+        <div class="farewell-content-box reveal-on-scroll">
+            <div class="farewell-sparkle">✨</div>
+
+            <h2 class="farewell-title">
+                <span class="phrase-wrap">CẢM ƠN EM ❤️</span>
+            </h2>
+            <h3 class="farewell-subtitle">
+                <span class="phrase-wrap highlight">VÌ TẤT CẢ</span>
+            </h3>
+
+            <div class="farewell-quote-box">
+                <p class="farewell-quote">
+                    “Có thể chỉ là một chuyến đi bình thường với em, nhưng với tôi, đó là một kỷ niệm đáng để lưu giữ thật lâu.”
+                </p>
+            </div>
+
+            <p class="farewell-wish">
+                Mong em luôn vui vẻ, bình an và gặp thật nhiều điều tốt đẹp.
+            </p>
+
+            <div class="farewell-final-thanks">
+                Cảm ơn em!
+            </div>
+
+            <div class="farewell-actions-row">
+                <a href="#hero" class="btn-primary-soft" id="replay-btn">
+                    ↑ Đọc lại từ đầu
+                </a>
+                <button type="button" class="btn-secondary-soft" id="star-wish-btn" onclick="triggerStarWish()">
+                    ✨ Thắp Sáng Một Ngôi Sao
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LIGHTBOX XEM ẢNH KỶ NIỆM TOÀN MÀN HÌNH -->
+    <div id="photo-zoom-modal" class="photo-zoom-modal" style="display: none;" onclick="closePhotoZoom()">
+        <div class="zoom-modal-content" onclick="event.stopPropagation()">
+            <button type="button" class="btn-zoom-close" onclick="closePhotoZoom()" aria-label="Đóng">✕</button>
+            <img id="zoom-modal-img" src="" alt="Ảnh kỷ niệm 2 ngón tay" />
+            <div id="zoom-modal-caption" class="zoom-modal-caption"></div>
+        </div>
+    </div>
+
+    <!-- Script tương tác chính & Data Store -->
+    <script src="./js/data-store.js?v=3.3"></script>
+    <script src="./js/memory.js?v=3.3"></script>
 </body>
 
 </html>
