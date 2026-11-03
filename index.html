@@ -16,7 +16,28 @@
         rel="stylesheet">
 
     <!-- CSS riêng cho Website Kỷ Niệm -->
-    <link rel="stylesheet" href="./css/memory.css?v=5.3">
+    <link rel="stylesheet" href="./css/memory.css?v=6.0">
+
+    <!-- Khóa triệt để bôi đen / copy trên điện thoại trực tiếp tại HTML -->
+    <style>
+        .opening-gate,
+        .opening-gate *,
+        .opening-gift-btn,
+        .opening-gift-btn * {
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+        .opening-gift-btn {
+            touch-action: manipulation !important;
+            cursor: pointer !important;
+            -webkit-tap-highlight-color: transparent !important;
+        }
+        .opening-gift-btn * {
+            pointer-events: none !important;
+        }
+    </style>
 </head>
 
 <body class="script-body">
@@ -47,11 +68,11 @@
             </p>
 
             <!-- Nút mở lời nhắn dạng phong bì tinh tế -->
-            <button type="button" class="opening-gift-btn" id="open-gift-gate-btn" aria-label="Mở lời nhắn">
-                <div class="envelope-icon-box">
+            <button type="button" class="opening-gift-btn" id="open-gift-gate-btn" onclick="openGiftGate(event)" ontouchend="openGiftGate(event)" aria-label="Mở lời nhắn" style="cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;">
+                <div class="envelope-icon-box" style="pointer-events: none; -webkit-user-select: none; user-select: none;">
                     <span>💌</span>
                 </div>
-                <span class="opening-btn-text">
+                <span class="opening-btn-text" style="pointer-events: none; -webkit-user-select: none; user-select: none;">
                     MỞ LỜI NHẮN ✦
                 </span>
             </button>
@@ -524,9 +545,48 @@
         </div>
     </div>
 
+    <!-- Hàm mở cổng trực tiếp không phụ thuộc file ngoài hay độ trễ DOM -->
+    <script>
+        window.openGiftGate = function(e) {
+            if (e) {
+                if (e.preventDefault) e.preventDefault();
+                if (e.stopPropagation) e.stopPropagation();
+            }
+            var gate = document.getElementById('opening-gate');
+            var openBtn = document.getElementById('open-gift-gate-btn');
+            if (!gate || gate.classList.contains('hidden')) return;
+
+            if (openBtn) {
+                openBtn.style.transform = 'scale(0.9)';
+                openBtn.style.opacity = '0.8';
+            }
+
+            try {
+                var audio = document.getElementById('bg-music-player');
+                var audioWidget = document.getElementById('floating-audio-widget');
+                if (audio && audioWidget && !audioWidget.classList.contains('playing')) {
+                    audio.play().then(function() {
+                        audioWidget.classList.add('playing');
+                    }).catch(function() {});
+                }
+            } catch (err) {}
+
+            gate.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease, visibility 0.6s';
+            gate.style.transform = 'scale(1.04)';
+            gate.style.opacity = '0';
+            gate.style.pointerEvents = 'none';
+
+            setTimeout(function() {
+                gate.classList.add('hidden');
+                gate.style.display = 'none';
+                document.body.style.overflow = '';
+            }, 600);
+        };
+    </script>
+
     <!-- Script tương tác chính & Data Store -->
     <script src="./js/data-store.js?v=3.3"></script>
-    <script src="./js/memory.js?v=5.3"></script>
+    <script src="./js/memory.js?v=6.0"></script>
 </body>
 
 </html>
