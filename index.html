@@ -16,26 +16,69 @@
         rel="stylesheet">
 
     <!-- CSS riêng cho Website Kỷ Niệm -->
-    <link rel="stylesheet" href="./css/memory.css?v=7.0">
+    <link rel="stylesheet" href="./css/memory.css?v=8.0">
 
-    <!-- Khóa triệt để bôi đen / copy trên điện thoại trực tiếp tại HTML -->
+    <!-- Khóa triệt để bôi đen / copy trên điện thoại cho TẤT CẢ các nút & liên kết -->
     <style>
-        .opening-gate,
-        .opening-gate *,
+        *,
+        *::before,
+        *::after {
+            -webkit-tap-highlight-color: transparent !important;
+        }
+
+        button,
+        a,
+        [role="button"],
+        .hero-cta-btn,
+        .btn-primary-soft,
+        .btn-secondary-soft,
+        .nav-link,
+        .nav-brand,
+        .nav-toggle-btn,
+        .floating-audio-widget,
+        .audio-disc-icon,
+        .keepsake-photo-card,
+        .btn-zoom-close,
         .opening-gift-btn,
+        .opening-gate {
+            -webkit-touch-callout: none !important;
+            -webkit-user-select: none !important;
+            user-select: none !important;
+            -webkit-tap-highlight-color: transparent !important;
+            touch-action: manipulation !important;
+            cursor: pointer;
+        }
+
+        button *,
+        a *,
+        [role="button"] *,
+        .hero-cta-btn *,
+        .btn-primary-soft *,
+        .btn-secondary-soft *,
+        .floating-audio-widget *,
+        .audio-disc-icon *,
+        .keepsake-photo-card *,
+        .nav-link *,
+        .nav-brand *,
+        .nav-toggle-btn *,
         .opening-gift-btn * {
             -webkit-touch-callout: none !important;
             -webkit-user-select: none !important;
             user-select: none !important;
             -webkit-tap-highlight-color: transparent !important;
-        }
-        .opening-gift-btn {
-            touch-action: manipulation !important;
-            cursor: pointer !important;
-            -webkit-tap-highlight-color: transparent !important;
-        }
-        .opening-gift-btn * {
             pointer-events: none !important;
+        }
+
+        /* Phản hồi chạm tức thì cho mọi nút trên điện thoại */
+        button:active,
+        a.btn-primary-soft:active,
+        .btn-secondary-soft:active,
+        .hero-cta-btn:active,
+        .nav-toggle-btn:active,
+        .audio-disc-icon:active,
+        .keepsake-photo-card:active {
+            transform: scale(0.95) !important;
+            transition: transform 0.1s ease !important;
         }
     </style>
 </head>
@@ -586,7 +629,7 @@
 
     <!-- Script tương tác chính & Data Store -->
     <script src="./js/data-store.js?v=3.3"></script>
-    <script src="./js/memory.js?v=7.0"></script>
+    <script src="./js/memory.js?v=8.0"></script>
 </body>
 
 </html>
