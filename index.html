@@ -16,7 +16,7 @@
         rel="stylesheet">
 
     <!-- CSS riêng cho Website Kỷ Niệm -->
-    <link rel="stylesheet" href="./css/memory.css?v=9.0">
+    <link rel="stylesheet" href="./css/memory.css?v=9.1">
 
     <!-- Khóa triệt để bôi đen / copy trên điện thoại cho TẤT CẢ các nút & liên kết -->
     <style>
@@ -111,11 +111,15 @@
             </p>
 
             <!-- Nút mở lời nhắn dạng phong bì tinh tế -->
-            <button type="button" class="opening-gift-btn" id="open-gift-gate-btn" onclick="openGiftGate(event)" ontouchend="openGiftGate(event)" aria-label="Mở lời nhắn" style="cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;">
-                <div class="envelope-icon-box" style="pointer-events: none; -webkit-user-select: none; user-select: none;">
+            <button type="button" class="opening-gift-btn" id="open-gift-gate-btn" onclick="openGiftGate(event)"
+                ontouchend="openGiftGate(event)" aria-label="Mở lời nhắn"
+                style="cursor: pointer; touch-action: manipulation; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; -webkit-user-select: none; user-select: none;">
+                <div class="envelope-icon-box"
+                    style="pointer-events: none; -webkit-user-select: none; user-select: none;">
                     <span>💌</span>
                 </div>
-                <span class="opening-btn-text" style="pointer-events: none; -webkit-user-select: none; user-select: none;">
+                <span class="opening-btn-text"
+                    style="pointer-events: none; -webkit-user-select: none; user-select: none;">
                     MỞ LỜI NHẮN ✦
                 </span>
             </button>
@@ -331,7 +335,8 @@
                     </h3>
 
                     <p class="two-fingers-lead-intro">
-                        Khoảnh khắc cùng em giơ tay chụp lại bức hình kỷ niệm duy nhất ấy, thật ra có những điều tôi chưa từng nói ra:
+                        Khoảnh khắc cùng em giơ tay chụp lại bức hình kỷ niệm duy nhất ấy, thật ra có những điều tôi
+                        chưa từng nói ra:
                     </p>
 
                     <div class="two-fingers-definitions">
@@ -516,14 +521,6 @@
                         mà tôi luôn nhớ đến với sự trân trọng.
                     </p>
 
-                    <p class="letter-lead-in">
-                        Tôi không biết em sẽ cảm nhận những dòng này như thế nào.
-                    </p>
-
-                    <p class="letter-lead-in" style="font-style: italic;">
-                        Chỉ mong rằng khi đọc xong, em hiểu được một điều:
-                    </p>
-
                     <div class="letter-golden-climax">
                         “Tôi thật sự biết ơn vì từ ngày gặp em đến giờ đã có em.”
                     </div>
@@ -590,7 +587,7 @@
 
     <!-- Hàm mở cổng trực tiếp không phụ thuộc file ngoài hay độ trễ DOM -->
     <script>
-        window.openGiftGate = function(e) {
+        window.openGiftGate = function (e) {
             if (e) {
                 if (e.preventDefault) e.preventDefault();
                 if (e.stopPropagation) e.stopPropagation();
@@ -608,18 +605,18 @@
                 var audio = document.getElementById('bg-music-player');
                 var audioWidget = document.getElementById('floating-audio-widget');
                 if (audio && audioWidget && !audioWidget.classList.contains('playing')) {
-                    audio.play().then(function() {
+                    audio.play().then(function () {
                         audioWidget.classList.add('playing');
-                    }).catch(function() {});
+                    }).catch(function () { });
                 }
-            } catch (err) {}
+            } catch (err) { }
 
             gate.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease, visibility 0.6s';
             gate.style.transform = 'scale(1.04)';
             gate.style.opacity = '0';
             gate.style.pointerEvents = 'none';
 
-            setTimeout(function() {
+            setTimeout(function () {
                 gate.classList.add('hidden');
                 gate.style.display = 'none';
                 document.body.style.overflow = '';
@@ -629,7 +626,7 @@
 
     <!-- Script tương tác chính & Data Store -->
     <script src="./js/data-store.js?v=3.3"></script>
-    <script src="./js/memory.js?v=9.0"></script>
+    <script src="./js/memory.js?v=9.1"></script>
 </body>
 
 </html>
