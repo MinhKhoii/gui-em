@@ -2552,21 +2552,22 @@ h1, h2, h3, h4 {
 
     .letter-wax-seal,
     .story-stationery-card .letter-wax-seal {
-        width: 50px !important;
-        height: 50px !important;
+        width: 48px !important;
+        height: 48px !important;
         font-size: 1.3rem !important;
-        top: -25px !important;
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) !important;
-        z-index: 10 !important;
+        top: -18px !important;
+        right: 18px !important;
+        left: auto !important;
+        transform: none !important;
+        z-index: 5 !important;
     }
 
     .story-header-title {
         font-size: 1.2rem !important;
         line-height: 1.45 !important;
-        margin-top: 16px !important;
+        margin-top: 4px !important;
         margin-bottom: 20px !important;
+        padding: 6px 42px 18px 42px !important;
     }
 
     .letter-salutation {
@@ -3266,20 +3267,21 @@ h1, h2, h3, h4 {
 }
 
 .letter-wax-seal {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #B72A38 0%, #7A1420 100%);
-    box-shadow: 0 8px 22px rgba(122, 20, 32, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 6px 18px rgba(122, 20, 32, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.7rem;
+    font-size: 1.6rem;
     position: absolute;
-    top: -32px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
+    top: -24px;
+    right: 32px;
+    left: auto;
+    transform: none;
+    z-index: 5;
 }
 
 .letter-salutation {
@@ -3516,32 +3518,33 @@ h1, h2, h3, h4 {
 }
 
 .story-stationery-card .letter-wax-seal {
-    width: 64px;
-    height: 64px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
     background: radial-gradient(circle at 35% 35%, #B72A38 0%, #7A1420 100%);
-    box-shadow: 0 8px 22px rgba(122, 20, 32, 0.45), inset 0 2px 4px rgba(255, 255, 255, 0.4);
+    box-shadow: 0 6px 18px rgba(122, 20, 32, 0.4), inset 0 2px 4px rgba(255, 255, 255, 0.4);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.7rem;
+    font-size: 1.6rem;
     position: absolute;
-    top: -32px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
+    top: -24px;
+    right: 32px;
+    left: auto;
+    transform: none;
+    z-index: 5;
 }
 
 .story-header-title {
     font-family: var(--font-serif);
-    font-size: clamp(1.35rem, 2.7vw, 1.85rem);
+    font-size: clamp(1.3rem, 2.6vw, 1.8rem);
     font-weight: 700;
     color: #142B3B;
     text-align: center;
     line-height: 1.45;
-    margin-top: 18px;
-    margin-bottom: 30px;
-    padding-bottom: 20px;
+    margin-top: 6px;
+    margin-bottom: 28px;
+    padding: 8px 48px 20px 48px;
     border-bottom: 1.5px solid rgba(216, 188, 138, 0.35);
     letter-spacing: 0.3px;
 }
