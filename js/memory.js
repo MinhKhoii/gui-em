@@ -39,26 +39,42 @@ function initOpeningGate() {
 
     if (!gate || !openBtn) return;
 
-    openBtn.addEventListener('click', () => {
-        // Hiệu ứng mở phong bì & chuyển cảnh mượt mà
-        openBtn.style.transform = 'scale(0.95)';
+    let isOpening = false;
+
+    function handleOpen(e) {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        if (isOpening) return;
+        isOpening = true;
+
+        // Phản hồi thị giác lập tức khi chạm tay
+        openBtn.style.transform = 'scale(0.92)';
+        openBtn.style.opacity = '0.85';
+
+        // Kích hoạt nhạc nền ngay trong sự kiện cử chỉ chạm
+        const audio = document.getElementById('bg-music-player');
+        const audioWidget = document.getElementById('floating-audio-widget');
+        if (audio && audioWidget && !audioWidget.classList.contains('playing')) {
+            audio.play().then(() => {
+                audioWidget.classList.add('playing');
+            }).catch(() => {});
+        }
+
+        // Chuyển cảnh mượt mà, mở cổng tức thì không trễ (120ms)
         setTimeout(() => {
+            gate.style.transition = 'opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1), transform 0.65s ease, visibility 0.65s';
+            gate.style.transform = 'scale(1.04)';
             gate.classList.add('hidden');
             document.body.style.overflow = '';
-            
-            // Nếu người dùng bật âm thanh khi mở quà
-            const audio = document.getElementById('bg-music-player');
-            const audioWidget = document.getElementById('floating-audio-widget');
-            if (audio && audioWidget && !audioWidget.classList.contains('playing')) {
-                // Nhắc người dùng hoặc tự động phát nhẹ nhàng nếu được phép
-                audio.play().then(() => {
-                    audioWidget.classList.add('playing');
-                }).catch(() => {
-                    // Trình duyệt chặn autoplay thì để người dùng bấm nút widget
-                });
-            }
-        }, 500);
-    });
+        }, 120);
+    }
+
+    openBtn.addEventListener('click', handleOpen);
+    openBtn.addEventListener('touchend', (e) => {
+        handleOpen(e);
+    }, { passive: false });
 }
 
 function initSunsetCanvas(canvas, count = 40) {

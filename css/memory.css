@@ -244,7 +244,24 @@ h1, h2, h3, h4 {
     cursor: pointer;
     outline: none;
     animation: fadeInUp 1.7s ease-out;
-    transition: var(--transition);
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), opacity 0.2s ease;
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    touch-action: manipulation;
+}
+
+.opening-gift-btn * {
+    -webkit-tap-highlight-color: transparent !important;
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    user-select: none !important;
+    pointer-events: none !important;
+}
+
+.opening-gift-btn:active {
+    transform: scale(0.92) !important;
 }
 
 .envelope-icon-box {
