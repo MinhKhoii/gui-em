@@ -34,8 +34,15 @@ function initOpeningGate() {
     const canvas = document.getElementById('opening-gate-canvas');
 
     if (canvas) {
-        initSunsetCanvas(canvas, 35);
+        window.openingGateCanvasController = initSunsetCanvas(canvas, 24);
     }
+
+    window.stopOpeningCanvas = function() {
+        if (window.openingGateCanvasController) {
+            window.openingGateCanvasController.destroy();
+            window.openingGateCanvasController = null;
+        }
+    };
 
     if (!gate || !openBtn) return;
 
@@ -48,6 +55,11 @@ function initOpeningGate() {
         }
         if (isOpening) return;
         isOpening = true;
+
+        // Dừng và giải phóng canvas mở cổng ngay lập tức
+        if (window.stopOpeningCanvas) {
+            window.stopOpeningCanvas();
+        }
 
         // Phản hồi thị giác lập tức khi chạm tay
         openBtn.style.transform = 'scale(0.92)';
@@ -62,13 +74,13 @@ function initOpeningGate() {
             }).catch(() => {});
         }
 
-        // Chuyển cảnh mượt mà, mở cổng tức thì không trễ (120ms)
+        // Chuyển cảnh mượt mà, mở cổng tức thì không trễ (80ms)
         setTimeout(() => {
-            gate.style.transition = 'opacity 0.65s cubic-bezier(0.4, 0, 0.2, 1), transform 0.65s ease, visibility 0.65s';
+            gate.style.transition = 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease, visibility 0.5s';
             gate.style.transform = 'scale(1.04)';
             gate.classList.add('hidden');
             document.body.style.overflow = '';
-        }, 120);
+        }, 80);
     }
 
     openBtn.addEventListener('click', handleOpen);
@@ -77,24 +89,33 @@ function initOpeningGate() {
     }, { passive: false });
 }
 
-function initSunsetCanvas(canvas, count = 40) {
-    const ctx = canvas.getContext('2d');
-    let width, height;
+function initSunsetCanvas(canvas, count = 30, observeContainer = null) {
+    if (!canvas) return null;
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let width = 0, height = 0;
     let particles = [];
+    let rafId = null;
+    let isRunning = false;
+    let isDestroyed = false;
+
+    // Giảm số hạt trên điện thoại để đạt chuẩn 60-120fps mượt mà
+    const isMobile = window.innerWidth < 768;
+    const actualCount = isMobile ? Math.min(count, 14) : Math.min(count, 24);
 
     function resize() {
-        width = canvas.width = window.innerWidth;
-        height = canvas.height = window.innerHeight;
+        if (isDestroyed) return;
+        width = canvas.width = canvas.parentElement ? canvas.parentElement.offsetWidth : window.innerWidth;
+        height = canvas.height = canvas.parentElement ? canvas.parentElement.offsetHeight : window.innerHeight;
         particles = [];
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < actualCount; i++) {
             particles.push({
                 x: Math.random() * width,
-                y: Math.random() * height * 0.85,
-                radius: Math.random() * 2 + 0.8,
-                speedY: Math.random() * 0.35 + 0.15,
-                speedX: (Math.random() - 0.5) * 0.3,
-                opacity: Math.random() * 0.7 + 0.2,
-                fadeSpeed: Math.random() * 0.01 + 0.005,
+                y: Math.random() * height * 0.9,
+                radius: Math.random() * 1.8 + 0.8,
+                speedY: Math.random() * 0.3 + 0.12,
+                speedX: (Math.random() - 0.5) * 0.25,
+                opacity: Math.random() * 0.65 + 0.2,
+                fadeSpeed: Math.random() * 0.008 + 0.004,
                 rising: true,
                 color: Math.random() > 0.4 ? '216, 188, 138' : '232, 161, 123'
             });
@@ -102,39 +123,82 @@ function initSunsetCanvas(canvas, count = 40) {
     }
 
     function render() {
+        if (!isRunning || isDestroyed) return;
         ctx.clearRect(0, 0, width, height);
-        particles.forEach(p => {
+
+        // Vẽ hạt cực nhẹ: KHÔNG dùng shadowBlur vì gây tụt FPS trên mobile
+        for (let i = 0; i < particles.length; i++) {
+            const p = particles[i];
             p.y -= p.speedY;
             p.x += p.speedX;
 
             if (p.rising) {
                 p.opacity += p.fadeSpeed;
-                if (p.opacity >= 0.85) p.rising = false;
+                if (p.opacity >= 0.8) p.rising = false;
             } else {
                 p.opacity -= p.fadeSpeed;
                 if (p.opacity <= 0.15) p.rising = true;
             }
 
             if (p.y < 0) {
-                p.y = height * 0.85;
+                p.y = height * 0.9;
                 p.x = Math.random() * width;
             }
 
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(${p.color}, ${p.opacity})`;
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = `rgba(${p.color}, 0.5)`;
+            ctx.fillStyle = 'rgba(' + p.color + ',' + p.opacity + ')';
             ctx.fill();
-            ctx.shadowBlur = 0;
-        });
+        }
 
-        requestAnimationFrame(render);
+        rafId = requestAnimationFrame(render);
     }
 
-    window.addEventListener('resize', resize);
+    const controller = {
+        start() {
+            if (isDestroyed || isRunning) return;
+            isRunning = true;
+            rafId = requestAnimationFrame(render);
+        },
+        pause() {
+            if (!isRunning) return;
+            isRunning = false;
+            if (rafId) {
+                cancelAnimationFrame(rafId);
+                rafId = null;
+            }
+        },
+        destroy() {
+            isDestroyed = true;
+            this.pause();
+            window.removeEventListener('resize', resize);
+            if (observer) observer.disconnect();
+            if (ctx) ctx.clearRect(0, 0, width, height);
+            particles = [];
+        }
+    };
+
+    window.addEventListener('resize', resize, { passive: true });
     resize();
-    render();
+    controller.start();
+
+    // Tự động tạm dừng canvas khi người dùng lướt ra ngoài màn hình
+    let observer = null;
+    const targetElement = observeContainer || canvas;
+    if ('IntersectionObserver' in window && targetElement) {
+        observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    controller.start();
+                } else {
+                    controller.pause();
+                }
+            });
+        }, { threshold: 0.05 });
+        observer.observe(targetElement);
+    }
+
+    return controller;
 }
 
 /* ===================================================================
@@ -188,7 +252,11 @@ function initAudioController() {
    =================================================================== */
 function initHeroCanvas() {
     const canvas = document.getElementById('hero-ambient-canvas');
-    if (canvas) initSunsetCanvas(canvas, 40);
+    const heroSection = document.getElementById('hero');
+    if (canvas) {
+        // Chỉ chạy khi phần Hero hiển thị trên màn hình
+        initSunsetCanvas(canvas, 24, heroSection);
+    }
 }
 
 /* ===================================================================
@@ -197,66 +265,72 @@ function initHeroCanvas() {
 function initFooterNightCanvas() {
     const canvas = document.getElementById('night-stars-canvas') || document.getElementById('footer-stars-canvas');
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext('2d', { alpha: true });
     let width, height;
     let stars = [];
     let shootingStars = [];
+    let rafId = null;
+    let isRunning = false;
+
+    const isMobile = window.innerWidth < 768;
+    const starCount = isMobile ? 32 : 65;
 
     function resize() {
         width = canvas.width = window.innerWidth;
         height = canvas.height = canvas.parentElement.offsetHeight || 600;
         stars = [];
-        const count = Math.floor((width * height) / 4500);
-        for (let i = 0; i < count; i++) {
+        for (let i = 0; i < starCount; i++) {
             stars.push({
                 x: Math.random() * width,
-                y: Math.random() * height * 0.75,
-                radius: Math.random() * 1.5 + 0.5,
-                alpha: Math.random(),
-                pulse: Math.random() * 0.02 + 0.005
+                y: Math.random() * height * 0.8,
+                radius: Math.random() * 1.4 + 0.5,
+                alpha: Math.random() * 0.7 + 0.2,
+                pulse: Math.random() * 0.015 + 0.005
             });
         }
     }
 
     function addShootingStar() {
-        if (Math.random() < 0.025 && shootingStars.length < 2) {
+        if (Math.random() < 0.02 && shootingStars.length < 2) {
             shootingStars.push({
                 x: Math.random() * width * 0.8,
                 y: Math.random() * (height * 0.35),
-                length: Math.random() * 90 + 50,
-                speed: Math.random() * 7 + 5,
+                length: Math.random() * 80 + 40,
+                speed: Math.random() * 6 + 4,
                 angle: Math.PI / 4,
                 opacity: 1
             });
         }
     }
 
-    window.spawnShootingStars = function(num = 4) {
+    window.spawnShootingStars = function(num = 3) {
         for (let i = 0; i < num; i++) {
             setTimeout(() => {
                 shootingStars.push({
                     x: Math.random() * width * 0.85,
                     y: Math.random() * (height * 0.35),
-                    length: Math.random() * 120 + 70,
-                    speed: Math.random() * 8 + 6,
-                    angle: Math.PI / 4 + (Math.random() - 0.5) * 0.25,
+                    length: Math.random() * 100 + 60,
+                    speed: Math.random() * 7 + 5,
+                    angle: Math.PI / 4 + (Math.random() - 0.5) * 0.2,
                     opacity: 1
                 });
-            }, i * 200);
+            }, i * 220);
         }
     };
 
     function render() {
+        if (!isRunning) return;
         ctx.clearRect(0, 0, width, height);
 
-        stars.forEach(s => {
+        for (let i = 0; i < stars.length; i++) {
+            const s = stars[i];
             s.alpha += s.pulse;
-            if (s.alpha > 1 || s.alpha < 0.2) s.pulse = -s.pulse;
+            if (s.alpha > 0.95 || s.alpha < 0.2) s.pulse = -s.pulse;
             ctx.beginPath();
             ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
-            ctx.fillStyle = `rgba(248, 243, 233, ${s.alpha})`;
+            ctx.fillStyle = 'rgba(248, 243, 233,' + s.alpha + ')';
             ctx.fill();
-        });
+        }
 
         addShootingStar();
         for (let i = shootingStars.length - 1; i >= 0; i--) {
@@ -265,29 +339,60 @@ function initFooterNightCanvas() {
             const endY = ss.y + Math.sin(ss.angle) * ss.length;
 
             const grad = ctx.createLinearGradient(ss.x, ss.y, endX, endY);
-            grad.addColorStop(0, `rgba(216, 188, 138, ${ss.opacity})`);
+            grad.addColorStop(0, 'rgba(216, 188, 138,' + ss.opacity + ')');
             grad.addColorStop(1, 'rgba(255, 255, 255, 0)');
 
             ctx.beginPath();
             ctx.moveTo(ss.x, ss.y);
             ctx.lineTo(endX, endY);
             ctx.strokeStyle = grad;
-            ctx.lineWidth = 1.6;
+            ctx.lineWidth = 1.4;
             ctx.stroke();
 
             ss.x += Math.cos(ss.angle) * ss.speed;
             ss.y += Math.sin(ss.angle) * ss.speed;
-            ss.opacity -= 0.02;
+            ss.opacity -= 0.025;
 
             if (ss.opacity <= 0) shootingStars.splice(i, 1);
         }
 
-        requestAnimationFrame(render);
+        rafId = requestAnimationFrame(render);
     }
 
-    window.addEventListener('resize', resize);
+    function start() {
+        if (isRunning) return;
+        isRunning = true;
+        rafId = requestAnimationFrame(render);
+    }
+
+    function pause() {
+        if (!isRunning) return;
+        isRunning = false;
+        if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = null;
+        }
+    }
+
+    window.addEventListener('resize', resize, { passive: true });
     resize();
-    render();
+
+    // CHỈ CHẠY animation sao trời khi màn hình kết thúc xuất hiện
+    const farewellSection = document.getElementById('farewell-night');
+    if ('IntersectionObserver' in window && farewellSection) {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    start();
+                } else {
+                    pause();
+                }
+            });
+        }, { threshold: 0.05 });
+        observer.observe(farewellSection);
+    } else {
+        start();
+    }
 }
 
 window.triggerStarWish = function() {
@@ -1078,14 +1183,24 @@ function initNavbarScroll() {
     const navbar = document.getElementById('site-navbar');
     const toggleBtn = document.getElementById('nav-toggle-btn');
     const navLinks = document.getElementById('nav-links');
+    if (!navbar) return;
+
+    let ticking = false;
+    let isScrolled = false;
 
     window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
+        if (!ticking) {
+            window.requestAnimationFrame(() => {
+                const shouldBeScrolled = window.scrollY > 30;
+                if (shouldBeScrolled !== isScrolled) {
+                    isScrolled = shouldBeScrolled;
+                    navbar.classList.toggle('scrolled', isScrolled);
+                }
+                ticking = false;
+            });
+            ticking = true;
         }
-    });
+    }, { passive: true });
 
     if (toggleBtn && navLinks) {
         toggleBtn.addEventListener('click', () => navLinks.classList.toggle('open'));
@@ -1097,14 +1212,24 @@ function initNavbarScroll() {
 
 function initScrollReveal() {
     const elements = document.querySelectorAll('.reveal-on-scroll:not(.revealed)');
+    if (!('IntersectionObserver' in window)) {
+        elements.forEach(el => el.classList.add('revealed'));
+        return;
+    }
+
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('revealed');
-                observer.unobserve(entry.target);
+                const el = entry.target;
+                el.classList.add('revealed');
+                observer.unobserve(el);
+                // Giải phóng will-change sau khi chuyển động hoàn tất để tối ưu GPU
+                setTimeout(() => {
+                    el.style.willChange = 'auto';
+                }, 550);
             }
         });
-    }, { threshold: 0.15 });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
 
     elements.forEach(el => observer.observe(el));
 }

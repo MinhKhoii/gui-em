@@ -16,7 +16,7 @@
         rel="stylesheet">
 
     <!-- CSS riêng cho Website Kỷ Niệm -->
-    <link rel="stylesheet" href="./css/memory.css?v=9.3">
+    <link rel="stylesheet" href="./css/memory.css?v=10.0">
 
     <!-- Khóa triệt để bôi đen / copy trên điện thoại cho TẤT CẢ các nút & liên kết -->
     <style>
@@ -604,6 +604,11 @@
             var openBtn = document.getElementById('open-gift-gate-btn');
             if (!gate || gate.classList.contains('hidden')) return;
 
+            // Dừng ngay canvas mở cổng để tiết kiệm tối đa GPU
+            if (window.stopOpeningCanvas) {
+                try { window.stopOpeningCanvas(); } catch (err) {}
+            }
+
             if (openBtn) {
                 openBtn.style.transform = 'scale(0.9)';
                 openBtn.style.opacity = '0.8';
@@ -634,7 +639,7 @@
 
     <!-- Script tương tác chính & Data Store -->
     <script src="./js/data-store.js?v=3.3"></script>
-    <script src="./js/memory.js?v=9.3"></script>
+    <script src="./js/memory.js?v=10.0"></script>
 </body>
 
 </html>

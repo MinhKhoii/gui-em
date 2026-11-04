@@ -124,9 +124,8 @@ html {
     scroll-behavior: smooth;
     font-size: 16px;
     background-color: var(--deep-sea);
-    overflow-x: hidden;
     width: 100%;
-    max-width: 100vw;
+    -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -134,11 +133,11 @@ body {
     color: var(--text-primary);
     background: var(--cream-white);
     line-height: 1.8;
-    overflow-x: hidden;
+    overflow-x: clip;
     position: relative;
     width: 100%;
-    max-width: 100vw;
     -webkit-font-smoothing: antialiased;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* ===================================================================
@@ -396,13 +395,15 @@ h1, h2, h3, h4 {
     align-items: center;
     gap: 12px;
     background: rgba(20, 43, 59, 0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border: 1px solid var(--border-gold);
     padding: 8px 18px 8px 10px;
     border-radius: var(--radius-full);
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-    transition: var(--transition);
+    transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 .floating-audio-widget:hover {
@@ -500,19 +501,21 @@ h1, h2, h3, h4 {
     left: 0;
     width: 100%;
     z-index: 100;
-    padding: 16px 36px;
+    padding: 14px 36px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    transition: var(--transition);
+    transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 .site-navbar.scrolled {
-    background: rgba(20, 43, 59, 0.92);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    background: rgba(20, 43, 59, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(216, 188, 138, 0.2);
-    padding: 12px 36px;
+    padding: 14px 36px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
@@ -2451,13 +2454,32 @@ h1, h2, h3, h4 {
 
 .reveal-on-scroll {
     opacity: 0;
-    transform: translateY(28px);
-    transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+    transform: translate3d(0, 20px, 0);
+    transition: opacity 0.55s ease, transform 0.55s cubic-bezier(0.25, 0.8, 0.25, 1);
+    will-change: opacity, transform;
+    backface-visibility: hidden;
 }
 
 .reveal-on-scroll.revealed {
     opacity: 1;
-    transform: translateY(0);
+    transform: translate3d(0, 0, 0);
+}
+
+/* GPU Composited layers cho các thẻ nặng */
+.story-stationery-card,
+.letter-stationery-card,
+.memoir-card-centered,
+.trip-scenic-container {
+    transform: translateZ(0);
+}
+
+.wave-layer {
+    will-change: transform;
+    transform: translateZ(0);
+}
+
+.hero-sun-glow {
+    will-change: transform, opacity;
 }
 
 /* ===================================================================
@@ -2500,9 +2522,13 @@ h1, h2, h3, h4 {
     *, *::before, *::after {
         box-sizing: border-box !important;
     }
-    html, body {
-        overflow-x: hidden !important;
+    html {
         max-width: 100vw !important;
+    }
+    body {
+        overflow-x: clip !important;
+        max-width: 100vw !important;
+        -webkit-overflow-scrolling: touch !important;
     }
     p, span, h1, h2, h3, h4, div, a {
         word-break: normal !important;
@@ -2517,7 +2543,24 @@ h1, h2, h3, h4 {
         padding: 48px 14px !important; 
         width: 100% !important;
         max-width: 100vw !important;
-        overflow-x: hidden !important;
+        overflow-x: clip !important;
+    }
+
+    .site-navbar {
+        padding: 12px 18px !important;
+    }
+
+    .site-navbar.scrolled {
+        background: rgba(13, 30, 42, 0.96) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
+        padding: 12px 18px !important;
+    }
+
+    .floating-audio-widget {
+        background: rgba(20, 43, 59, 0.95) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
     }
 
     .story-stationery-card,
