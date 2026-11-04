@@ -64,45 +64,11 @@ function initOpeningGate() {
         e.stopPropagation();
     }, { passive: false });
 
-    let isOpening = false;
-
+    // Điều hướng toàn bộ sự kiện mở cổng qua hàm window.openGiftGate thống nhất
     function handleOpen(e) {
-        if (e) {
-            e.preventDefault();
-            e.stopPropagation();
+        if (typeof window.openGiftGate === 'function') {
+            window.openGiftGate(e);
         }
-        if (isOpening) return;
-        isOpening = true;
-
-        // Dừng và giải phóng canvas mở cổng ngay lập tức
-        if (window.stopOpeningCanvas) {
-            window.stopOpeningCanvas();
-        }
-
-        // Phản hồi thị giác lập tức khi chạm tay
-        openBtn.style.transform = 'scale(0.92)';
-        openBtn.style.opacity = '0.85';
-
-        // Kích hoạt nhạc nền ngay trong sự kiện cử chỉ chạm
-        const audio = document.getElementById('bg-music-player');
-        const audioWidget = document.getElementById('floating-audio-widget');
-        if (audio && audioWidget && !audioWidget.classList.contains('playing')) {
-            audio.play().then(() => {
-                audioWidget.classList.add('playing');
-            }).catch(() => {});
-        }
-
-        // Chuyển cảnh mượt mà, mở cổng tức thì không trễ (80ms)
-        window.scrollTo(0, 0);
-        setTimeout(() => {
-            gate.style.transition = 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease, visibility 0.5s';
-            gate.style.transform = 'scale(1.04)';
-            gate.classList.add('hidden');
-            document.documentElement.classList.remove('gate-active');
-            document.body.classList.remove('gate-active');
-            document.body.style.overflow = '';
-            window.scrollTo({ top: 0, behavior: 'instant' });
-        }, 80);
     }
 
     openBtn.addEventListener('click', handleOpen);

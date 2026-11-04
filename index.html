@@ -25,7 +25,7 @@
         rel="stylesheet">
 
     <!-- CSS riêng cho Website Kỷ Niệm -->
-    <link rel="stylesheet" href="./css/memory.css?v=13.0">
+    <link rel="stylesheet" href="./css/memory.css?v=13.1">
 
     <!-- Khóa triệt để bôi đen / copy trên điện thoại cho TẤT CẢ các nút & liên kết -->
     <style>
@@ -601,16 +601,17 @@
             }
             var gate = document.getElementById('opening-gate');
             var openBtn = document.getElementById('open-gift-gate-btn');
-            if (!gate || gate.classList.contains('hidden')) return;
+            if (!gate || gate.classList.contains('hidden') || gate.dataset.opening === 'true') return;
+            gate.dataset.opening = 'true';
 
-            // Dừng ngay canvas mở cổng để tiết kiệm tối đa GPU
+            // Dừng ngay canvas mở cổng để giải phóng 100% GPU
             if (window.stopOpeningCanvas) {
                 try { window.stopOpeningCanvas(); } catch (err) {}
             }
 
             if (openBtn) {
-                openBtn.style.transform = 'scale(0.9)';
-                openBtn.style.opacity = '0.8';
+                openBtn.style.transform = 'scale(0.92)';
+                openBtn.style.opacity = '0.85';
             }
 
             try {
@@ -623,26 +624,27 @@
                 }
             } catch (err) { }
 
-            gate.style.transition = 'opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), transform 0.6s ease, visibility 0.6s';
+            window.scrollTo(0, 0);
+            gate.style.transition = 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease, visibility 0.5s';
             gate.style.transform = 'scale(1.04)';
             gate.style.opacity = '0';
             gate.style.pointerEvents = 'none';
 
-            window.scrollTo(0, 0);
             setTimeout(function () {
                 gate.classList.add('hidden');
                 gate.style.display = 'none';
+                gate.dataset.opening = 'false';
                 document.documentElement.classList.remove('gate-active');
                 document.body.classList.remove('gate-active');
                 document.body.style.overflow = '';
                 window.scrollTo({ top: 0, behavior: 'instant' });
-            }, 550);
+            }, 500);
         };
     </script>
 
     <!-- Script tương tác chính & Data Store -->
     <script src="./js/data-store.js?v=3.3"></script>
-    <script src="./js/memory.js?v=13.0"></script>
+    <script src="./js/memory.js?v=13.1"></script>
 </body>
 
 </html>
