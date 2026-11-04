@@ -386,10 +386,16 @@ function initFooterNightCanvas() {
 window.triggerStarWish = function() {
     const btn = document.getElementById('star-wish-btn');
     if (btn) {
-        btn.innerHTML = '✨ Ngôi sao của em đã tỏa sáng!';
+        btn.innerHTML = '💫 Sao băng đang bay qua kìa...';
         btn.style.background = 'linear-gradient(135deg, var(--champagne-gold), var(--sunset-peach))';
         btn.style.color = 'var(--deep-sea)';
         btn.style.borderColor = 'transparent';
+        setTimeout(() => {
+            btn.innerHTML = '💫 Ngắm Sao Băng';
+            btn.style.background = '';
+            btn.style.color = '';
+            btn.style.borderColor = '';
+        }, 4000);
     }
     if (window.spawnShootingStars) {
         window.spawnShootingStars(6);
