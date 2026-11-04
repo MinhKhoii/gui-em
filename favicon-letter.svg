@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 36 36" width="36" height="36">
+  <defs>
+    <linearGradient id="envelopeBg" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#F5EBD7"/>
+    </linearGradient>
+    <radialGradient id="sealRed" cx="35%" cy="30%" r="65%">
+      <stop offset="0%" stop-color="#FF5271"/>
+      <stop offset="60%" stop-color="#E01137"/>
+      <stop offset="100%" stop-color="#8A0019"/>
+    </radialGradient>
+    <filter id="envShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="1.5" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+  <!-- Thân phong bì kem viền vàng champagne -->
+  <rect filter="url(#envShadow)" x="2" y="7" width="32" height="22" rx="3.5" fill="url(#envelopeBg)" stroke="#D4AF37" stroke-width="1.4"/>
+  <!-- Nếp gấp nắp thư -->
+  <path d="M2 8.5 L18 20 L34 8.5" fill="none" stroke="#D4AF37" stroke-width="1.3" stroke-linejoin="round"/>
+  <!-- Con dấu sáp trái tim đỏ ruby ở chính giữa -->
+  <path fill="url(#sealRed)" d="M18 24.5 C14.5 21 9.5 16 9.5 12 C9.5 9.2 11.8 7.2 14.5 7.2 C16.2 7.2 17.5 8.2 18 9.2 C18.5 8.2 19.8 7.2 21.5 7.2 C24.2 7.2 26.5 9.2 26.5 12 C26.5 16 21.5 21 18 24.5 Z" filter="url(#envShadow)"/>
+</svg>
