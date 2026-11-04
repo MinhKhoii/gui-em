@@ -1,7 +1,13 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" class="gate-active">
 
 <head>
+    <script>
+        if (history.scrollRestoration) {
+            history.scrollRestoration = 'manual';
+        }
+        window.scrollTo(0, 0);
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Cảm Ơn Em, Vì Tất Cả ❤️</title>
@@ -19,7 +25,7 @@
         rel="stylesheet">
 
     <!-- CSS riêng cho Website Kỷ Niệm -->
-    <link rel="stylesheet" href="./css/memory.css?v=12.0">
+    <link rel="stylesheet" href="./css/memory.css?v=13.0">
 
     <!-- Khóa triệt để bôi đen / copy trên điện thoại cho TẤT CẢ các nút & liên kết -->
     <style>
@@ -622,17 +628,21 @@
             gate.style.opacity = '0';
             gate.style.pointerEvents = 'none';
 
+            window.scrollTo(0, 0);
             setTimeout(function () {
                 gate.classList.add('hidden');
                 gate.style.display = 'none';
+                document.documentElement.classList.remove('gate-active');
+                document.body.classList.remove('gate-active');
                 document.body.style.overflow = '';
-            }, 600);
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }, 550);
         };
     </script>
 
     <!-- Script tương tác chính & Data Store -->
     <script src="./js/data-store.js?v=3.3"></script>
-    <script src="./js/memory.js?v=12.0"></script>
+    <script src="./js/memory.js?v=13.0"></script>
 </body>
 
 </html>

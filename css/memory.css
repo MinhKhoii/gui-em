@@ -184,6 +184,15 @@ h1, h2, h3, h4 {
    III. MÀN HÌNH MỞ ĐẦU – MÓN QUÀ DÀNH RIÊNG CHO EM (OPENING GATE)
    =================================================================== */
 
+/* Khóa cuộn tuyệt đối khi màn hình mở cổng đang hiển thị */
+html.gate-active,
+body.gate-active {
+    overflow: hidden !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    touch-action: none !important;
+}
+
 .opening-gate {
     position: fixed;
     top: 0;
@@ -195,7 +204,9 @@ h1, h2, h3, h4 {
     align-items: center;
     justify-content: center;
     background: radial-gradient(circle at 50% 60%, #30263f 0%, #1e2840 40%, #142B3B 80%, #0d1e2a 100%);
-    overflow: hidden;
+    overflow: hidden !important;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
     transition: opacity 1s cubic-bezier(0.65, 0, 0.35, 1), visibility 1s cubic-bezier(0.65, 0, 0.35, 1);
 }
 

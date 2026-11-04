@@ -46,6 +46,24 @@ function initOpeningGate() {
 
     if (!gate || !openBtn) return;
 
+    // Chặn triệt để cuộn chuột, lăn bánh xe và vuốt khi màn hình mở cổng đang bật
+    if (!gate.classList.contains('hidden')) {
+        document.documentElement.classList.add('gate-active');
+        document.body.classList.add('gate-active');
+        document.body.style.overflow = 'hidden';
+        window.scrollTo(0, 0);
+    }
+
+    gate.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    }, { passive: false });
+
+    gate.addEventListener('touchmove', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+    }, { passive: false });
+
     let isOpening = false;
 
     function handleOpen(e) {
@@ -75,11 +93,15 @@ function initOpeningGate() {
         }
 
         // Chuyển cảnh mượt mà, mở cổng tức thì không trễ (80ms)
+        window.scrollTo(0, 0);
         setTimeout(() => {
             gate.style.transition = 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s ease, visibility 0.5s';
             gate.style.transform = 'scale(1.04)';
             gate.classList.add('hidden');
+            document.documentElement.classList.remove('gate-active');
+            document.body.classList.remove('gate-active');
             document.body.style.overflow = '';
+            window.scrollTo({ top: 0, behavior: 'instant' });
         }, 80);
     }
 
@@ -415,7 +437,14 @@ function initReplayAction() {
         replayBtn.addEventListener('click', (e) => {
             e.preventDefault();
             gate.classList.remove('hidden');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            gate.style.display = 'flex';
+            gate.style.opacity = '1';
+            gate.style.transform = 'scale(1)';
+            gate.style.pointerEvents = 'auto';
+            document.documentElement.classList.add('gate-active');
+            document.body.classList.add('gate-active');
+            document.body.style.overflow = 'hidden';
+            window.scrollTo({ top: 0, behavior: 'instant' });
         });
     }
 }
