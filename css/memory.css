@@ -2476,6 +2476,15 @@ body.gate-active {
     transform: translate3d(0, 0, 0);
 }
 
+/* .reveal-on-scroll {
+    opacity: 0;
+    transition: opacity 0.7s ease;
+}
+
+.reveal-on-scroll.revealed {
+    opacity: 1;
+} */
+
 /* GPU Composited layers cho các thẻ nặng */
 .story-stationery-card,
 .letter-stationery-card,
@@ -2588,10 +2597,26 @@ body.gate-active {
 
     .story-golden-climax,
     .letter-golden-climax {
-        padding: 16px 12px !important;
+        padding: 16px 14px !important;
         margin: 20px 0 16px !important;
         font-size: 1.05rem !important;
         line-height: 1.6 !important;
+    }
+
+    .memoir-quote-highlight {
+        padding: 16px 16px !important;
+        font-size: 1.02rem !important;
+        line-height: 1.68 !important;
+    }
+
+    .story-concern-box,
+    .story-night-chat-box {
+        padding: 16px 16px !important;
+        margin: 18px 0 !important;
+    }
+
+    .farewell-quote-box {
+        padding: 18px 16px !important;
     }
 
     .two-fingers-core-box {
