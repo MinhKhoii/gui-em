@@ -3778,44 +3778,47 @@ body.gate-active {
 
 .two-fingers-definitions {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 16px;
     margin-bottom: 26px;
 }
 
 .two-fingers-def-item {
     background: #FFFFFF;
-    border: 1px solid rgba(216, 188, 138, 0.35);
-    border-radius: 12px;
-    padding: 14px 18px;
+    border: 1px solid rgba(216, 188, 138, 0.45);
+    border-left: 3.5px solid #C49753;
+    border-radius: 14px;
+    padding: 16px 20px;
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    box-shadow: 0 4px 12px rgba(20, 43, 59, 0.03);
+    gap: 6px;
+    box-shadow: 0 4px 15px rgba(20, 43, 59, 0.04);
     transition: var(--transition);
 }
 
 .two-fingers-def-item:hover {
     transform: translateY(-2px);
     border-color: var(--champagne-gold);
-    box-shadow: 0 6px 18px rgba(20, 43, 59, 0.07);
+    border-left-color: #A33F1D;
+    box-shadow: 0 8px 24px rgba(20, 43, 59, 0.08);
 }
 
 .two-fingers-def-item .def-term {
     font-family: var(--font-serif);
     font-weight: 700;
     font-style: italic;
-    font-size: 1.12rem;
+    font-size: 1.15rem;
     color: #A33F1D;
     display: flex;
     align-items: center;
     gap: 6px;
+    letter-spacing: 0.3px;
 }
 
 .two-fingers-def-item .def-desc {
-    font-size: 0.94rem;
+    font-size: 0.98rem;
     color: #1E3344;
-    line-height: 1.55;
+    line-height: 1.6;
     font-weight: 450;
 }
 
