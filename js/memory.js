@@ -598,7 +598,7 @@ function initFooterNightCanvas() {
 window.triggerStarWish = function() {
     const btn = document.getElementById('star-wish-btn');
     if (btn) {
-        btn.innerHTML = '✨ Cả bầu trời sao đang dành cho em...';
+        btn.innerHTML = '✨ Cả bầu trời sao đang dành cho...';
         btn.style.background = 'linear-gradient(135deg, var(--champagne-gold), var(--sunset-peach))';
         btn.style.color = 'var(--deep-sea)';
         btn.style.borderColor = 'transparent';
