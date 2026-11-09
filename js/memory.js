@@ -248,7 +248,7 @@ function initHeroCanvas() {
 }
 
 /* ===================================================================
-   4. FOOTER NIGHT SEA CANVAS (STARS, SHOOTING STARS & FLYING PETALS)
+   4. FOOTER NIGHT SEA CANVAS (STARS, SHOOTING STARS & GLOWING WISH HEARTS)
    =================================================================== */
 function initFooterNightCanvas() {
     const canvas = document.getElementById('night-stars-canvas') || document.getElementById('footer-stars-canvas');
@@ -257,39 +257,40 @@ function initFooterNightCanvas() {
     let width, height;
     let stars = [];
     let shootingStars = [];
-    let petals = [];
+    let glowingHearts = [];
     let sparkles = [];
     let trailSparks = [];
     let rafId = null;
     let isRunning = false;
 
     const isMobile = window.innerWidth < 768;
-    const starCount = isMobile ? 36 : 70;
-    const ambientPetalCount = isMobile ? 8 : 14;
+    const starCount = isMobile ? 38 : 75;
+    const ambientHeartCount = isMobile ? 6 : 10;
 
-    const petalColors = [
-        'rgba(255, 174, 188, ',  // Cherry blossom pink
-        'rgba(255, 195, 160, ',  // Soft peach
-        'rgba(232, 161, 123, ',  // Sunset rose
-        'rgba(244, 208, 173, ',  // Champagne gold petal
-        'rgba(255, 142, 114, '   // Warm rose coral
+    // Palette: Champagne gold, amber starlight, candlelight warm glow, soft rose
+    const heartColors = [
+        'rgba(255, 222, 173, ',  // Warm Champagne Gold
+        'rgba(248, 180, 160, ',  // Sunset Peach Rose
+        'rgba(255, 238, 204, ',  // Soft Starlight Amber
+        'rgba(245, 195, 205, ',  // Romantic Blush
+        'rgba(255, 200, 150, '   // Warm Candlelight
     ];
 
-    function createPetal(customY, speedBoost = 1) {
-        const colorPrefix = petalColors[Math.floor(Math.random() * petalColors.length)];
+    function createGlowingHeart(customY, isBurst = false) {
+        const colorPrefix = heartColors[Math.floor(Math.random() * heartColors.length)];
+        const size = Math.random() * 5 + (isBurst ? 8 : 6.5);
         return {
-            x: Math.random() * (width + 120) - 60,
-            y: typeof customY === 'number' ? customY : (Math.random() * -60 - 20),
-            sizeW: Math.random() * 5 + 6,
-            sizeH: Math.random() * 8 + 10,
-            angle: Math.random() * Math.PI * 2,
-            angleSpeed: (Math.random() - 0.5) * 0.035,
+            x: Math.random() * (width - 40) + 20,
+            y: typeof customY === 'number' ? customY : (height + Math.random() * 40),
+            size: size,
+            alpha: Math.random() * 0.4 + 0.5,
+            maxAlpha: Math.random() * 0.35 + 0.65,
+            speedY: -(Math.random() * 0.85 + (isBurst ? 1.4 : 0.65)), // Floating UPWARD like wish lanterns!
+            speedX: (Math.random() - 0.5) * 0.5,
             wobble: Math.random() * Math.PI * 2,
-            wobbleSpeed: Math.random() * 0.04 + 0.02,
-            speedX: (Math.random() * 1.3 + 0.6) * speedBoost,
-            speedY: (Math.random() * 1.5 + 1.2) * speedBoost,
-            colorPrefix: colorPrefix,
-            alpha: Math.random() * 0.35 + 0.55
+            wobbleSpeed: Math.random() * 0.035 + 0.02,
+            rotation: (Math.random() - 0.5) * 0.35,
+            colorPrefix: colorPrefix
         };
     }
 
@@ -300,11 +301,11 @@ function initFooterNightCanvas() {
             size: Math.random() * 3.5 + 2,
             alpha: Math.random() * 0.8 + 0.2,
             pulse: (Math.random() * 0.03 + 0.015),
-            color: Math.random() > 0.4 ? 'rgba(255, 230, 180,' : 'rgba(255, 255, 255,',
-            isDiamond: Math.random() > 0.35,
-            speedY: Math.random() * 0.4 + 0.2,
-            speedX: (Math.random() - 0.3) * 0.4,
-            life: Math.random() * 130 + 80
+            color: Math.random() > 0.35 ? 'rgba(255, 230, 180,' : 'rgba(255, 255, 255,',
+            isDiamond: Math.random() > 0.3,
+            speedY: Math.random() * 0.4 + 0.15,
+            speedX: (Math.random() - 0.3) * 0.35,
+            life: Math.random() * 140 + 80
         };
     }
 
@@ -317,17 +318,17 @@ function initFooterNightCanvas() {
         for (let i = 0; i < starCount; i++) {
             stars.push({
                 x: Math.random() * width,
-                y: Math.random() * height * 0.88,
+                y: Math.random() * height * 0.9,
                 radius: Math.random() * 1.4 + 0.4,
                 alpha: Math.random() * 0.7 + 0.25,
                 pulse: Math.random() * 0.015 + 0.005
             });
         }
 
-        // Init ambient petals if empty
-        if (petals.length === 0) {
-            for (let i = 0; i < ambientPetalCount; i++) {
-                petals.push(createPetal(Math.random() * height));
+        // Init ambient floating glowing hearts
+        if (glowingHearts.length === 0) {
+            for (let i = 0; i < ambientHeartCount; i++) {
+                glowingHearts.push(createGlowingHeart(Math.random() * height));
             }
         }
     }
@@ -337,70 +338,77 @@ function initFooterNightCanvas() {
             shootingStars.push({
                 x: Math.random() * width * 0.85,
                 y: Math.random() * (height * 0.4),
-                length: Math.random() * 100 + 55,
-                speed: Math.random() * 7 + 5,
+                length: Math.random() * 110 + 60,
+                speed: Math.random() * 7.5 + 5.5,
                 angle: Math.PI / 4 + (Math.random() - 0.5) * 0.15,
                 opacity: 1,
-                headSize: Math.random() * 1.5 + 2
+                headSize: Math.random() * 1.6 + 2.2
             });
         }
     }
 
-    window.spawnShootingStarsAndFlurry = function(numStars = 8, numPetals = 36) {
+    window.spawnShootingStarsAndFlurry = function(numStars = 8, numHearts = 24) {
         // 1. Spawning burst of shooting stars across 2.2 seconds
         for (let i = 0; i < numStars; i++) {
             setTimeout(() => {
                 shootingStars.push({
                     x: Math.random() * (width * 0.85),
                     y: Math.random() * (height * 0.38),
-                    length: Math.random() * 120 + 70,
-                    speed: Math.random() * 8 + 6,
+                    length: Math.random() * 130 + 80,
+                    speed: Math.random() * 8.5 + 6.5,
                     angle: Math.PI / 4 + (Math.random() - 0.5) * 0.2,
                     opacity: 1,
-                    headSize: Math.random() * 1.8 + 2.2
+                    headSize: Math.random() * 1.8 + 2.4
                 });
             }, i * 220);
         }
 
-        // 2. Spawning burst of romantic flower petals
-        for (let i = 0; i < numPetals; i++) {
+        // 2. Spawning burst of luminous wish hearts floating up into the sky
+        for (let i = 0; i < numHearts; i++) {
             setTimeout(() => {
-                petals.push(createPetal(Math.random() * (height * 0.35) - 50, Math.random() * 0.6 + 0.95));
-            }, i * 55);
+                glowingHearts.push(createGlowingHeart(height + Math.random() * 40, true));
+            }, i * 75);
         }
 
         // 3. Spawning bursts of stardust sparkles
-        for (let i = 0; i < 28; i++) {
+        for (let i = 0; i < 30; i++) {
             setTimeout(() => {
                 sparkles.push(createSparkle(
                     Math.random() * width,
-                    Math.random() * (height * 0.65)
+                    Math.random() * (height * 0.7)
                 ));
-            }, i * 65);
+            }, i * 60);
         }
     };
 
-    // Helper: draw an organic 3D-tumbling petal
-    function drawPetal(p) {
+    // Helper: draw an ethereal glowing heart
+    function drawGlowingHeart(h) {
         ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.angle);
-        ctx.scale(Math.cos(p.wobble), 1);
-        ctx.fillStyle = p.colorPrefix + p.alpha + ')';
+        ctx.translate(h.x + Math.sin(h.wobble) * 6, h.y);
+        ctx.rotate(h.rotation);
+        ctx.globalAlpha = h.alpha;
 
+        const color = h.colorPrefix + h.alpha + ')';
+        ctx.fillStyle = color;
+        ctx.shadowColor = h.colorPrefix + '0.85)';
+        ctx.shadowBlur = h.size * 1.4;
+
+        // Draw classic upright heart
+        const s = h.size;
         ctx.beginPath();
-        ctx.moveTo(0, -p.sizeH);
-        ctx.bezierCurveTo(p.sizeW * 0.85, -p.sizeH * 0.4, p.sizeW * 0.85, p.sizeH * 0.6, 0, p.sizeH);
-        ctx.bezierCurveTo(-p.sizeW * 0.85, p.sizeH * 0.6, -p.sizeW * 0.85, -p.sizeH * 0.4, 0, -p.sizeH);
+        ctx.moveTo(0, 0); // top center cleft
+        ctx.bezierCurveTo(-s / 2, -s / 2, -s, s / 3, 0, s); // left lobe to bottom point
+        ctx.bezierCurveTo(s, s / 3, s / 2, -s / 2, 0, 0); // bottom point to right lobe to cleft
         ctx.fill();
 
-        // Subtle petal spine / vein highlight
-        ctx.strokeStyle = 'rgba(255, 255, 255, ' + (p.alpha * 0.35) + ')';
-        ctx.lineWidth = 0.8;
+        // Inner glowing starlight core
+        ctx.fillStyle = 'rgba(255, 255, 255, ' + (h.alpha * 0.65) + ')';
         ctx.beginPath();
-        ctx.moveTo(0, -p.sizeH * 0.7);
-        ctx.lineTo(0, p.sizeH * 0.7);
-        ctx.stroke();
+        const is = s * 0.45;
+        ctx.moveTo(0, 0);
+        ctx.bezierCurveTo(-is / 2, -is / 2, -is, is / 3, 0, is);
+        ctx.bezierCurveTo(is, is / 3, is / 2, -is / 2, 0, 0);
+        ctx.fill();
 
         ctx.restore();
     }
@@ -412,6 +420,8 @@ function initFooterNightCanvas() {
         ctx.fillStyle = sp.color + sp.alpha + ')';
 
         if (sp.isDiamond) {
+            ctx.shadowColor = sp.color + '0.7)';
+            ctx.shadowBlur = 6;
             ctx.beginPath();
             ctx.moveTo(0, -sp.size);
             ctx.quadraticCurveTo(0, 0, sp.size, 0);
@@ -449,18 +459,18 @@ function initFooterNightCanvas() {
             const endX = ss.x - Math.cos(ss.angle) * ss.length;
             const endY = ss.y - Math.sin(ss.angle) * ss.length;
 
-            // Gradient tail (bright head -> gold -> fade)
+            // Gradient tail (bright white head -> warm gold -> sunset peach -> fade)
             const grad = ctx.createLinearGradient(ss.x, ss.y, endX, endY);
-            grad.addColorStop(0, 'rgba(255, 255, 255, ' + (ss.opacity * 0.95) + ')');
-            grad.addColorStop(0.2, 'rgba(255, 230, 185, ' + (ss.opacity * 0.8) + ')');
-            grad.addColorStop(0.65, 'rgba(232, 161, 123, ' + (ss.opacity * 0.35) + ')');
+            grad.addColorStop(0, 'rgba(255, 255, 255, ' + (ss.opacity * 0.98) + ')');
+            grad.addColorStop(0.2, 'rgba(255, 230, 185, ' + (ss.opacity * 0.85) + ')');
+            grad.addColorStop(0.65, 'rgba(232, 161, 123, ' + (ss.opacity * 0.4) + ')');
             grad.addColorStop(1, 'rgba(232, 161, 123, 0)');
 
             ctx.beginPath();
             ctx.moveTo(ss.x, ss.y);
             ctx.lineTo(endX, endY);
             ctx.strokeStyle = grad;
-            ctx.lineWidth = 1.8;
+            ctx.lineWidth = 1.9;
             ctx.stroke();
 
             // Head core & halo glow
@@ -470,17 +480,17 @@ function initFooterNightCanvas() {
             ctx.fill();
 
             ctx.beginPath();
-            ctx.arc(ss.x, ss.y, ss.headSize * 2.2, 0, Math.PI * 2);
-            ctx.fillStyle = 'rgba(255, 226, 180, ' + (ss.opacity * 0.35) + ')';
+            ctx.arc(ss.x, ss.y, ss.headSize * 2.4, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255, 226, 180, ' + (ss.opacity * 0.4) + ')';
             ctx.fill();
 
             // Spawn trail spark occasionally
-            if (Math.random() < 0.45) {
+            if (Math.random() < 0.5) {
                 trailSparks.push({
-                    x: ss.x - Math.cos(ss.angle) * (Math.random() * 20),
-                    y: ss.y - Math.sin(ss.angle) * (Math.random() * 20),
-                    radius: Math.random() * 1.2 + 0.6,
-                    alpha: ss.opacity * 0.8,
+                    x: ss.x - Math.cos(ss.angle) * (Math.random() * 25),
+                    y: ss.y - Math.sin(ss.angle) * (Math.random() * 25),
+                    radius: Math.random() * 1.3 + 0.6,
+                    alpha: ss.opacity * 0.85,
                     speedX: (Math.random() - 0.5) * 0.5,
                     speedY: Math.random() * 0.5 + 0.2
                 });
@@ -498,7 +508,7 @@ function initFooterNightCanvas() {
             const ts = trailSparks[i];
             ts.x += ts.speedX;
             ts.y += ts.speedY;
-            ts.alpha -= 0.028;
+            ts.alpha -= 0.026;
             if (ts.alpha <= 0) {
                 trailSparks.splice(i, 1);
                 continue;
@@ -525,25 +535,25 @@ function initFooterNightCanvas() {
             drawSparkle(sp);
         }
 
-        // 5. Update & draw falling flower petals
-        for (let i = petals.length - 1; i >= 0; i--) {
-            const p = petals[i];
-            p.y += p.speedY;
-            p.x += p.speedX;
-            p.angle += p.angleSpeed;
-            p.wobble += p.wobbleSpeed;
+        // 5. Update & draw floating glowing hearts (ascending like warm starlight lanterns)
+        for (let i = glowingHearts.length - 1; i >= 0; i--) {
+            const h = glowingHearts[i];
+            h.y += h.speedY;
+            h.x += h.speedX;
+            h.wobble += h.wobbleSpeed;
 
-            // If petal falls below screen
-            if (p.y > height + 30) {
-                if (petals.length > ambientPetalCount) {
-                    petals.splice(i, 1);
+            // If heart floats above screen
+            if (h.y < -30) {
+                if (glowingHearts.length > ambientHeartCount) {
+                    glowingHearts.splice(i, 1);
                     continue;
                 } else {
-                    p.y = -20;
-                    p.x = Math.random() * (width + 60) - 30;
+                    // Recycle ambient heart to bottom
+                    h.y = height + 25;
+                    h.x = Math.random() * (width - 40) + 20;
                 }
             }
-            drawPetal(p);
+            drawGlowingHeart(h);
         }
 
         rafId = requestAnimationFrame(render);
@@ -588,7 +598,7 @@ function initFooterNightCanvas() {
 window.triggerStarWish = function() {
     const btn = document.getElementById('star-wish-btn');
     if (btn) {
-        btn.innerHTML = '✨ Bầu trời hoa & sao băng đang bay...';
+        btn.innerHTML = '✨ Cả bầu trời sao đang dành cho em...';
         btn.style.background = 'linear-gradient(135deg, var(--champagne-gold), var(--sunset-peach))';
         btn.style.color = 'var(--deep-sea)';
         btn.style.borderColor = 'transparent';
@@ -602,7 +612,7 @@ window.triggerStarWish = function() {
         }, 4500);
     }
     if (window.spawnShootingStarsAndFlurry) {
-        window.spawnShootingStarsAndFlurry(8, 36);
+        window.spawnShootingStarsAndFlurry(8, 24);
     }
 };
 
